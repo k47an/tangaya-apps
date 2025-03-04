@@ -28,6 +28,22 @@ class WeatherView extends GetView<WeatherController> {
             onPressed: controller.getCurrentLocation,
             child: const Text('Dapatkan Lokasi'),
           ),
+          const SizedBox(height: 16),
+          Obx(() {
+            if (controller.currentWeather.value == null) {
+              return const Text('Cuaca belum tersedia');
+            }
+            final weather = controller.currentWeather.value!;
+            return Column(
+              children: [
+                Text('Cuaca: ${weather.weatherDescription}'),
+                Text(
+                  'Suhu: ${weather.temperature?.celsius?.toStringAsFixed(1)} °C',
+                ),
+                Text('Kelembaban: ${weather.humidity}%'),
+              ],
+            );
+          }),
         ],
       ),
     );
