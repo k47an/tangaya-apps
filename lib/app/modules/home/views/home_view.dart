@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/modules/home/weather/views/weather_view.dart';
 
 import '../controllers/home_controller.dart';
 
