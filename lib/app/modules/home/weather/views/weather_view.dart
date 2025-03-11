@@ -5,6 +5,7 @@ import '../controllers/weather_controller.dart';
 
 class WeatherView extends GetView<WeatherController> {
   const WeatherView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -15,58 +16,45 @@ class WeatherView extends GetView<WeatherController> {
           children: [
             const SizedBox(height: 16),
             Obx(() {
-              if (controller.currentWeather.value == null) {
-                return const Text('Cuaca belum tersedia');
-              }
-              final weather = controller.currentWeather.value!;
-              return WeatherBox(weather: weather);
-            }),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: controller.getCurrentLocation,
-              child: const Text('Dapatkan Lokasi'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class WeatherBox extends StatelessWidget {
-  final Weather weather;
-
-  const WeatherBox({required this.weather, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.network(
-              'http://openweathermap.org/img/w/${weather.weatherIcon}.png',
-              width: 100,
-              height: 100,
-            ),
-            Text(
-              'Cuaca: ${weather.weatherDescription}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Suhu: ${weather.temperature?.celsius?.toStringAsFixed(1)} °C',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Kelembaban: ${weather.humidity}%',
-              style: const TextStyle(fontSize: 16),
-            ),
+              final weather = controller.currentWeather.value;
+              return Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.network(
+                        'http://openweathermap.org/img/w/${weather?.weatherIcon ?? '01d'}.png',
+                        height: 500,
+                        width: 500,
+                        fit: BoxFit.cover,
+                      ),
+                      Text(
+                        'Cuaca: ${weather?.weatherDescription ?? 'Tidak tersedia'}',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Suhu: ${weather?.temperature?.celsius?.toStringAsFixed(1) ?? '0.0'} °C',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Kelembaban: ${weather?.humidity ?? 0}%',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                       Text(
+                        'Curah Hujan Terakhir: ${weather?.rainLast3Hours ?? 0} mm',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+           
+                    ],
+                  ),
+                ),
+              );
+  },),
           ],
         ),
       ),

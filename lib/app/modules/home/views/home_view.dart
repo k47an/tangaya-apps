@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
+import 'package:tangaya_apps/app/modules/home/weather/views/weather_view.dart';
+import 'package:tangaya_apps/app/modules/home/weather/controllers/weather_controller.dart';
 
 import '../controllers/home_controller.dart';
 
@@ -10,11 +11,15 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('HomeView'), centerTitle: true),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => Get.toNamed('/home/weather'),
-          child: const Text('Buka Weather'),
-        ),
+      body: Column(
+        children: [
+          GetBuilder<WeatherController>(
+            init: WeatherController(),
+            builder: (controller) {
+              return WeatherView();
+            },
+          ),
+        ],
       ),
     );
   }
