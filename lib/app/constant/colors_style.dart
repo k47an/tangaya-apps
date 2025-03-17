@@ -1,9 +1,9 @@
 part of 'constant.dart';
 
 class Primary {
-  static const Color mainColor = Color(0xFF499448);
-  static const Color lightColor = Color(0xFFA3D977);
-  static const Color darkColor = Color(0xFF1B5E20);
+  static const Color mainColor = Color(0xFF80B155);
+  static const Color lightColor = Color(0xFFEAEF9D);
+  static const Color darkColor = Color(0xFF336A29);
   static const Color subtleColor = Color(0xFFE8F5E9);
 }
 
