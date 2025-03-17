@@ -1,11 +1,52 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tangaya_apps/app/modules/home/mixin/weather_mixin.dart';
 
-class HomeController extends GetxController {
-  //TODO: Implement HomeController
+class HomeController extends GetxController
+    with GetSingleTickerProviderStateMixin, WeatherMixin {
+  late TabController tabController;
+  RxInt currentTab = 0.obs;
+  List<String> tabs = ['Tracking', 'Camping', 'Edutourism'];
 
-  final count = 0.obs;
+  String getTabIcon(int index) {
+    switch (index) {
+      case 0:
+        return 'assets/icons/tracking.svg';
+      case 1:
+        return 'assets/icons/camping.svg';
+      case 2:
+        return 'assets/icons/edutourism.svg';
+      default:
+        return '';
+    }
+  }
 
+  String getTabTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Tracking';
+      case 1:
+        return 'Camping';
+      case 2:
+        return 'Edutourism';
+      default:
+        return '';
+    }
+  }
 
+  @override
+  void onInit() {
+    super.onInit();
+    tabController = TabController(length: tabs.length, vsync: this);
+    tabController.addListener(() {
+      currentTab.value = tabController.index;
+    });
+    fetchCurrentWeather();
+  }
 
-  void increment() => count.value++;
+  @override
+  void onClose() {
+    tabController.dispose();
+    super.onClose();
+  }
 }

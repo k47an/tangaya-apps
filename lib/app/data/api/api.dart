@@ -1,0 +1,1 @@
+const KEY_WEATHER = "2b6f111cea2f3692611bd60d98159ea4";
