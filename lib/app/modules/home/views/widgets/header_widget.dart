@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tangaya_apps/app/constant/constant.dart';
+import 'package:get/get.dart';
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({Key? key}) : super(key: key);
@@ -68,16 +69,15 @@ class HeaderWidget extends StatelessWidget {
                     icon: Icon(Icons.notifications),
                     color: Primary.subtleColor,
                     iconSize: 25,
-                    onPressed: () {
-                      // Navigate to search page
-                    },
+                    onPressed: () {},
                   ),
                   IconButton(
                     icon: Icon(Icons.message_rounded),
                     color: Primary.subtleColor,
                     iconSize: 25,
                     onPressed: () {
-                      // Navigate to search page
+                      // Navigate to
+                      Get.toNamed('/chat');
                     },
                   ),
                 ],
