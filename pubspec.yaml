@@ -38,6 +38,7 @@ dependencies:
   weather: ^3.1.1
   flutter_svg: ^2.0.17
   skeletonizer: ^1.4.3
+  intl: ^0.20.2
 
 dev_dependencies:
   flutter_test:
