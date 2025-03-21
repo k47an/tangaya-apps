@@ -23,8 +23,8 @@ class WeatherWidget extends GetView<HomeController> {
                 child: Center(
                   child: Image.network(
                     "https://openweathermap.org/img/wn/${weather?.weatherIcon}.png",
-                    height: 400,
-                    width: 400,
+                    height: ScaleHelper(context).scaleWidthForDevice(400),
+                    width: ScaleHelper(context).scaleHeightForDevice(400),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -47,7 +47,7 @@ class WeatherWidget extends GetView<HomeController> {
                       'Temp',
                       style: light.copyWith(
                         color: Primary.subtleColor,
-                        fontSize: 12,
+                        fontSize: ScaleHelper(context).scaleTextForDevice(12),
                       ),
                     ),
                     Container(
@@ -60,17 +60,21 @@ class WeatherWidget extends GetView<HomeController> {
                                 '0',
                             style: extraBold.copyWith(
                               color: Primary.subtleColor,
-                              fontSize: 50,
+                              fontSize: ScaleHelper(
+                                context,
+                              ).scaleTextForDevice(50),
                             ),
                           ),
                           Positioned(
                             top: -10,
                             left: 53,
                             child: Text(
-                              '°c',
+                              '°',
                               style: extraBold.copyWith(
                                 color: Primary.subtleColor,
-                                fontSize: 50,
+                                fontSize: ScaleHelper(
+                                  context,
+                                ).scaleTextForDevice(50),
                               ),
                             ),
                           ),
@@ -83,7 +87,7 @@ class WeatherWidget extends GetView<HomeController> {
                         '${(weather?.tempMin?.celsius?.toDouble() ?? 0).round()}°  /  ${(weather?.tempMax?.celsius?.toDouble() ?? 0).round()}°',
                         style: light.copyWith(
                           color: Primary.subtleColor,
-                          fontSize: 12,
+                          fontSize: ScaleHelper(context).scaleTextForDevice(12),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -101,24 +105,35 @@ class WeatherWidget extends GetView<HomeController> {
                             'Cuaca terkini',
                             style: regular.copyWith(
                               color: Primary.subtleColor,
-                              fontSize: 10,
+                              fontSize: ScaleHelper(
+                                context,
+                              ).scaleTextForDevice(10),
                             ),
                           ),
                           Text(
                             'POKDARWIS Tangaya',
                             style: regular.copyWith(
                               color: Primary.subtleColor,
-                              fontSize: 12,
+                              fontSize: ScaleHelper(
+                                context,
+                              ).scaleTextForDevice(10),
                             ),
                           ),
                         ],
                       ),
 
                       Text(
-                        weather?.weatherDescription ?? 'Tidak tersedia',
+                        weather?.weatherDescription
+                                ?.split(' ')
+                                .map(
+                                  (word) =>
+                                      word[0].toUpperCase() + word.substring(1),
+                                )
+                                .join(' ') ??
+                            'Tidak Tersedia',
                         style: bold.copyWith(
                           color: Primary.subtleColor,
-                          fontSize: 16,
+                          fontSize: ScaleHelper(context).scaleTextForDevice(18),
                         ),
                       ),
                     ],
