@@ -32,6 +32,7 @@ class HomeView extends GetView<HomeController> {
             Expanded(
               child: Container(
                 margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                padding: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   color: Primary.subtleColor,
@@ -51,13 +52,19 @@ class HomeView extends GetView<HomeController> {
                 child: Column(
                   children: [
                     TabBar(
+                      isScrollable: true,
                       labelColor: Primary.mainColor,
                       unselectedLabelColor: Colors.grey,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
                       controller: controller.tabController,
                       dividerColor: Neutral.transparent,
                       tabAlignment: TabAlignment.center,
+                      indicatorWeight: ScaleHelper(
+                        context,
+                      ).scaleHeightForDevice(1),
                       indicatorColor: Primary.mainColor,
+                      indicatorPadding: EdgeInsets.symmetric(
+                        vertical: ScaleHelper(context).scaleHeightForDevice(5),
+                      ),
                       tabs: List.generate(
                         controller.tabs.length,
                         (index) => Obx(
@@ -66,14 +73,22 @@ class HomeView extends GetView<HomeController> {
                               children: [
                                 SvgPicture.asset(
                                   controller.getTabIcon(index),
-                                  width: 20,
-                                  height: 20,
+                                  width: ScaleHelper(
+                                    context,
+                                  ).scaleWidthForDevice(15),
+                                  height: ScaleHelper(
+                                    context,
+                                  ).scaleHeightForDevice(15),
                                   color:
                                       controller.currentTab.value == index
                                           ? Primary.mainColor
                                           : Colors.grey,
                                 ),
-                                const SizedBox(width: 10),
+                                SizedBox(
+                                  width: ScaleHelper(
+                                    context,
+                                  ).scaleWidthForDevice(8),
+                                ),
                                 Text(
                                   controller.getTabTitle(index),
                                   style: TextStyle(
@@ -89,6 +104,9 @@ class HomeView extends GetView<HomeController> {
                           ),
                         ),
                       ),
+                    ),
+                    SizedBox(
+                      height: ScaleHelper(context).scaleHeightForDevice(10),
                     ),
                     Expanded(
                       child: TabBarView(

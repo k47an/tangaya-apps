@@ -22,17 +22,16 @@ class HeaderWidget extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
-        toolbarHeight: 70,
         flexibleSpace: Padding(
-          padding: EdgeInsets.only(top: 60, left: 10, right: 10, bottom: 20),
+          padding: EdgeInsets.only(top: 50, left: 10, right: 10, bottom: 10),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                width: 60,
-                height: 60,
+                width: ScaleHelper(context).scaleWidthForDevice(50),
+                height: ScaleHelper(context).scaleHeightForDevice(50),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Primary.lightColor, width: 1),
+                  border: Border.all(color: Neutral.dark4, width: 1),
                   image: DecorationImage(
                     image: AssetImage('assets/dummy/profile.JPG'),
                     fit: BoxFit.cover,
@@ -40,23 +39,22 @@ class HeaderWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              SizedBox(width: 20),
+              SizedBox(width: ScaleHelper(context).scaleWidthForDevice(10)),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     'Selamat Datang',
                     style: extraBold.copyWith(
                       color: Primary.subtleColor,
-                      fontSize: 16,
+                      fontSize: ScaleHelper(context).scaleTextForDevice(14),
                     ),
                   ),
                   Text(
                     'Katan',
                     style: regular.copyWith(
                       color: Primary.subtleColor,
-                      fontSize: 14,
+                      fontSize: ScaleHelper(context).scaleTextForDevice(14),
                     ),
                   ),
                 ],
@@ -67,7 +65,7 @@ class HeaderWidget extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.notifications),
                     color: Primary.subtleColor,
-                    iconSize: 25,
+                    iconSize: ScaleHelper(context).scaleWidthForDevice(20),
                     onPressed: () {
                       // Navigate to search page
                     },
@@ -75,7 +73,7 @@ class HeaderWidget extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.message_rounded),
                     color: Primary.subtleColor,
-                    iconSize: 25,
+                    iconSize: ScaleHelper(context).scaleWidthForDevice(20),
                     onPressed: () {
                       // Navigate to search page
                     },
