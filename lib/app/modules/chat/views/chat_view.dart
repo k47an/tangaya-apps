@@ -13,10 +13,16 @@ class ChatView extends GetView<ChatController> {
       appBar: AppBar(
         title: Text(
           'Customer Service Chat',
-          style: extraBold.copyWith(color: Primary.subtleColor, fontSize: 20),
+          style: extraBold.copyWith(
+            color: Primary.subtleColor,
+            fontSize: ScaleHelper(context).scaleTextForDevice(18),
+          ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            size: ScaleHelper(context).scaleWidthForDevice(16),
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -63,7 +69,9 @@ class ChatView extends GetView<ChatController> {
                               backgroundImage: AssetImage(
                                 'assets/dummy/profile.JPG',
                               ),
-                              radius: 20,
+                              radius: ScaleHelper(
+                                context,
+                              ).scaleWidthForDevice(20),
                             ),
                           Container(
                             margin: EdgeInsets.symmetric(
@@ -95,10 +103,16 @@ class ChatView extends GetView<ChatController> {
                                         isUserMessage
                                             ? Primary.darkColor
                                             : Colors.black,
-                                    fontSize: 14,
+                                    fontSize: ScaleHelper(
+                                      context,
+                                    ).scaleTextForDevice(14),
                                   ),
                                 ),
-                                SizedBox(height: 5),
+                                SizedBox(
+                                  height: ScaleHelper(
+                                    context,
+                                  ).scaleHeightForDevice(5),
+                                ),
                                 Text(
                                   DateFormat(
                                     'hh:mm a',
@@ -108,7 +122,9 @@ class ChatView extends GetView<ChatController> {
                                         isUserMessage
                                             ? Primary.darkColor
                                             : Colors.black54,
-                                    fontSize: 8,
+                                    fontSize: ScaleHelper(
+                                      context,
+                                    ).scaleTextForDevice(8),
                                   ),
                                 ),
                               ],
