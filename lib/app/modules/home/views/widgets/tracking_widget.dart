@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tangaya_apps/app/constant/constant.dart';
+import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 
-class TrackingWidget extends StatelessWidget {
+class TrackingWidget extends GetView<HomeController> {
   const TrackingWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 22),
-      itemCount: 6, // Hanya contoh
-      itemBuilder: (context, index) {
-        return const ArticleCard(
-          image: "assets/dummy/camp.jpg",
-          title: "Camping Adventure",
-        );
-      },
-    );
+    return Obx(() {
+      if (controller.isLoadingTracking.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (controller.trackingList.isEmpty) {
+        return const Center(child: Text("Tidak ada data tracking."));
+      }
+
+      return ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 22),
+        itemCount: controller.trackingList.length,
+        itemBuilder: (context, index) {
+          final tracking = controller.trackingList[index];
+          debugPrint("🔥 Image: ${tracking.images[0]}");
+          debugPrint("🔥 Title: ${tracking.name}");
+
+          return ArticleCard(image: tracking.images[0], title: tracking.name);
+          // debug print image dan title
+        },
+      );
+    });
   }
 }
 
@@ -33,7 +47,7 @@ class ArticleCard extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey, width: 0.2),
         borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
+        image: DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
       ),
       child: Stack(
         children: [
