@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tangaya_apps/app/modules/home/mixin/tracking_mixin.dart';
 import 'package:tangaya_apps/app/modules/home/mixin/weather_mixin.dart';
 
 class HomeController extends GetxController
-    with GetSingleTickerProviderStateMixin, WeatherMixin {
+    with GetSingleTickerProviderStateMixin, WeatherMixin, TrackingMixin {
   late TabController tabController;
   RxInt currentTab = 0.obs;
   List<String> tabs = ['Tracking', 'Camping', 'Edutourism'];
@@ -42,6 +43,7 @@ class HomeController extends GetxController
       currentTab.value = tabController.index;
     });
     fetchCurrentWeather();
+    fetchTrackingList();
   }
 
   @override
