@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tangaya_apps/app/constant/constant.dart';
+import 'package:tangaya_apps/constant/constant.dart';
 import 'package:get/get.dart';
 
 class HeaderWidget extends StatelessWidget {

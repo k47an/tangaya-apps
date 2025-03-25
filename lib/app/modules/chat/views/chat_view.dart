@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart'; // Ensure this import is present
-import 'package:tangaya_apps/app/constant/constant.dart';
+import 'package:tangaya_apps/constant/constant.dart';
 import 'package:tangaya_apps/app/modules/chat/controllers/chat_controller.dart';
 
 class ChatView extends GetView<ChatController> {
