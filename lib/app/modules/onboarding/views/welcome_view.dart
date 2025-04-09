@@ -40,15 +40,15 @@ class WelcomeView extends GetView<OnboardingController> {
               ),
               SizedBox(height: ScaleHelper(context).scaleHeightForDevice(40)),
               MainButton(
-                label: 'Masuk',
+                label: 'Masuk tanpa akun',
                 onTap: () {
-                  Get.toNamed(Routes.LOGIN);
+                  Get.toNamed(Routes.HOME);
                 },
               ),
               SizedBox(height: ScaleHelper(context).scaleHeightForDevice(16)),
               GestureDetector(
                 onTap: () {
-                  // Get.toNamed(Routes.REGISTER);
+                  Get.toNamed(Routes.LOGIN);
                 },
                 child: Container(
                   margin: EdgeInsets.symmetric(
@@ -64,7 +64,7 @@ class WelcomeView extends GetView<OnboardingController> {
                     color: Neutral.white4,
                   ),
                   child: Text(
-                    'Daftar',
+                    'Masuk dengan Akun',
                     style: semiBold.copyWith(
                       fontSize: ScaleHelper(context).scaleTextForDevice(14),
                       color: Primary.mainColor,

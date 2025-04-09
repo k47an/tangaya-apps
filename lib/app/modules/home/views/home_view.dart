@@ -14,6 +14,10 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> args = Get.arguments ?? {};
+    final String name = args['name'] ?? 'User';
+    final String photoURL = args['photoURL'] ?? '';
+
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -27,7 +31,7 @@ class HomeView extends GetView<HomeController> {
         ),
         child: Column(
           children: [
-            const HeaderWidget(),
+            HeaderWidget(name: name, photoURL: photoURL),
             const WeatherWidget(),
             Expanded(
               child: Container(

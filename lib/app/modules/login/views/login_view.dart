@@ -174,7 +174,7 @@ class LoginView extends GetView<LoginController> {
                     svgAssetPath: 'assets/icons/google.svg',
                     label: 'Google',
                     onTap: () {
-                      // Implement Google Sign In
+                      controller.handleGoogleSignIn();
                     },
                   ),
                 ],
