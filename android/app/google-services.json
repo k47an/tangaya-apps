@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "209624047180",
+    "firebase_url": "https://palala-app-b1873-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "palala-app-b1873",
+    "storage_bucket": "palala-app-b1873.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209624047180:android:38ef5662148e6e27851ee9",
+        "android_client_info": {
+          "package_name": "com.example.tangaya_apps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "209624047180-9ldmjtqu7dtrdt442bm9aslehm229dhl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tangaya_apps",
+            "certificate_hash": "093afeaf2ccf02df2377684e856e29d2e6506503"
+          }
+        },
+        {
+          "client_id": "209624047180-906nuhgsed95gck2l2kjp26nu50bppbo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7i-Z9okQEdm9P0jgEfA3whvubusUE26w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "209624047180-906nuhgsed95gck2l2kjp26nu50bppbo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "209624047180-dae34gsvnqcelukig0ai3bihtoc3k8cf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tangayaApps"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

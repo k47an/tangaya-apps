@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/constant/constant.dart';
+import 'package:tangaya_apps/constant/constant.dart';
 import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 import 'package:tangaya_apps/app/modules/home/views/widgets/camping_widget.dart';
 import 'package:tangaya_apps/app/modules/home/views/widgets/edutour_widget.dart';
@@ -14,6 +14,10 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> args = Get.arguments ?? {};
+    final String name = args['name'] ?? 'User';
+    final String photoURL = args['photoURL'] ?? '';
+
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -27,7 +31,7 @@ class HomeView extends GetView<HomeController> {
         ),
         child: Column(
           children: [
-            const HeaderWidget(),
+            HeaderWidget(name: name, photoURL: photoURL),
             const WeatherWidget(),
             Expanded(
               child: Container(

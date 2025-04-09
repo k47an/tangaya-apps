@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:tangaya_apps/app/constant/constant.dart';
+import 'package:tangaya_apps/app/modules/login/controllers/login_controller.dart';
+import 'package:tangaya_apps/app/routes/app_pages.dart';
+import 'package:tangaya_apps/constant/constant.dart';
 import 'package:get/get.dart';
 
 class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({Key? key}) : super(key: key);
+  final String name;
+  final String photoURL;
+  const HeaderWidget({Key? key, required this.name, required this.photoURL})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var auth = Get.put(LoginController());
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -34,7 +40,10 @@ class HeaderWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border.all(color: Neutral.dark4, width: 1),
                   image: DecorationImage(
-                    image: AssetImage('assets/dummy/profile.JPG'),
+                    image:
+                        (photoURL.isNotEmpty)
+                            ? NetworkImage(photoURL) as ImageProvider
+                            : AssetImage('assets/dummy/profile.JPG'),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(50),
@@ -52,7 +61,7 @@ class HeaderWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Katan',
+                    name,
                     style: regular.copyWith(
                       color: Primary.subtleColor,
                       fontSize: ScaleHelper(context).scaleTextForDevice(14),
@@ -66,7 +75,6 @@ class HeaderWidget extends StatelessWidget {
                   IconButton(
                     icon: Icon(Icons.notifications),
                     color: Primary.subtleColor,
-
                     iconSize: ScaleHelper(context).scaleWidthForDevice(20),
                     onPressed: () {
                       // Navigate to search page
@@ -78,7 +86,23 @@ class HeaderWidget extends StatelessWidget {
                     iconSize: ScaleHelper(context).scaleWidthForDevice(20),
                     onPressed: () {
                       // Navigate to
-                      Get.toNamed('/chat');
+                      Get.toNamed(Routes.CHAT);
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      name.isNotEmpty && photoURL.isNotEmpty
+                          ? Icons.logout_sharp
+                          : Icons.login,
+                    ),
+                    color: Primary.subtleColor,
+                    iconSize: ScaleHelper(context).scaleWidthForDevice(20),
+                    onPressed: () {
+                      if (name.isNotEmpty && photoURL.isNotEmpty) {
+                        auth.handleSignOut();
+                      } else {
+                        Get.toNamed(Routes.LOGIN);
+                      }
                     },
                   ),
                 ],

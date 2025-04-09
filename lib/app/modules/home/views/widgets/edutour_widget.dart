@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tangaya_apps/app/constant/constant.dart';
+import 'package:tangaya_apps/constant/constant.dart';
 
 class EdutourWidget extends StatelessWidget {
   const EdutourWidget({Key? key}) : super(key: key);

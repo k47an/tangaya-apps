@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tangaya_apps/app/constant/constant.dart';
+import 'package:tangaya_apps/constant/constant.dart';
 
 class CampingWidget extends StatelessWidget {
   const CampingWidget({Key? key}) : super(key: key);
