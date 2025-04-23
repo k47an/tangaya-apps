@@ -27,14 +27,22 @@ class InputField extends StatelessWidget {
       validator: validator,
       obscureText: obscureText,
       onChanged: onChanged,
-      style: regular.copyWith(fontSize: 14, color: Neutral.dark1),
+      style: regular.copyWith(
+        fontSize: ScaleHelper(context).scaleTextForDevice(14),
+        color: Neutral.dark1,
+      ),
       decoration: primary.copyWith(
         hintText: title,
-        hintStyle: regular.copyWith(fontSize: 14, color: Neutral.dark2),
+        hintStyle: regular.copyWith(
+          fontSize: ScaleHelper(context).scaleTextForDevice(14),
+          color: Neutral.dark2,
+        ),
         suffixIcon:
             icon != null
                 ? Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all(
+                    ScaleHelper(context).scaleWidthForDevice(10),
+                  ),
                   child:
                       errorText != null && errorText!.isNotEmpty
                           ? errorIcon

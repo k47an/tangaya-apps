@@ -48,7 +48,7 @@ class WelcomeView extends GetView<OnboardingController> {
               SizedBox(height: ScaleHelper(context).scaleHeightForDevice(16)),
               GestureDetector(
                 onTap: () {
-                  Get.toNamed(Routes.LOGIN);
+                  Get.toNamed(Routes.SIGNIN);
                 },
                 child: Container(
                   margin: EdgeInsets.symmetric(

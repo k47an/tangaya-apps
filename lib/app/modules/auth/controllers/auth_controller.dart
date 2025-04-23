@@ -1,15 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tangaya_apps/app/modules/auth/mixins/goggleAuth_mixin.dart';
+import 'package:tangaya_apps/app/modules/auth/mixins/signUp_mixin.dart';
 import 'package:tangaya_apps/constant/constant.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/modules/login/mixins/goggle_auth.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
 
-class LoginController extends GetxController with AuthGoogle {
+class AuthController extends GetxController with AuthGoogle, SignUpMixin {
   Rx<User?> firebaseUser = Rx<User?>(null);
 
-  RxBool obscureText = true.obs;
-  RxString passwordError = ''.obs;
+
 
   void handleGoogleSignIn() async {
     User? user = await signInWithGoogle();

@@ -19,9 +19,10 @@ class MainButton extends StatelessWidget {
     return GestureDetector(
       onTap: isEnabled ? onTap : null,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        width: double.infinity,
+        padding: EdgeInsets.symmetric(
+          vertical: ScaleHelper(context).scaleHeightForDevice(14),
+        ),
+        width: ScaleHelper(context).scaleWidthForDevice(200),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           color: isEnabled ? Primary.mainColor : Neutral.white1,
@@ -29,7 +30,7 @@ class MainButton extends StatelessWidget {
         child: Text(
           label,
           style: semiBold.copyWith(
-            fontSize: 16,
+            fontSize: ScaleHelper(context).scaleTextForDevice(16),
             color: isEnabled ? Neutral.white1 : Neutral.dark3,
           ),
           textAlign: TextAlign.center,

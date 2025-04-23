@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tangaya_apps/app/modules/login/controllers/login_controller.dart';
+import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 import 'package:get/get.dart';
@@ -12,7 +12,7 @@ class HeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var auth = Get.put(LoginController());
+    var auth = Get.put((AuthController()));
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -101,7 +101,7 @@ class HeaderWidget extends StatelessWidget {
                       if (name.isNotEmpty && photoURL.isNotEmpty) {
                         auth.handleSignOut();
                       } else {
-                        Get.toNamed(Routes.LOGIN);
+                        Get.toNamed(Routes.SIGNIN);
                       }
                     },
                   ),

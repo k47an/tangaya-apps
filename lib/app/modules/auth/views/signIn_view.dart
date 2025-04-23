@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/modules/login/controllers/login_controller.dart';
+import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
+import 'package:tangaya_apps/app/modules/auth/views/components/auth_button.dart';
+import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
-import 'package:tangaya_apps/app/modules/login/views/components/auth_button.dart';
 import 'package:tangaya_apps/utils/global_components/main_button.dart';
 import 'package:tangaya_apps/utils/global_components/text_input_field.dart';
 
-class LoginView extends GetView<LoginController> {
-  const LoginView({super.key});
+class SignInView extends GetView<AuthController> {
+  const SignInView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,11 +105,10 @@ class LoginView extends GetView<LoginController> {
                   title: 'Ketikkan Password',
                   onChanged: (String) {},
                   obscureText: controller.obscureText.value,
-                  validator: (String) {},
                   icon: GestureDetector(
                     onTap: () {
-                      // controller.obscureText.value =
-                      //     !controller.obscureText.value;
+                      controller.obscureText.value =
+                          !controller.obscureText.value;
                     },
                     child: SvgPicture.asset(
                       controller.obscureText.value
@@ -196,7 +196,7 @@ class LoginView extends GetView<LoginController> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        // Get.toNamed(Routes.REGISTER);
+                        Get.toNamed(Routes.SIGNUP);
                       },
                       child: Text(
                         'Daftar',
