@@ -7,12 +7,7 @@ class MainButton extends StatelessWidget {
   final Function()? onTap;
   final bool isEnabled;
 
-  const MainButton({
-    required this.label,
-    this.onTap,
-    this.isEnabled = true,
-    super.key,
-  });
+  const MainButton({required this.label, this.onTap, this.isEnabled = true});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +17,7 @@ class MainButton extends StatelessWidget {
         padding: EdgeInsets.symmetric(
           vertical: ScaleHelper(context).scaleHeightForDevice(14),
         ),
-        width: ScaleHelper(context).scaleWidthForDevice(200),
+        width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           color: isEnabled ? Primary.mainColor : Neutral.white1,

@@ -38,39 +38,53 @@ class WelcomeView extends GetView<OnboardingController> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: ScaleHelper(context).scaleHeightForDevice(40)),
-              MainButton(
-                label: 'Masuk tanpa akun',
-                onTap: () {
-                  Get.toNamed(Routes.HOME);
-                },
-              ),
-              SizedBox(height: ScaleHelper(context).scaleHeightForDevice(16)),
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(Routes.SIGNIN);
-                },
-                child: Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: ScaleHelper(context).scaleWidthForDevice(24),
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    vertical: ScaleHelper(context).scaleHeightForDevice(16),
-                  ),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Primary.mainColor),
-                    color: Neutral.white4,
-                  ),
-                  child: Text(
-                    'Masuk dengan Akun',
-                    style: semiBold.copyWith(
-                      fontSize: ScaleHelper(context).scaleTextForDevice(14),
-                      color: Primary.mainColor,
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ScaleHelper(context).scaleWidthForDevice(24),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: ScaleHelper(context).scaleHeightForDevice(40),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                    MainButton(
+                      label: 'Masuk Dengan Akun',
+                      onTap: () {
+                        Get.toNamed(Routes.SIGNIN);
+                      },
+                    ),
+                    SizedBox(
+                      height: ScaleHelper(context).scaleHeightForDevice(16),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Get.toNamed(Routes.HOME);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: ScaleHelper(
+                            context,
+                          ).scaleHeightForDevice(14),
+                        ),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: Primary.mainColor),
+                          color: Neutral.white4,
+                        ),
+                        child: Text(
+                          'Masuk sebagai Tamu',
+                          style: bold.copyWith(
+                            fontSize: ScaleHelper(
+                              context,
+                            ).scaleTextForDevice(16),
+                            color: Primary.mainColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

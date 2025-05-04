@@ -1,8 +1,6 @@
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/auth/bindings/auth_binding.dart';
 import 'package:tangaya_apps/app/modules/auth/views/signIn_view.dart';
-import 'package:tangaya_apps/app/modules/auth/views/signup_view.dart';
-
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/home/bindings/home_binding.dart';
@@ -18,7 +16,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SIGNUP;
+  static const INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(
@@ -51,10 +49,10 @@ class AppPages {
       page: () => const WelcomeView(),
       binding: OnboardingBinding(),
     ),
-    GetPage(
-      name: _Paths.SIGNUP,
-      page: () => const SignupView(),
-      binding: AuthBinding(),
-    ),
+    // GetPage(
+    //   name: _Paths.OTP_INPUT,
+    //   page: () => OtpInputPage(),
+    //   binding: AuthBinding(),
+    // ),
   ];
 }

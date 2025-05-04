@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 import 'package:tangaya_apps/app/modules/home/views/widgets/camping_widget.dart';
@@ -14,9 +16,13 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> args = Get.arguments ?? {};
-    final String name = args['name'] ?? 'User';
-    final String photoURL = args['photoURL'] ?? '';
+    Get.put(AuthController());
+    final user = FirebaseAuth.instance.currentUser;
+
+    final String displayName = user?.displayName ?? 'User';
+    final String email = user?.email ?? 'No email';
+    final String phoneNumber = user?.phoneNumber ?? 'No phone number';
+    final String photoURL = user?.photoURL ?? '';
 
     return Scaffold(
       body: Container(
@@ -31,14 +37,19 @@ class HomeView extends GetView<HomeController> {
         ),
         child: Column(
           children: [
-            HeaderWidget(name: name, photoURL: photoURL),
+            HeaderWidget(
+              displayName: displayName,
+              email: email,
+              phoneNumber: phoneNumber,
+              photoURL: photoURL,
+            ),
             const WeatherWidget(),
             Expanded(
               child: Container(
                 margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                 padding: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
                   color: Primary.subtleColor,
                   border: Border.all(
                     color: Colors.grey.withOpacity(0.2),
@@ -49,7 +60,7 @@ class HomeView extends GetView<HomeController> {
                       color: Neutral.dark1.withOpacity(0.1),
                       spreadRadius: 2,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),

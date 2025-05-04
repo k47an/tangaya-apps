@@ -9,7 +9,7 @@ abstract class Routes {
   static const SIGNIN = _Paths.SIGNIN;
   static const ONBOARDING = _Paths.ONBOARDING;
   static const WELCOME = _Paths.WELCOME;
-  static const SIGNUP = _Paths.SIGNUP;
+  // static var OTPINPUT = _Paths.OTP_INPUT;
 }
 
 abstract class _Paths {
@@ -20,5 +20,5 @@ abstract class _Paths {
   static const SPLASH = '/splash';
   static const ONBOARDING = '/onboarding';
   static const WELCOME = '/welcome';
-  static const SIGNUP = '/signup';
+  // static const OTP_INPUT = '/otp-input';
 }
