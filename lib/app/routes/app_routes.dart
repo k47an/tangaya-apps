@@ -6,17 +6,19 @@ abstract class Routes {
   static const HOME = _Paths.HOME;
   static const CHAT = _Paths.CHAT;
   static const SPLASH = _Paths.SPLASH;
-  static const LOGIN = _Paths.LOGIN;
+  static const SIGNIN = _Paths.SIGNIN;
   static const ONBOARDING = _Paths.ONBOARDING;
   static const WELCOME = _Paths.WELCOME;
+  // static var OTPINPUT = _Paths.OTP_INPUT;
 }
 
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
   static const CHAT = '/chat';
-  static const LOGIN = '/login';
+  static const SIGNIN = '/sigin';
   static const SPLASH = '/splash';
   static const ONBOARDING = '/onboarding';
   static const WELCOME = '/welcome';
+  // static const OTP_INPUT = '/otp-input';
 }

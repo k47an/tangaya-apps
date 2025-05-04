@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class OnboardingController extends GetxController {
   var selectedPageIndex = 0.obs;
   var pageController = PageController();
   bool get isLastPage => selectedPageIndex.value == items.length - 1;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _checkLoginStatus();
+  }
+
+  // Periksa status login pengguna
+  void _checkLoginStatus() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Jika sudah login, arahkan ke Home
+      Get.offAllNamed(Routes.HOME);  // Ganti dengan rute halaman Home
+    }
+  }
 
   forwardAction() {
     if (isLastPage) {

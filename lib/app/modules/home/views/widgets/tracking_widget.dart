@@ -43,7 +43,7 @@ class ArticleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      height: ScaleHelper(context).scaleHeightForDevice(150),
+      height: ScaleHelper(context).scaleHeightForDevice(200),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey, width: 0.2),
         borderRadius: BorderRadius.circular(20),
@@ -52,14 +52,19 @@ class ArticleCard extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            height: ScaleHelper(context).scaleHeightForDevice(150),
+            height: ScaleHelper(context).scaleHeightForDevice(200),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                colors: [Colors.black.withOpacity(0.8), Colors.transparent],
-                stops: const [0.1, 0.9],
+                colors: [
+                  Primary.subtleColor.withOpacity(0.9),
+                  Primary.subtleColor.withOpacity(0.8),
+                  Primary.subtleColor.withOpacity(0.5),
+                  Colors.transparent,
+                ],
+                stops: const [0.1, 0.3, 0.5],
               ),
             ),
           ),

@@ -1,18 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:tangaya_apps/app/modules/login/controllers/login_controller.dart';
+import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 import 'package:get/get.dart';
 
 class HeaderWidget extends StatelessWidget {
-  final String name;
+  final String displayName;
+  final String email;
+  final String phoneNumber;
   final String photoURL;
-  const HeaderWidget({Key? key, required this.name, required this.photoURL})
-    : super(key: key);
+
+  HeaderWidget({
+    super.key,
+    required this.displayName,
+    required this.email,
+    required this.phoneNumber,
+    required this.photoURL,
+  });
 
   @override
   Widget build(BuildContext context) {
-    var auth = Get.put(LoginController());
+    // Gunakan Get.find() untuk mengambil instance yang sudah ada dari AuthController
+    var auth = Get.find<AuthController>();
+
+    // Gunakan data dari arguments atau fallback ke default jika null
+    final String userDisplayName =
+        displayName.isNotEmpty ? displayName : 'No Name';
+    final String userEmail = email.isNotEmpty ? email : 'No Email';
+    final String userPhoneNumber =
+        phoneNumber.isNotEmpty ? phoneNumber : 'No Phone Number';
+    final String userPhotoURL = photoURL.isNotEmpty ? photoURL : '';
+    debugPrint(
+      'User Info: $userDisplayName, $userEmail, $userPhoneNumber, $userPhotoURL',
+    );
+
     return Container(
       decoration: BoxDecoration(
         boxShadow: [
@@ -41,9 +62,12 @@ class HeaderWidget extends StatelessWidget {
                   border: Border.all(color: Neutral.dark4, width: 1),
                   image: DecorationImage(
                     image:
-                        (photoURL.isNotEmpty)
-                            ? NetworkImage(photoURL) as ImageProvider
-                            : AssetImage('assets/dummy/profile.JPG'),
+                        (userPhotoURL.isNotEmpty)
+                            ? NetworkImage(
+                              userPhotoURL,
+                            ) // Memastikan gambar diambil dari URL
+                            : AssetImage('assets/dummy/profile.JPG')
+                                as ImageProvider,
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(50),
@@ -61,7 +85,7 @@ class HeaderWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    name,
+                    userDisplayName,
                     style: regular.copyWith(
                       color: Primary.subtleColor,
                       fontSize: ScaleHelper(context).scaleTextForDevice(14),
@@ -77,7 +101,7 @@ class HeaderWidget extends StatelessWidget {
                     color: Primary.subtleColor,
                     iconSize: ScaleHelper(context).scaleWidthForDevice(20),
                     onPressed: () {
-                      // Navigate to search page
+                      // Aksi untuk membuka halaman notifikasi
                     },
                   ),
                   IconButton(
@@ -85,23 +109,26 @@ class HeaderWidget extends StatelessWidget {
                     color: Primary.subtleColor,
                     iconSize: ScaleHelper(context).scaleWidthForDevice(20),
                     onPressed: () {
-                      // Navigate to
+                      // Aksi untuk membuka halaman chat
                       Get.toNamed(Routes.CHAT);
                     },
                   ),
                   IconButton(
                     icon: Icon(
-                      name.isNotEmpty && photoURL.isNotEmpty
+                      (userDisplayName.isNotEmpty && userPhotoURL.isNotEmpty)
                           ? Icons.logout_sharp
                           : Icons.login,
                     ),
                     color: Primary.subtleColor,
                     iconSize: ScaleHelper(context).scaleWidthForDevice(20),
                     onPressed: () {
-                      if (name.isNotEmpty && photoURL.isNotEmpty) {
-                        auth.handleSignOut();
+                      if (userDisplayName.isNotEmpty &&
+                          userPhotoURL.isNotEmpty) {
+                        auth.signOut(); // Panggil fungsi logout
                       } else {
-                        Get.toNamed(Routes.LOGIN);
+                        Get.toNamed(
+                          Routes.SIGNIN,
+                        ); // Arahkan ke halaman login jika belum login
                       }
                     },
                   ),

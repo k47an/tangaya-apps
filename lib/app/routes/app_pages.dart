@@ -1,14 +1,13 @@
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/modules/onboarding/views/welcome_view.dart';
-
+import 'package:tangaya_apps/app/modules/auth/bindings/auth_binding.dart';
+import 'package:tangaya_apps/app/modules/auth/views/signIn_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
-import '../modules/login/bindings/login_binding.dart';
-import '../modules/login/views/login_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
 import '../modules/onboarding/views/onboarding_view.dart';
+import '../modules/onboarding/views/welcome_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 
@@ -31,9 +30,9 @@ class AppPages {
       binding: ChatBinding(),
     ),
     GetPage(
-      name: _Paths.LOGIN,
-      page: () => const LoginView(),
-      binding: LoginBinding(),
+      name: _Paths.SIGNIN,
+      page: () => const SignInView(),
+      binding: AuthBinding(),
     ),
     GetPage(
       name: _Paths.SPLASH,
@@ -50,5 +49,10 @@ class AppPages {
       page: () => const WelcomeView(),
       binding: OnboardingBinding(),
     ),
+    // GetPage(
+    //   name: _Paths.OTP_INPUT,
+    //   page: () => OtpInputPage(),
+    //   binding: AuthBinding(),
+    // ),
   ];
 }

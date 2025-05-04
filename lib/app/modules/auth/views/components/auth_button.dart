@@ -19,6 +19,7 @@ class AuthButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.symmetric(
           horizontal: ScaleHelper(context).scaleWidthForDevice(30),
           vertical: ScaleHelper(context).scaleHeightForDevice(10),
@@ -30,6 +31,7 @@ class AuthButton extends StatelessWidget {
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
               padding: EdgeInsets.only(

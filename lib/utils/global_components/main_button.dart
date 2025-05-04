@@ -7,20 +7,16 @@ class MainButton extends StatelessWidget {
   final Function()? onTap;
   final bool isEnabled;
 
-  const MainButton({
-    required this.label,
-    this.onTap,
-    this.isEnabled = true,
-    super.key,
-  });
+  const MainButton({required this.label, this.onTap, this.isEnabled = true});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: isEnabled ? onTap : null,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(
+          vertical: ScaleHelper(context).scaleHeightForDevice(14),
+        ),
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
@@ -29,7 +25,7 @@ class MainButton extends StatelessWidget {
         child: Text(
           label,
           style: semiBold.copyWith(
-            fontSize: 16,
+            fontSize: ScaleHelper(context).scaleTextForDevice(16),
             color: isEnabled ? Neutral.white1 : Neutral.dark3,
           ),
           textAlign: TextAlign.center,
