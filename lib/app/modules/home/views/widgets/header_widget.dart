@@ -1,143 +1,119 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
-import 'package:get/get.dart';
 
 class HeaderWidget extends StatelessWidget {
   final String displayName;
-  final String email;
-  final String phoneNumber;
   final String photoURL;
 
-  HeaderWidget({
-    super.key,
-    required this.displayName,
-    required this.email,
-    required this.phoneNumber,
-    required this.photoURL,
-  });
+  HeaderWidget({super.key, required this.displayName, required this.photoURL});
 
   @override
   Widget build(BuildContext context) {
-    // Gunakan Get.find() untuk mengambil instance yang sudah ada dari AuthController
-    var auth = Get.find<AuthController>();
+    final auth = Get.find<AuthController>();
 
-    // Gunakan data dari arguments atau fallback ke default jika null
     final String userDisplayName =
-        displayName.isNotEmpty ? displayName : 'No Name';
-    final String userEmail = email.isNotEmpty ? email : 'No Email';
-    final String userPhoneNumber =
-        phoneNumber.isNotEmpty ? phoneNumber : 'No Phone Number';
-    final String userPhotoURL = photoURL.isNotEmpty ? photoURL : '';
-    debugPrint(
-      'User Info: $userDisplayName, $userEmail, $userPhoneNumber, $userPhotoURL',
-    );
+        displayName.isNotEmpty ? displayName : 'Tamu';
+    final ImageProvider<Object> profileImage =
+        photoURL.isNotEmpty && photoURL.startsWith('http')
+            ? NetworkImage(photoURL)
+            : AssetImage(photoURL);
 
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
+    final bool isLoggedIn = auth.currentUser.value != null;
+
+    return AppBar(
+      automaticallyImplyLeading: false, // Menghilangkan tombol back
+      backgroundColor: Primary.darkColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
       ),
-      child: AppBar(
-        backgroundColor: Primary.darkColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
-        flexibleSpace: Padding(
-          padding: EdgeInsets.only(top: 50, left: 10, right: 10, bottom: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
+      // Menetapkan tinggi AppBar
+      toolbarHeight: ScaleHelper(
+        context,
+      ).scaleHeightForDevice(80), // Atur tinggi AppBar di sini
+      title: Padding(
+        padding: const EdgeInsets.only(left: 10, top: 10),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                if (auth.userRole.value == 'admin') {
+                  Get.toNamed(Routes.ADMIN);
+                } else if (auth.userRole.value == 'user') {
+                  Get.toNamed(Routes.PROFILE);
+                } else {
+                  Get.toNamed(Routes.SIGNIN);
+                }
+              },
+              child: Container(
                 width: ScaleHelper(context).scaleWidthForDevice(50),
                 height: ScaleHelper(context).scaleHeightForDevice(50),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Neutral.dark4, width: 1),
+                  border: Border.all(color: Neutral.white1, width: 1),
                   image: DecorationImage(
-                    image:
-                        (userPhotoURL.isNotEmpty)
-                            ? NetworkImage(
-                              userPhotoURL,
-                            ) // Memastikan gambar diambil dari URL
-                            : AssetImage('assets/dummy/profile.JPG')
-                                as ImageProvider,
+                    image: profileImage,
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(50),
                 ),
               ),
-              SizedBox(width: ScaleHelper(context).scaleWidthForDevice(10)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Selamat Datang',
-                    style: extraBold.copyWith(
-                      color: Primary.subtleColor,
-                      fontSize: ScaleHelper(context).scaleTextForDevice(14),
-                    ),
-                  ),
-                  Text(
-                    userDisplayName,
-                    style: regular.copyWith(
-                      color: Primary.subtleColor,
-                      fontSize: ScaleHelper(context).scaleTextForDevice(14),
-                    ),
-                  ),
-                ],
-              ),
-              Spacer(),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.notifications),
+            ),
+            SizedBox(width: ScaleHelper(context).scaleWidthForDevice(10)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Selamat Datang',
+                  style: extraBold.copyWith(
                     color: Primary.subtleColor,
-                    iconSize: ScaleHelper(context).scaleWidthForDevice(20),
-                    onPressed: () {
-                      // Aksi untuk membuka halaman notifikasi
-                    },
+                    fontSize: ScaleHelper(context).scaleTextForDevice(14),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.message_rounded),
+                ),
+                Text(
+                  userDisplayName,
+                  style: regular.copyWith(
                     color: Primary.subtleColor,
-                    iconSize: ScaleHelper(context).scaleWidthForDevice(20),
-                    onPressed: () {
-                      // Aksi untuk membuka halaman chat
-                      Get.toNamed(Routes.CHAT);
-                    },
+                    fontSize: ScaleHelper(context).scaleTextForDevice(14),
                   ),
-                  IconButton(
-                    icon: Icon(
-                      (userDisplayName.isNotEmpty && userPhotoURL.isNotEmpty)
-                          ? Icons.logout_sharp
-                          : Icons.login,
-                    ),
-                    color: Primary.subtleColor,
-                    iconSize: ScaleHelper(context).scaleWidthForDevice(20),
-                    onPressed: () {
-                      if (userDisplayName.isNotEmpty &&
-                          userPhotoURL.isNotEmpty) {
-                        auth.signOut(); // Panggil fungsi logout
-                      } else {
-                        Get.toNamed(
-                          Routes.SIGNIN,
-                        ); // Arahkan ke halaman login jika belum login
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.notifications),
+          color: Primary.subtleColor,
+          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
+          onPressed: () {
+            // TODO: Aksi notifikasi
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.message_rounded),
+          color: Primary.subtleColor,
+          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
+          onPressed: () {
+            Get.toNamed(Routes.CHAT);
+          },
+        ),
+        IconButton(
+          icon: Icon(isLoggedIn ? Icons.logout_sharp : Icons.login),
+          color: Primary.subtleColor,
+          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
+          onPressed: () async {
+            if (isLoggedIn) {
+              await auth.signOut(); // Pastikan signOut selesai
+              Get.offAllNamed(Routes.SIGNIN);
+            } else {
+              Get.toNamed(Routes.SIGNIN);
+            }
+          },
+        ),
+      ],
     );
   }
 }

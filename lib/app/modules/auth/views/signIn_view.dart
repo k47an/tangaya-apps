@@ -44,7 +44,7 @@ class SignInView extends GetView<AuthController> {
                   onTap: () async {
                     final result = await controller.signInWithGoogle();
                     if (result) {
-                      Get.offAllNamed(Routes.HOME);
+                      Get.toNamed(Routes.HOME);
                     }
                   },
                 ),

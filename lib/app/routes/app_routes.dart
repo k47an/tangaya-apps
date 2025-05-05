@@ -10,6 +10,8 @@ abstract class Routes {
   static const ONBOARDING = _Paths.ONBOARDING;
   static const WELCOME = _Paths.WELCOME;
   // static var OTPINPUT = _Paths.OTP_INPUT;
+  static const ADMIN = _Paths.ADMIN;
+  static const PROFILE = _Paths.PROFILE;
 }
 
 abstract class _Paths {
@@ -21,4 +23,6 @@ abstract class _Paths {
   static const ONBOARDING = '/onboarding';
   static const WELCOME = '/welcome';
   // static const OTP_INPUT = '/otp-input';
+  static const ADMIN = '/admin';
+  static const PROFILE = '/profile';
 }

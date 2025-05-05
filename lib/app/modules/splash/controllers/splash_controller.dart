@@ -1,18 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tangaya_apps/app/routes/app_pages.dart';
 
 class SplashController extends GetxController {
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  // Fungsi untuk mengecek status user (login atau tidak)
+  Future<void> checkUserStatus() async {
+    // Tunggu sebentar (2 detik) untuk menampilkan splash screen
+    await Future.delayed(const Duration(seconds: 2));
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
+    // Mendengarkan perubahan status autentikasi
+    FirebaseAuth.instance.authStateChanges().first.then((user) {
+      if (user == null) {
+        // Arahkan ke halaman onboarding jika belum login
+        Get.offAllNamed(Routes.ONBOARDING);
+      } else {
+        // Arahkan ke halaman home jika sudah login
+        Get.offAllNamed(Routes.HOME);
+      }
+    });
   }
 }
