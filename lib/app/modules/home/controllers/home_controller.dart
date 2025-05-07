@@ -7,15 +7,13 @@ class HomeController extends GetxController
     with GetSingleTickerProviderStateMixin, WeatherMixin, TrackingMixin {
   late TabController tabController;
   RxInt currentTab = 0.obs;
-  List<String> tabs = ['Tracking', 'Camping', 'Edutourism'];
+  List<String> tabs = ['Tour Package', 'Events'];
 
   String getTabIcon(int index) {
     switch (index) {
       case 0:
         return 'assets/icons/tracking.svg';
       case 1:
-        return 'assets/icons/camping.svg';
-      case 2:
         return 'assets/icons/edutourism.svg';
       default:
         return '';
@@ -25,11 +23,9 @@ class HomeController extends GetxController
   String getTabTitle(int index) {
     switch (index) {
       case 0:
-        return 'Tracking';
+        return 'Tour Package';
       case 1:
-        return 'Camping';
-      case 2:
-        return 'Edutourism';
+        return 'Events';
       default:
         return '';
     }

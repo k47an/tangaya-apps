@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 
-class TrackingWidget extends GetView<HomeController> {
-  const TrackingWidget({Key? key}) : super(key: key);
+class TourpackageWidget extends GetView<HomeController> {
+  const TourpackageWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

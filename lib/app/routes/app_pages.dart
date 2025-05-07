@@ -8,6 +8,8 @@ import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/manageTour/bindings/manage_tour_binding.dart';
+import '../modules/manageTour/views/manage_tour_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
 import '../modules/onboarding/views/onboarding_view.dart';
 import '../modules/onboarding/views/welcome_view.dart';
@@ -68,6 +70,11 @@ class AppPages {
       name: _Paths.PROFILE,
       page: () => const ProfileView(),
       binding: ProfileBinding(),
+    ),
+    GetPage(
+      name: _Paths.MANAGE_TOUR,
+      page: () => const ManageTourView(),
+      binding: ManageTourBinding(),
     ),
   ];
 }

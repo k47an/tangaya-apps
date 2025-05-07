@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 
-class CampingWidget extends StatelessWidget {
-  const CampingWidget({Key? key}) : super(key: key);
+class EventsWidget extends StatelessWidget {
+  const EventsWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

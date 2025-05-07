@@ -3,10 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
-import 'package:tangaya_apps/app/modules/home/views/widgets/camping_widget.dart';
-import 'package:tangaya_apps/app/modules/home/views/widgets/edutour_widget.dart';
+import 'package:tangaya_apps/app/modules/home/views/widgets/events_widget.dart';
 import 'package:tangaya_apps/app/modules/home/views/widgets/header_widget.dart';
-import 'package:tangaya_apps/app/modules/home/views/widgets/tracking_widget.dart';
+import 'package:tangaya_apps/app/modules/home/views/widgets/tourPackage_widget.dart';
 import 'package:tangaya_apps/app/modules/home/views/widgets/weather_widget.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -78,6 +77,9 @@ class HomeView extends GetView<HomeController> {
                       children: [
                         TabBar(
                           isScrollable: true,
+                          labelPadding: EdgeInsets.symmetric(
+                            horizontal: ScaleHelper(context).scaleWidth(30),
+                          ),
                           labelColor: Primary.mainColor,
                           unselectedLabelColor: Colors.grey,
                           controller: controller.tabController,
@@ -139,9 +141,8 @@ class HomeView extends GetView<HomeController> {
                           child: TabBarView(
                             controller: controller.tabController,
                             children: const [
-                              TrackingWidget(),
-                              CampingWidget(),
-                              EdutourWidget(),
+                              TourpackageWidget(),
+                              EventsWidget(),
                             ],
                           ),
                         ),

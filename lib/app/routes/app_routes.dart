@@ -12,6 +12,7 @@ abstract class Routes {
   // static var OTPINPUT = _Paths.OTP_INPUT;
   static const ADMIN = _Paths.ADMIN;
   static const PROFILE = _Paths.PROFILE;
+  static const MANAGE_TOUR = _Paths.MANAGE_TOUR;
 }
 
 abstract class _Paths {
@@ -25,4 +26,5 @@ abstract class _Paths {
   // static const OTP_INPUT = '/otp-input';
   static const ADMIN = '/admin';
   static const PROFILE = '/profile';
+  static const MANAGE_TOUR = '/manage-tour';
 }
