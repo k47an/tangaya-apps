@@ -24,16 +24,15 @@ class AuthController extends GetxController {
 
   // Getters
   User? get user => currentUser.value;
-
   String get userName =>
       firestoreUserName.isNotEmpty
           ? firestoreUserName.value
           : user?.displayName ?? 'Tamu';
-
   String get userPhotoURL =>
       user?.photoURL?.isNotEmpty == true
           ? user!.photoURL!
           : 'assets/images/profile.png';
+  String get uid => user?.uid ?? '';
 
   @override
   void onInit() {

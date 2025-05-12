@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/modules/home/mixin/tracking_mixin.dart';
+import 'package:tangaya_apps/app/modules/home/mixin/tourPackage_mixin.dart';
 import 'package:tangaya_apps/app/modules/home/mixin/weather_mixin.dart';
 
 class HomeController extends GetxController
-    with GetSingleTickerProviderStateMixin, WeatherMixin, TrackingMixin {
+    with GetSingleTickerProviderStateMixin, WeatherMixin, TourpackageMixin {
   late TabController tabController;
   RxInt currentTab = 0.obs;
   List<String> tabs = ['Tour Package', 'Events'];

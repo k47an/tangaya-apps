@@ -1,6 +1,6 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 
@@ -23,6 +23,7 @@ class TourpackageWidget extends GetView<HomeController> {
         itemCount: controller.tourPackages.length,
         itemBuilder: (context, index) {
           final tracking = controller.tourPackages[index];
+          if (tracking.imageUrls.isEmpty) return const SizedBox();
 
           return ArticleCard(
             id: tracking.id,
@@ -55,25 +56,6 @@ class ArticleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(
-      HomeController(),
-      tag: 'carousel_$id',
-      permanent: false,
-    );
-
-    final isSingleImage = imageUrls.length == 1;
-
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: description,
-        style: regular.copyWith(fontSize: 14, color: Neutral.dark3),
-      ),
-      maxLines: 2,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: MediaQuery.of(context).size.width - 32);
-
-    final hasMoreThanTwoLines = textPainter.didExceedMaxLines;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -83,56 +65,22 @@ class ArticleCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CarouselSlider.builder(
-            itemCount: imageUrls.length,
-            itemBuilder: (context, index, realIndex) {
-              return Container(
-                width: double.infinity,
-                height: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  image: DecorationImage(
-                    image: NetworkImage(imageUrls[index]),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              );
+          GestureDetector(
+            onTap: () {
+              Get.toNamed(Routes.DETAIL_PACK, arguments: id);
             },
-            options: CarouselOptions(
+            child: Container(
+              width: double.infinity,
               height: 200,
-              viewportFraction: 1.0,
-              enlargeCenterPage: !isSingleImage,
-              enableInfiniteScroll: !isSingleImage,
-              autoPlay: !isSingleImage,
-              scrollPhysics:
-                  isSingleImage ? const NeverScrollableScrollPhysics() : null,
-              onPageChanged: (index, reason) {
-                controller.changeIndex(index);
-              },
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: DecorationImage(
+                  image: NetworkImage(imageUrls.first),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          if (!isSingleImage)
-            Obx(() {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children:
-                    imageUrls.asMap().entries.map((entry) {
-                      return Container(
-                        width: 5.0,
-                        height: 5.0,
-                        margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              controller.current.value == entry.key
-                                  ? Primary.mainColor
-                                  : Neutral.dark1.withOpacity(0.4),
-                        ),
-                      );
-                    }).toList(),
-              );
-            }),
           const SizedBox(height: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +123,6 @@ class ArticleCard extends StatelessWidget {
                             color: Primary.mainColor,
                           ),
                         ),
-
                         const Icon(
                           Icons.arrow_right_rounded,
                           color: Primary.mainColor,
@@ -185,50 +132,6 @@ class ArticleCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Obx(() {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AnimatedCrossFade(
-                      firstChild: Text(
-                        description,
-                        style: regular.copyWith(
-                          fontSize: 14,
-                          color: Neutral.dark3,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      secondChild: Text(
-                        description,
-                        style: regular.copyWith(
-                          fontSize: 14,
-                          color: Neutral.dark3,
-                        ),
-                      ),
-                      crossFadeState:
-                          controller.isExpanded.value
-                              ? CrossFadeState.showSecond
-                              : CrossFadeState.showFirst,
-                      duration: const Duration(milliseconds: 300),
-                    ),
-                    if (hasMoreThanTwoLines) // Only show the button if there are more than 2 lines
-                      GestureDetector(
-                        onTap: () => controller.isExpanded.toggle(),
-                        child: Text(
-                          controller.isExpanded.value
-                              ? "Lebih sedikit"
-                              : "Selengkapnya",
-                          style: medium.copyWith(
-                            fontSize: 14,
-                            color: Primary.mainColor,
-                          ),
-                        ),
-                      ),
-                  ],
-                );
-              }),
             ],
           ),
         ],

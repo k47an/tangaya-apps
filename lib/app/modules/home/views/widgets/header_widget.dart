@@ -81,7 +81,11 @@ class HeaderWidget extends StatelessWidget {
           color: Primary.subtleColor,
           iconSize: ScaleHelper(context).scaleWidthForDevice(20),
           onPressed: () {
-            // TODO: Aksi notifikasi
+            if (isLoggedIn) {
+              Get.toNamed(Routes.NOTIFICATION);
+            } else {
+              Get.toNamed(Routes.SIGNIN);
+            }
           },
         ),
         IconButton(
