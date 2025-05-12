@@ -132,7 +132,9 @@ class AdminView extends StatelessWidget {
                 ),
                 SizedBox(height: ScaleHelper(context).scaleHeightForDevice(8)),
                 Divider(color: Primary.mainColor),
-                _slipGajiTextField("List Paket dan event", "lihat"),
+                _manageTextField("List Paket dan event", "lihat"),
+                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(8)),
+                _orderTextField("List Order", "lihat"),
               ],
             ),
           ),
@@ -168,7 +170,7 @@ class AdminView extends StatelessWidget {
     );
   }
 
-  Widget _slipGajiTextField(String title, String data) {
+  Widget _manageTextField(String title, String data) {
     return Row(
       children: [
         Text(title, style: bold.copyWith(fontSize: 12, color: Neutral.dark1)),
@@ -176,6 +178,30 @@ class AdminView extends StatelessWidget {
         GestureDetector(
           onTap: () {
             Get.toNamed(Routes.MANAGE_TOUR);
+          },
+          child: Text(
+            data,
+            style: bold.copyWith(
+              fontSize: 12,
+              color: Primary.mainColor,
+              decoration: TextDecoration.underline,
+              decorationColor: Primary.mainColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _orderTextField(String title, String data) {
+    return Row(
+      children: [
+        Text(title, style: bold.copyWith(fontSize: 12, color: Neutral.dark1)),
+        const Spacer(),
+        GestureDetector(
+          onTap: () {
+            Get.toNamed(Routes.ORDERVIEW);
+            debugPrint("Order View");
           },
           child: Text(
             data,
