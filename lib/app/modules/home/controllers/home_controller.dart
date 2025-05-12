@@ -8,6 +8,8 @@ class HomeController extends GetxController
   late TabController tabController;
   RxInt currentTab = 0.obs;
   List<String> tabs = ['Tour Package', 'Events'];
+  var current = 0.obs;
+  final RxBool isExpanded = false.obs;
 
   String getTabIcon(int index) {
     switch (index) {
@@ -31,6 +33,10 @@ class HomeController extends GetxController
     }
   }
 
+  void changeIndex(int index) {
+    current.value = index;
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -39,7 +45,7 @@ class HomeController extends GetxController
       currentTab.value = tabController.index;
     });
     fetchCurrentWeather();
-    fetchTrackingList();
+    fetchTourPackages();
   }
 
   @override

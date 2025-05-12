@@ -1,22 +1,23 @@
 import 'package:get/get.dart';
-import '../models/tracking_model.dart';
-import '../services/tracking_service.dart';
+import 'package:tangaya_apps/app/data/models/tourPackageModel.dart';
+import 'package:tangaya_apps/app/data/services/tourPackageService.dart';
 
 mixin TrackingMixin on GetxController {
-  final TrackingService _trackingService = TrackingService();
+  final TourPackageService _tourPackageService = TourPackageService();
+  final RxList<TourPackage> tourPackages = <TourPackage>[].obs;
+  final RxBool isLoading = false.obs;
 
-  var trackingList = <TrackingModel>[].obs;
-  var isLoadingTracking = false.obs;
 
-  void fetchTrackingList() async {
-    isLoadingTracking(true);
+  // Mengambil daftar paket wisata
+  Future<void> fetchTourPackages() async {
     try {
-      var list = await _trackingService.getTrackingList();
-      trackingList.assignAll(list);
-      // ✅ Print data ke debug console
-      print("🔥 Data Tracking: ${trackingList.map((e) => e.toMap()).toList()}");
+      isLoading.value = true;
+      final packages = await _tourPackageService.fetchTourPackages();
+      tourPackages.assignAll(packages);
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal mengambil paket wisata: $e');
     } finally {
-      isLoadingTracking(false);
+      isLoading.value = false;
     }
   }
 }

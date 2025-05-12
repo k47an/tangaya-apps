@@ -19,12 +19,10 @@ class HomeView extends GetView<HomeController> {
 
     return WillPopScope(
       onWillPop: () async {
-        // Keluar aplikasi ketika tombol back ditekan
-        SystemNavigator.pop(); // atau exit(0)
+        SystemNavigator.pop();
         return false;
       },
       child: SafeArea(
-        top: false,
         child: Scaffold(
           body: Container(
             height: MediaQuery.of(context).size.height,
@@ -51,11 +49,9 @@ class HomeView extends GetView<HomeController> {
                 const WeatherWidget(),
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      bottom: 20,
-                    ),
+                    // margin: EdgeInsets.symmetric(
+                    //   horizontal: ScaleHelper(context).scaleWidth(20),
+                    // ),
                     padding: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(20)),

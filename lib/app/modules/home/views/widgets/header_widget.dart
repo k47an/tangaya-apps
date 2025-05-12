@@ -24,64 +24,56 @@ class HeaderWidget extends StatelessWidget {
     final bool isLoggedIn = auth.currentUser.value != null;
 
     return AppBar(
-      automaticallyImplyLeading: false, // Menghilangkan tombol back
-      backgroundColor: Primary.darkColor,
+      automaticallyImplyLeading: false,
+      backgroundColor: Primary.mainColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        side: BorderSide(color: Primary.darkColor, width: 1),
       ),
-      // Menetapkan tinggi AppBar
-      toolbarHeight: ScaleHelper(
-        context,
-      ).scaleHeightForDevice(80), // Atur tinggi AppBar di sini
-      title: Padding(
-        padding: const EdgeInsets.only(left: 10, top: 10),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                if (auth.userRole.value == 'admin') {
-                  Get.toNamed(Routes.ADMIN);
-                } else if (auth.userRole.value == 'user') {
-                  Get.toNamed(Routes.PROFILE);
-                } else {
-                  Get.toNamed(Routes.SIGNIN);
-                }
-              },
-              child: Container(
-                width: ScaleHelper(context).scaleWidthForDevice(50),
-                height: ScaleHelper(context).scaleHeightForDevice(50),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Neutral.white1, width: 1),
-                  image: DecorationImage(
-                    image: profileImage,
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: BorderRadius.circular(50),
-                ),
+      toolbarHeight: ScaleHelper(context).scaleHeightForDevice(80),
+      title: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (auth.userRole.value == 'admin') {
+                Get.toNamed(Routes.ADMIN);
+              } else if (auth.userRole.value == 'user') {
+                Get.toNamed(Routes.PROFILE);
+              } else {
+                Get.toNamed(Routes.SIGNIN);
+              }
+            },
+            child: Container(
+              width: ScaleHelper(context).scaleWidthForDevice(50),
+              height: ScaleHelper(context).scaleHeightForDevice(50),
+              decoration: BoxDecoration(
+                border: Border.all(color: Primary.darkColor, width: 1),
+                image: DecorationImage(image: profileImage, fit: BoxFit.cover),
+                borderRadius: BorderRadius.circular(50),
               ),
             ),
-            SizedBox(width: ScaleHelper(context).scaleWidthForDevice(10)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Selamat Datang',
-                  style: extraBold.copyWith(
-                    color: Primary.subtleColor,
-                    fontSize: ScaleHelper(context).scaleTextForDevice(14),
-                  ),
+          ),
+          SizedBox(width: ScaleHelper(context).scaleWidthForDevice(10)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Selamat Datang',
+                style: extraBold.copyWith(
+                  color: Primary.subtleColor,
+                  fontSize: ScaleHelper(context).scaleTextForDevice(14),
                 ),
-                Text(
-                  userDisplayName,
-                  style: regular.copyWith(
-                    color: Primary.subtleColor,
-                    fontSize: ScaleHelper(context).scaleTextForDevice(14),
-                  ),
+              ),
+              Text(
+                userDisplayName,
+                style: regular.copyWith(
+                  color: Primary.subtleColor,
+                  fontSize: ScaleHelper(context).scaleTextForDevice(14),
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
       actions: [
         IconButton(
@@ -106,7 +98,7 @@ class HeaderWidget extends StatelessWidget {
           iconSize: ScaleHelper(context).scaleWidthForDevice(20),
           onPressed: () async {
             if (isLoggedIn) {
-              await auth.signOut(); // Pastikan signOut selesai
+              await auth.signOut();
               Get.offAllNamed(Routes.SIGNIN);
             } else {
               Get.toNamed(Routes.SIGNIN);

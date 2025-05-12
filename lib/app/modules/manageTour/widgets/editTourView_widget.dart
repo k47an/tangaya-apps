@@ -23,35 +23,17 @@ class EditTourView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.lazyPut(() => ManageTourController());
     final controller = Get.find<ManageTourController>();
 
+    // Set initial values to the controller's reactive variables
     controller.title.value = initialTitle;
     controller.descriptionController.text = initialDescription;
     controller.price.value = initialPrice;
-    controller.selectedImages.value = [];
-
-    controller.selectedImages.addAll(
-      initialImageUrls.map((url) => null).toList(),
-    );
+    controller.selectedImages.clear(); // Reset selected images
+    controller.imagesToDelete.clear(); // Clear images to be deleted
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () => Get.back(),
-        ),
-        iconTheme: const IconThemeData(color: Neutral.white1),
-        title: Text(
-          'Edit Tour Package',
-          style: semiBold.copyWith(
-            fontSize: ScaleHelper(context).scaleTextForDevice(20),
-            color: Neutral.white1,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Primary.mainColor,
-      ),
+      appBar: _buildAppBar(context),
       body: Padding(
         padding: EdgeInsets.all(ScaleHelper(context).scaleWidthForDevice(16)),
         child: Obx(() {
@@ -59,95 +41,25 @@ class EditTourView extends StatelessWidget {
             key: controller.formKey,
             child: ListView(
               children: [
-                _buildTextInput(controller.title.value, 'Title', (value) {
-                  controller.title.value = value;
-                }),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: controller.descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Deskripsi',
-                    labelStyle: TextStyle(color: Primary.mainColor),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                      borderSide: BorderSide(color: Primary.mainColor),
-                    ),
-                  ),
-                  maxLines: 5, // Pastikan maxLines lebih dari 1
-                  keyboardType: TextInputType.multiline,
-                  textInputAction:
-                      TextInputAction
-                          .newline, // Membuka newline saat tekan Enter
+                _buildTextInputField(
+                  controller.title.value,
+                  'Title',
+                  (value) => controller.title.value = value,
                 ),
-
                 const SizedBox(height: 12),
-                _buildTextInput(controller.price.value.toString(), 'Price', (
-                  value,
-                ) {
-                  controller.price.value = double.tryParse(value) ?? 0;
-                }, isNumber: true),
+                _buildTextInputField(
+                  controller.price.value.toString(),
+                  'Price',
+                  (value) =>
+                      controller.price.value = double.tryParse(value) ?? 0,
+                  isNumber: true,
+                ),
                 const SizedBox(height: 12),
-                _buildImagePicker(controller),
+                _buildDescriptionField(controller),
+                const SizedBox(height: 12),
+                _buildImageSection(controller),
                 const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                    onPressed:
-                        controller.isLoading.value
-                            ? null
-                            : () async {
-                              if (controller.formKey.currentState?.validate() ??
-                                  false) {
-                                final title = controller.title.value;
-                                final description =
-                                    controller.descriptionController.text;
-                                final price = controller.price.value;
-
-                                await controller.editTourPackage(
-                                  docId,
-                                  title,
-                                  description,
-                                  price,
-                                  initialImageUrls,
-                                  controller.selectedImages,
-                                );
-                                controller.titleController.clear();
-                                controller.descriptionController.clear();
-                                controller.priceController.clear();
-                                controller.selectedImages.clear();
-                                Get.snackbar(
-                                  'Success',
-                                  'Tour package updated successfully',
-                                  snackPosition: SnackPosition.BOTTOM,
-                                );
-
-                                Get.offAll(() => ManageTourView());
-                              }
-                            },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Primary.subtleColor,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 24,
-                      ),
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Text('Save Changes', style: TextStyle(fontSize: 16)),
-                        if (controller.isLoading.value)
-                          Positioned(
-                            child: CircularProgressIndicator(
-                              color: Neutral.white1,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
+                _buildSaveButton(controller),
               ],
             ),
           );
@@ -156,8 +68,26 @@ class EditTourView extends StatelessWidget {
     );
   }
 
-  // Helper method to build text input fields
-  Widget _buildTextInput(
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new),
+        onPressed: () => Get.back(),
+      ),
+      iconTheme: const IconThemeData(color: Neutral.white1),
+      title: Text(
+        'Edit Tour Package',
+        style: semiBold.copyWith(
+          fontSize: ScaleHelper(context).scaleTextForDevice(20),
+          color: Neutral.white1,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: Primary.mainColor,
+    );
+  }
+
+  Widget _buildTextInputField(
     String initialValue,
     String label,
     Function(String) onChanged, {
@@ -179,72 +109,171 @@ class EditTourView extends StatelessWidget {
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       onChanged: onChanged,
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return '$label cannot be empty';
-        }
-        if (isNumber && double.tryParse(value) == null) {
+        if (value == null || value.isEmpty) return '$label cannot be empty';
+        if (isNumber && double.tryParse(value) == null)
           return 'Enter a valid number';
-        }
         return null;
       },
     );
   }
 
-  // Membuat bagian untuk memilih gambar dengan tampilan grid
-  // Image Picker section
-  Widget _buildImagePicker(ManageTourController controller) {
-    return Obx(
-      () => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Images:', style: TextStyle(fontWeight: FontWeight.bold)),
-          Wrap(
-            spacing: 8,
-            children: [
-              for (var imageUrl in initialImageUrls)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    imageUrl,
-                    height: 50,
-                    width: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              for (var imageFile in controller.selectedImages)
-                if (imageFile != null)
+  Widget _buildDescriptionField(ManageTourController controller) {
+    return TextField(
+      controller: controller.descriptionController,
+      decoration: InputDecoration(
+        labelText: 'Description',
+        labelStyle: TextStyle(color: Primary.mainColor),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Primary.mainColor),
+        ),
+      ),
+      maxLines: 5,
+      keyboardType: TextInputType.multiline,
+      textInputAction: TextInputAction.newline,
+    );
+  }
+
+  Widget _buildImageSection(ManageTourController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Images:', style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+
+        // Show initial image URLs
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (var url in initialImageUrls)
+              Stack(
+                children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      imageFile,
-                      height: 50,
-                      width: 50,
+                    child: Image.network(
+                      url,
+                      height: 150,
+                      width: 150,
                       fit: BoxFit.cover,
                     ),
                   ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ElevatedButton.icon(
-            onPressed: () async {
-              final ImagePicker _picker = ImagePicker();
-              final XFile? image = await _picker.pickImage(
-                source: ImageSource.gallery,
-              );
-              if (image != null) {
-                controller.selectedImages.add(File(image.path));
-              }
-            },
-            icon: const Icon(Icons.image),
-            label: const Text('Pick Images'),
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        controller.imagesToDelete.add(url);
+                        initialImageUrls.remove(url);
+                        controller.selectedImages.refresh();
+                      },
+                    ),
+                  ),
+                ],
               ),
-              backgroundColor: Primary.mainColor,
-              padding: const EdgeInsets.symmetric(vertical: 14),
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        // Show picked new images
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (var image in controller.selectedImages)
+              if (image != null)
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        image,
+                        height: 150,
+                        width: 150,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          controller.selectedImages.remove(image);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        ElevatedButton.icon(
+          onPressed: () async {
+            final picker = ImagePicker();
+            final image = await picker.pickImage(source: ImageSource.gallery);
+            if (image != null) {
+              controller.selectedImages.add(File(image.path));
+            }
+          },
+          icon: const Icon(Icons.image),
+          label: const Text('Pick Images'),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
+            backgroundColor: Primary.mainColor,
+            padding: const EdgeInsets.symmetric(vertical: 14),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSaveButton(ManageTourController controller) {
+    return ElevatedButton(
+      onPressed:
+          controller.isLoading.value
+              ? null
+              : () async {
+                if (controller.formKey.currentState?.validate() ?? false) {
+                  await controller.editTourPackage(
+                    docId: docId,
+                    newTitle: controller.title.value,
+                    newDescription: controller.descriptionController.text,
+                    newPrice: controller.price.value,
+                    oldImageUrls: initialImageUrls,
+                    newImageFiles: controller.selectedImages,
+                    imagesToDelete: controller.imagesToDelete,
+                    initialTitle: '',
+                  );
+
+                  controller.selectedImages.clear();
+                  controller.imagesToDelete.clear();
+
+                  Get.snackbar(
+                    'Success',
+                    'Tour package updated successfully',
+                    snackPosition: SnackPosition.BOTTOM,
+                  );
+                  Get.offAll(() => ManageTourView());
+                }
+              },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Primary.subtleColor,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Text('Save Changes', style: TextStyle(fontSize: 16)),
+          if (controller.isLoading.value)
+            const Positioned(
+              child: CircularProgressIndicator(color: Neutral.white1),
+            ),
         ],
       ),
     );
