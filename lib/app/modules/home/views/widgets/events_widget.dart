@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 
-class EdutourWidget extends StatelessWidget {
-  const EdutourWidget({Key? key}) : super(key: key);
+class EventsWidget extends StatelessWidget {
+  const EventsWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class ArticleCard extends StatelessWidget {
             child: Text(
               title,
               style: semiBold.copyWith(
-                color: Neutral.white1,
+                color: Colors.white,
                 fontSize: ScaleHelper(context).scaleTextForDevice(14),
               ),
               maxLines: 2,

@@ -14,7 +14,7 @@ class WeatherWidget extends GetView<HomeController> {
         children: [
           if (weather?.weatherIcon != null)
             Positioned(
-              top: -20,
+              top: -30,
               bottom: 0,
               left: -100,
               right: 100,
@@ -31,11 +31,9 @@ class WeatherWidget extends GetView<HomeController> {
               ),
             ),
           Padding(
-            padding: const EdgeInsets.only(
-              left: 30,
-              top: 20,
-              right: 30,
-              bottom: 40,
+            padding: EdgeInsets.symmetric(
+              horizontal: ScaleHelper(context).scaleWidthForDevice(20),
+              vertical: ScaleHelper(context).scaleHeightForDevice(20),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,8 +49,10 @@ class WeatherWidget extends GetView<HomeController> {
                       ),
                     ),
                     Container(
-                      width: 80,
-                      padding: const EdgeInsets.only(left: 10),
+                      width: ScaleHelper(context).scaleWidthForDevice(90),
+                      padding: EdgeInsets.only(
+                        left: ScaleHelper(context).scaleWidth(10),
+                      ),
                       child: Stack(
                         children: [
                           Text(
@@ -82,10 +82,11 @@ class WeatherWidget extends GetView<HomeController> {
                       ),
                     ),
                     Container(
-                      width: 90,
+                      width: ScaleHelper(context).scaleWidthForDevice(90),
+
                       child: Text(
                         '${(weather?.tempMin?.celsius?.toDouble() ?? 0).round()}°  /  ${(weather?.tempMax?.celsius?.toDouble() ?? 0).round()}°',
-                        style: light.copyWith(
+                        style: semiBold.copyWith(
                           color: Primary.subtleColor,
                           fontSize: ScaleHelper(context).scaleTextForDevice(12),
                         ),
@@ -95,7 +96,9 @@ class WeatherWidget extends GetView<HomeController> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 30),
+                  padding: EdgeInsets.only(
+                    top: ScaleHelper(context).scaleHeight(10),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

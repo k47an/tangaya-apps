@@ -7,8 +7,8 @@ class AppTheme {
     scaffoldBackgroundColor: Neutral.white1,
     colorSchemeSeed: Primary.mainColor,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Primary.darkColor,
-      surfaceTintColor: Neutral.white1,
+      backgroundColor: Primary.subtleColor,
+      foregroundColor: Primary.darkColor,
     ),
   );
 }

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/modules/home/mixin/tracking_mixin.dart';
+import 'package:tangaya_apps/app/modules/home/mixin/tourPackage_mixin.dart';
 import 'package:tangaya_apps/app/modules/home/mixin/weather_mixin.dart';
 
 class HomeController extends GetxController
-    with GetSingleTickerProviderStateMixin, WeatherMixin, TrackingMixin {
+    with GetSingleTickerProviderStateMixin, WeatherMixin, TourpackageMixin {
   late TabController tabController;
   RxInt currentTab = 0.obs;
-  List<String> tabs = ['Tracking', 'Camping', 'Edutourism'];
+  List<String> tabs = ['Tour Package', 'Events'];
+  var current = 0.obs;
+  final RxBool isExpanded = false.obs;
 
   String getTabIcon(int index) {
     switch (index) {
       case 0:
         return 'assets/icons/tracking.svg';
       case 1:
-        return 'assets/icons/camping.svg';
-      case 2:
         return 'assets/icons/edutourism.svg';
       default:
         return '';
@@ -25,14 +25,16 @@ class HomeController extends GetxController
   String getTabTitle(int index) {
     switch (index) {
       case 0:
-        return 'Tracking';
+        return 'Tour Package';
       case 1:
-        return 'Camping';
-      case 2:
-        return 'Edutourism';
+        return 'Events';
       default:
         return '';
     }
+  }
+
+  void changeIndex(int index) {
+    current.value = index;
   }
 
   @override
@@ -43,7 +45,7 @@ class HomeController extends GetxController
       currentTab.value = tabController.index;
     });
     fetchCurrentWeather();
-    fetchTrackingList();
+    fetchTourPackages();
   }
 
   @override
