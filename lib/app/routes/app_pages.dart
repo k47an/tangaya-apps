@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-
+import 'package:tangaya_apps/app/modules/admin/views/components/orderView.dart';
 import '../modules/admin/bindings/admin_binding.dart';
 import '../modules/admin/views/admin_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
@@ -60,14 +60,14 @@ class AppPages {
       page: () => const WelcomeView(),
       binding: OnboardingBinding(),
     ),
-    // GetPage(
-    //   name: _Paths.OTP_INPUT,
-    //   page: () => OtpInputPage(),
-    //   binding: AuthBinding(),
-    // ),
     GetPage(
       name: _Paths.ADMIN,
       page: () => const AdminView(),
+      binding: AdminBinding(),
+    ),
+    GetPage(
+      name: _Paths.ORDERVIEW,
+      page: () => const OrderView(),
       binding: AdminBinding(),
     ),
     GetPage(

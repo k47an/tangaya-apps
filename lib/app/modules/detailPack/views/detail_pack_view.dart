@@ -212,12 +212,34 @@ class DetailPackView extends StatelessWidget {
                           labelText: "Tanggal Pemesanan",
                         ),
                         onTap: () async {
+                          await controller
+                              .fetchUnavailableDates(); // 👉 Tambahkan ini terlebih dahulu
+
                           final picked = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
                             firstDate: DateTime.now(),
                             lastDate: DateTime(2100),
+                            selectableDayPredicate: (day) {
+                              if (day.isBefore(
+                                DateTime.now().subtract(
+                                  const Duration(days: 1),
+                                ),
+                              )) {
+                                return false;
+                              }
+
+                              for (final d in controller.unavailableDates) {
+                                if (day.year == d.year &&
+                                    day.month == d.month &&
+                                    day.day == d.day) {
+                                  return false;
+                                }
+                              }
+                              return true;
+                            },
                           );
+
                           if (picked != null) {
                             setSelectedDate(picked);
                             dateC.text = DateFormat(

@@ -14,6 +14,7 @@ class DetailPackController extends GetxController with TourpackageMixin {
   final RxInt peopleCount = 0.obs;
   final RxList<TextEditingController> peopleNames =
       <TextEditingController>[].obs;
+  final RxList<DateTime> unavailableDates = <DateTime>[].obs;
 
   void setPeopleCount(int count) {
     peopleCount.value = count;
@@ -122,6 +123,27 @@ class DetailPackController extends GetxController with TourpackageMixin {
       Get.snackbar("Gagal", "Terjadi kesalahan saat mengirim pemesanan");
     } finally {
       isOrdering.value = false;
+    }
+  }
+
+  Future<void> fetchUnavailableDates() async {
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance
+              .collection("orders")
+              .where("packageId", isEqualTo: id)
+              .where("status", isEqualTo: "approved")
+              .get();
+
+      final List<DateTime> dates =
+          snapshot.docs.map((doc) {
+            final timestamp = doc["date"] as Timestamp;
+            return timestamp.toDate();
+          }).toList();
+
+      unavailableDates.assignAll(dates);
+    } catch (e) {
+      print("Gagal mengambil tanggal yang tidak tersedia: $e");
     }
   }
 }
