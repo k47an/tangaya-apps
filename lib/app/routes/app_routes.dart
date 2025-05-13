@@ -21,7 +21,7 @@ abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
   static const CHAT = '/chat';
-  static const SIGNIN = '/sigin';
+  static const SIGNIN = '/signin';
   static const SPLASH = '/splash';
   static const ONBOARDING = '/onboarding';
   static const WELCOME = '/welcome';

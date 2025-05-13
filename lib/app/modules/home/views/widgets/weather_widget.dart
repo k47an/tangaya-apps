@@ -23,8 +23,8 @@ class WeatherWidget extends GetView<HomeController> {
                 child: Center(
                   child: Image.network(
                     "https://openweathermap.org/img/wn/${weather?.weatherIcon}.png",
-                    height: ScaleHelper(context).scaleWidthForDevice(400),
-                    width: ScaleHelper(context).scaleHeightForDevice(400),
+                    height: ScaleHelper.scaleWidthForDevice(400),
+                    width: ScaleHelper.scaleHeightForDevice(400),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -32,8 +32,8 @@ class WeatherWidget extends GetView<HomeController> {
             ),
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: ScaleHelper(context).scaleWidthForDevice(20),
-              vertical: ScaleHelper(context).scaleHeightForDevice(20),
+              horizontal: ScaleHelper.scaleWidthForDevice(20),
+              vertical: ScaleHelper.scaleHeightForDevice(20),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -45,13 +45,13 @@ class WeatherWidget extends GetView<HomeController> {
                       'Temp',
                       style: light.copyWith(
                         color: Primary.subtleColor,
-                        fontSize: ScaleHelper(context).scaleTextForDevice(12),
+                        fontSize: ScaleHelper.scaleTextForDevice(12),
                       ),
                     ),
                     Container(
-                      width: ScaleHelper(context).scaleWidthForDevice(90),
+                      width: ScaleHelper.scaleWidthForDevice(90),
                       padding: EdgeInsets.only(
-                        left: ScaleHelper(context).scaleWidth(10),
+                        left: ScaleHelper.scaleWidth(10),
                       ),
                       child: Stack(
                         children: [
@@ -60,9 +60,7 @@ class WeatherWidget extends GetView<HomeController> {
                                 '0',
                             style: extraBold.copyWith(
                               color: Primary.subtleColor,
-                              fontSize: ScaleHelper(
-                                context,
-                              ).scaleTextForDevice(50),
+                              fontSize: ScaleHelper.scaleTextForDevice(50),
                             ),
                           ),
                           Positioned(
@@ -72,9 +70,7 @@ class WeatherWidget extends GetView<HomeController> {
                               '°',
                               style: extraBold.copyWith(
                                 color: Primary.subtleColor,
-                                fontSize: ScaleHelper(
-                                  context,
-                                ).scaleTextForDevice(50),
+                                fontSize: ScaleHelper.scaleTextForDevice(50),
                               ),
                             ),
                           ),
@@ -82,13 +78,13 @@ class WeatherWidget extends GetView<HomeController> {
                       ),
                     ),
                     Container(
-                      width: ScaleHelper(context).scaleWidthForDevice(90),
+                      width: ScaleHelper.scaleWidthForDevice(90),
 
                       child: Text(
                         '${(weather?.tempMin?.celsius?.toDouble() ?? 0).round()}°  /  ${(weather?.tempMax?.celsius?.toDouble() ?? 0).round()}°',
                         style: semiBold.copyWith(
                           color: Primary.subtleColor,
-                          fontSize: ScaleHelper(context).scaleTextForDevice(12),
+                          fontSize: ScaleHelper.scaleTextForDevice(12),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -97,7 +93,7 @@ class WeatherWidget extends GetView<HomeController> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(
-                    top: ScaleHelper(context).scaleHeight(10),
+                    top: ScaleHelper.scaleHeight(10),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,18 +104,14 @@ class WeatherWidget extends GetView<HomeController> {
                             'Cuaca terkini',
                             style: regular.copyWith(
                               color: Primary.subtleColor,
-                              fontSize: ScaleHelper(
-                                context,
-                              ).scaleTextForDevice(10),
+                              fontSize: ScaleHelper.scaleTextForDevice(10),
                             ),
                           ),
                           Text(
                             'POKDARWIS Tangaya',
                             style: regular.copyWith(
                               color: Primary.subtleColor,
-                              fontSize: ScaleHelper(
-                                context,
-                              ).scaleTextForDevice(10),
+                              fontSize: ScaleHelper.scaleTextForDevice(10),
                             ),
                           ),
                         ],
@@ -136,7 +128,7 @@ class WeatherWidget extends GetView<HomeController> {
                             'Tidak Tersedia',
                         style: bold.copyWith(
                           color: Primary.subtleColor,
-                          fontSize: ScaleHelper(context).scaleTextForDevice(18),
+                          fontSize: ScaleHelper.scaleTextForDevice(18),
                         ),
                       ),
                     ],

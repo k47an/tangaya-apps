@@ -31,7 +31,7 @@ class ProfileView extends GetView<ProfileController> {
             title: Text(
               "Profile",
               style: semiBold.copyWith(
-                fontSize: ScaleHelper(context).scaleTextForDevice(20),
+                fontSize: ScaleHelper.scaleTextForDevice(20),
                 color: Neutral.white1,
               ),
             ),
@@ -46,26 +46,22 @@ class ProfileView extends GetView<ProfileController> {
             }
 
             return SingleChildScrollView(
-              padding: EdgeInsets.all(
-                ScaleHelper(context).scaleWidthForDevice(14),
-              ),
+              padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(14)),
               child: Container(
                 decoration: BoxDecoration(
                   color: Neutral.white3,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 width: double.infinity,
-                padding: EdgeInsets.all(
-                  ScaleHelper(context).scaleWidthForDevice(16),
-                ),
+                padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
                 child: Column(
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          width: ScaleHelper(context).scaleWidthForDevice(60),
-                          height: ScaleHelper(context).scaleWidthForDevice(60),
+                          width: ScaleHelper.scaleWidthForDevice(60),
+                          height: ScaleHelper.scaleWidthForDevice(60),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
@@ -74,27 +70,21 @@ class ProfileView extends GetView<ProfileController> {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: ScaleHelper(context).scaleWidthForDevice(16),
-                        ),
+                        SizedBox(width: ScaleHelper.scaleWidthForDevice(16)),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               auth.userName,
                               style: bold.copyWith(
-                                fontSize: ScaleHelper(
-                                  context,
-                                ).scaleTextForDevice(20),
+                                fontSize: ScaleHelper.scaleTextForDevice(20),
                                 color: Neutral.dark1,
                               ),
                             ),
                             Text(
                               "Pengunjung",
                               style: semiBold.copyWith(
-                                fontSize: ScaleHelper(
-                                  context,
-                                ).scaleTextForDevice(14),
+                                fontSize: ScaleHelper.scaleTextForDevice(14),
                                 color: Neutral.dark4,
                               ),
                             ),
@@ -126,9 +116,7 @@ class ProfileView extends GetView<ProfileController> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: ScaleHelper(context).scaleHeightForDevice(24),
-                    ),
+                    SizedBox(height: ScaleHelper.scaleHeightForDevice(24)),
                     Row(
                       children: [
                         Text(

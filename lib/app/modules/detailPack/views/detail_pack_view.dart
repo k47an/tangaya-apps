@@ -29,7 +29,7 @@ class DetailPackView extends StatelessWidget {
         title: Text(
           'Detail Paket Wisata',
           style: bold.copyWith(
-            fontSize: ScaleHelper(context).scaleTextForDevice(20),
+            fontSize: ScaleHelper.scaleTextForDevice(20),
             color: Primary.darkColor,
           ),
         ),

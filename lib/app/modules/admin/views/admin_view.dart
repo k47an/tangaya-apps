@@ -31,7 +31,7 @@ class AdminView extends StatelessWidget {
             title: Text(
               "Admin Dashboard",
               style: semiBold.copyWith(
-                fontSize: ScaleHelper(context).scaleTextForDevice(20),
+                fontSize: ScaleHelper.scaleTextForDevice(20),
                 color: Neutral.white1,
               ),
             ),
@@ -44,24 +44,22 @@ class AdminView extends StatelessWidget {
         }
 
         return SingleChildScrollView(
-          padding: EdgeInsets.all(ScaleHelper(context).scaleWidthForDevice(14)),
+          padding: ScaleHelper.paddingAll(14),
           child: Container(
             decoration: BoxDecoration(
               color: Neutral.white3,
               borderRadius: BorderRadius.circular(10),
             ),
             width: double.infinity,
-            padding: EdgeInsets.all(
-              ScaleHelper(context).scaleWidthForDevice(16),
-            ),
+            padding: ScaleHelper.paddingAll(16),
             child: Column(
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: ScaleHelper(context).scaleWidthForDevice(60),
-                      height: ScaleHelper(context).scaleWidthForDevice(60),
+                      width: ScaleHelper.scaleWidthForDevice(60),
+                      height: ScaleHelper.scaleWidthForDevice(60),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
@@ -75,7 +73,7 @@ class AdminView extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: ScaleHelper(context).scaleWidthForDevice(16),
+                      width: ScaleHelper.scaleWidthForDevice(16),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,18 +81,14 @@ class AdminView extends StatelessWidget {
                         Text(
                           auth.userName,
                           style: bold.copyWith(
-                            fontSize: ScaleHelper(
-                              context,
-                            ).scaleTextForDevice(20),
+                            fontSize: ScaleHelper.scaleTextForDevice(20),
                             color: Neutral.dark1,
                           ),
                         ),
                         Text(
                           auth.userRole.value.capitalizeFirst ?? 'Pengunjung',
                           style: semiBold.copyWith(
-                            fontSize: ScaleHelper(
-                              context,
-                            ).scaleTextForDevice(14),
+                            fontSize: ScaleHelper.scaleTextForDevice(14),
                             color: Neutral.dark4,
                           ),
                         ),
@@ -102,7 +96,7 @@ class AdminView extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(24)),
+                SizedBox(height: ScaleHelper.scaleHeightForDevice(24)),
                 Row(
                   children: [
                     Text(
@@ -111,29 +105,29 @@ class AdminView extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(8)),
+                SizedBox(height: ScaleHelper.scaleHeightForDevice(8)),
                 Divider(color: Primary.mainColor),
-                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(8)),
+                SizedBox(height: ScaleHelper.scaleHeightForDevice(8)),
                 _dataPribadiTextField("Email", auth.user?.email ?? "-"),
-                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(15)),
+                SizedBox(height: ScaleHelper.scaleHeightForDevice(15)),
                 _dataPribadiTextField(
                   "Jenis Kelamin",
                   auth.userGender.value.isEmpty ? "-" : auth.userGender.value,
                 ),
-                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(15)),
+                SizedBox(height: ScaleHelper.scaleHeightForDevice(15)),
                 _dataPribadiTextField(
                   "Nomor HP",
                   auth.userPhone.value.isEmpty ? "-" : auth.userPhone.value,
                 ),
-                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(15)),
+                SizedBox(height: ScaleHelper.scaleHeightForDevice(15)),
                 _alamatTextField(
                   "Alamat",
                   auth.userAddress.value.isEmpty ? "-" : auth.userAddress.value,
                 ),
-                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(8)),
+                SizedBox(height: ScaleHelper.scaleHeightForDevice(8)),
                 Divider(color: Primary.mainColor),
                 _manageTextField("List Paket dan event", "lihat"),
-                SizedBox(height: ScaleHelper(context).scaleHeightForDevice(8)),
+                SizedBox(height: ScaleHelper.scaleHeightForDevice(8)),
                 _orderTextField("List Order", "lihat"),
               ],
             ),

@@ -1,19 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tangaya_apps/constant/constant.dart';
 import 'package:tangaya_apps/app/modules/splash/controllers/splash_controller.dart';
+import 'package:tangaya_apps/app/routes/app_pages.dart';
+import 'package:tangaya_apps/constant/constant.dart';
 
-class SplashView extends StatelessWidget {
+class SplashView extends GetView<SplashController> {
   const SplashView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Mengambil instance dari SplashController
-    final SplashController controller = Get.put(SplashController());
-
-    // Memanggil checkUserStatus saat splash screen pertama kali ditampilkan
-    controller.checkUserStatus();
-
+    Future.delayed(const Duration(seconds: 2), () {
+      final user = FirebaseAuth.instance.currentUser;
+      final next = user == null ? Routes.ONBOARDING : Routes.HOME;
+      Get.offAllNamed(next);
+    });
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(

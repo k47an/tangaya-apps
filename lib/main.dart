@@ -16,7 +16,7 @@ void main() async {
   runApp(
     GetMaterialApp(
       title: "Pokdarwis Tangaya",
-      initialRoute: AppPages.INITIAL,
+      initialRoute: AppPages.initial,
       getPages: AppPages.routes,
       theme: AppTheme.themeData,
     ),

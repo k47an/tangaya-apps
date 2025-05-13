@@ -30,7 +30,7 @@ class HeaderWidget extends StatelessWidget {
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         side: BorderSide(color: Primary.darkColor, width: 1),
       ),
-      toolbarHeight: ScaleHelper(context).scaleHeightForDevice(80),
+      toolbarHeight: ScaleHelper.scaleHeightForDevice(80),
       title: Row(
         children: [
           GestureDetector(
@@ -44,8 +44,8 @@ class HeaderWidget extends StatelessWidget {
               }
             },
             child: Container(
-              width: ScaleHelper(context).scaleWidthForDevice(50),
-              height: ScaleHelper(context).scaleHeightForDevice(50),
+              width: ScaleHelper.scaleWidthForDevice(50),
+              height: ScaleHelper.scaleHeightForDevice(50),
               decoration: BoxDecoration(
                 border: Border.all(color: Primary.darkColor, width: 1),
                 image: DecorationImage(image: profileImage, fit: BoxFit.cover),
@@ -53,7 +53,7 @@ class HeaderWidget extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: ScaleHelper(context).scaleWidthForDevice(10)),
+          SizedBox(width: ScaleHelper.scaleWidthForDevice(10)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -61,14 +61,14 @@ class HeaderWidget extends StatelessWidget {
                 'Selamat Datang',
                 style: extraBold.copyWith(
                   color: Primary.subtleColor,
-                  fontSize: ScaleHelper(context).scaleTextForDevice(14),
+                  fontSize: ScaleHelper.scaleTextForDevice(14),
                 ),
               ),
               Text(
                 userDisplayName,
                 style: regular.copyWith(
                   color: Primary.subtleColor,
-                  fontSize: ScaleHelper(context).scaleTextForDevice(14),
+                  fontSize: ScaleHelper.scaleTextForDevice(14),
                 ),
               ),
             ],
@@ -79,7 +79,7 @@ class HeaderWidget extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.notifications),
           color: Primary.subtleColor,
-          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
+          iconSize: ScaleHelper.scaleWidthForDevice(20),
           onPressed: () {
             if (isLoggedIn) {
               Get.toNamed(Routes.NOTIFICATION);
@@ -91,7 +91,7 @@ class HeaderWidget extends StatelessWidget {
         IconButton(
           icon: const Icon(Icons.message_rounded),
           color: Primary.subtleColor,
-          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
+          iconSize: ScaleHelper.scaleWidthForDevice(20),
           onPressed: () {
             Get.toNamed(Routes.CHAT);
           },
@@ -99,7 +99,7 @@ class HeaderWidget extends StatelessWidget {
         IconButton(
           icon: Icon(isLoggedIn ? Icons.logout_sharp : Icons.login),
           color: Primary.subtleColor,
-          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
+          iconSize: ScaleHelper.scaleWidthForDevice(20),
           onPressed: () async {
             if (isLoggedIn) {
               await auth.signOut();

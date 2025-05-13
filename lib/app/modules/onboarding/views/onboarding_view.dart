@@ -18,14 +18,15 @@ class OnboardingView extends GetView<OnboardingController> {
               onPageChanged: controller.selectedPageIndex.call,
               itemCount: controller.items.length,
               itemBuilder: (context, index) {
+                final item = controller.items[index];
                 return Column(
                   children: [
                     Stack(
                       children: [
                         Container(
-                          height: Get.height * 0.66,
+                          height: ScaleHelper.scaleHeightForDevice(500),
                           decoration: const BoxDecoration(
-                            color: Primary.subtleColor,
+                            color: Primary.mainColor,
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(120),
                             ),
@@ -35,43 +36,31 @@ class OnboardingView extends GetView<OnboardingController> {
                           borderRadius: const BorderRadius.only(
                             bottomLeft: Radius.circular(120),
                           ),
-                          child: Container(
+                          child: SizedBox(
                             width: Get.width,
-                            height: Get.height * 0.62,
-                            decoration: const BoxDecoration(
-                              color: Primary.subtleColor,
-                            ),
-                            child: Image.asset(
-                              controller.items[index].image,
-                              fit: BoxFit.cover,
-                            ),
+                            height: ScaleHelper.scaleHeightForDevice(480),
+                            child: Image.asset(item.image, fit: BoxFit.cover),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: ScaleHelper(context).scaleHeightForDevice(20),
-                    ),
+                    SizedBox(height: ScaleHelper.scaleHeightForDevice(20)),
                     Text(
-                      controller.items[index].title,
-                      style: semiBold.copyWith(
-                        fontSize: ScaleHelper(context).scaleTextForDevice(24),
+                      item.title,
+                      style: bold.copyWith(
+                        fontSize: ScaleHelper.scaleTextForDevice(28),
                         color: Neutral.dark1,
                       ),
                     ),
-                    SizedBox(
-                      height: ScaleHelper(context).scaleHeightForDevice(16),
-                    ),
+                    SizedBox(height: ScaleHelper.scaleHeightForDevice(16)),
                     Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: ScaleHelper(
-                          context,
-                        ).scaleWidthForDevice(24),
+                        horizontal: ScaleHelper.scaleWidthForDevice(24),
                       ),
                       child: Text(
-                        controller.items[index].descriptions,
+                        item.descriptions,
                         style: regular.copyWith(
-                          fontSize: ScaleHelper(context).scaleTextForDevice(14),
+                          fontSize: ScaleHelper.scaleTextForDevice(14),
                           color: Neutral.dark3,
                         ),
                         textAlign: TextAlign.center,
@@ -81,22 +70,21 @@ class OnboardingView extends GetView<OnboardingController> {
                 );
               },
             ),
-
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: EdgeInsets.only(
-                  bottom: ScaleHelper(context).scaleHeightForDevice(20),
+                  bottom: ScaleHelper.scaleHeightForDevice(20),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        controller.items.length,
-                        (index) => Obx(() {
-                          return Container(
+                    Obx(
+                      () => Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          controller.items.length,
+                          (index) => Container(
                             margin: const EdgeInsets.all(4),
                             width: 9,
                             height: 9,
@@ -107,47 +95,32 @@ class OnboardingView extends GetView<OnboardingController> {
                                       : Neutral.dark4,
                               shape: BoxShape.circle,
                             ),
-                          );
-                        }),
+                          ),
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      height: ScaleHelper(context).scaleHeightForDevice(20),
-                    ),
+                    SizedBox(height: ScaleHelper.scaleHeightForDevice(20)),
                     GestureDetector(
-                      onTap: () {
-                        controller.forwardAction();
-                      },
+                      onTap: controller.nextPage,
                       child: Container(
                         margin: EdgeInsets.symmetric(
-                          horizontal: ScaleHelper(
-                            context,
-                          ).scaleWidthForDevice(24),
+                          horizontal: ScaleHelper.scaleWidthForDevice(24),
                         ),
                         padding: EdgeInsets.symmetric(
-                          vertical: ScaleHelper(
-                            context,
-                          ).scaleHeightForDevice(16),
+                          vertical: ScaleHelper.scaleHeightForDevice(16),
                         ),
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           color: Primary.mainColor,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Lanjut",
-                              style: semiBold.copyWith(
-                                fontSize: ScaleHelper(
-                                  context,
-                                ).scaleTextForDevice(16),
-                                color: Neutral.white1,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                        child: Text(
+                          "Lanjut",
+                          style: semiBold.copyWith(
+                            fontSize: ScaleHelper.scaleTextForDevice(16),
+                            color: Neutral.white1,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),

@@ -35,7 +35,7 @@ class EditTourView extends StatelessWidget {
     return Scaffold(
       appBar: _buildAppBar(context),
       body: Padding(
-        padding: EdgeInsets.all(ScaleHelper(context).scaleWidthForDevice(16)),
+        padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
         child: Obx(() {
           return Form(
             key: controller.formKey,
@@ -78,7 +78,7 @@ class EditTourView extends StatelessWidget {
       title: Text(
         'Edit Tour Package',
         style: semiBold.copyWith(
-          fontSize: ScaleHelper(context).scaleTextForDevice(20),
+          fontSize: ScaleHelper.scaleTextForDevice(20),
           color: Neutral.white1,
         ),
       ),
