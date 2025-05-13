@@ -6,8 +6,9 @@ import 'package:tangaya_apps/app/routes/app_pages.dart';
 class OnboardingController extends GetxController {
   late PageController pageController;
   final selectedPageIndex = 0.obs;
+  final isLoading = false.obs;
 
-  List<OnboardingInfo> items = [
+  final List<OnboardingInfo> items = [
     OnboardingInfo(
       title: "Camping",
       descriptions:
@@ -44,14 +45,16 @@ class OnboardingController extends GetxController {
     }
   }
 
-  void nextPage() {
+  void onMainButtonPressed() {
     if (isLastPage) {
       Get.toNamed(Routes.WELCOME);
     } else {
-      pageController.nextPage(
-        duration: 300.milliseconds,
-        curve: Curves.ease,
-      );
+      if (pageController.hasClients) {
+        pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+      }
     }
   }
 

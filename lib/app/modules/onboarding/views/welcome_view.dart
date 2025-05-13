@@ -10,14 +10,18 @@ class WelcomeView extends GetView<OnboardingController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
           alignment: Alignment.center,
           child: Column(
             children: [
-              Image.asset('assets/images/logo.png'),
-              SizedBox(height: ScaleHelper.scaleHeightForDevice(80)),
+              Image.asset(
+                'assets/images/logo.png',
+                width: ScaleHelper.scaleWidthForDevice(500),
+                height: ScaleHelper.scaleHeightForDevice(500),
+              ),
+              Spacer(),
               Text(
                 "Jelajahi Destinasi Impian Anda",
                 style: semiBold.copyWith(
@@ -25,57 +29,34 @@ class WelcomeView extends GetView<OnboardingController> {
                   color: Neutral.dark1,
                 ),
               ),
-              SizedBox(height: ScaleHelper.scaleHeightForDevice(18)),
               Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ScaleHelper.scaleWidthForDevice(24),
-                ),
+                padding: ScaleHelper.paddingSymmetric(horizontal: 24),
                 child: Text(
                   "Temukan tempat wisata terbaik dan nikmati pengalaman tak terlupakan di berbagai destinasi menarik!",
                   style: regular.copyWith(
-                    fontSize: ScaleHelper.scaleTextForDevice(12),
+                    fontSize: ScaleHelper.scaleTextForDevice(14),
                     color: Neutral.dark3,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: ScaleHelper.scaleWidthForDevice(24),
+                padding: ScaleHelper.paddingSymmetric(
+                  horizontal: 20,
+                  vertical: 16,
                 ),
                 child: Column(
                   children: [
-                    SizedBox(height: ScaleHelper.scaleHeightForDevice(40)),
                     MainButton(
                       label: 'Masuk Dengan Akun',
-                      onTap: () {
-                        Get.toNamed(Routes.SIGNIN);
-                      },
+                      onTap: () => Get.toNamed(Routes.SIGNIN),
                     ),
                     SizedBox(height: ScaleHelper.scaleHeightForDevice(16)),
-                    GestureDetector(
-                      onTap: () {
-                        Get.toNamed(Routes.HOME);
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: ScaleHelper.scaleHeightForDevice(14),
-                        ),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Primary.mainColor),
-                          color: Neutral.white4,
-                        ),
-                        child: Text(
-                          'Masuk sebagai Tamu',
-                          style: bold.copyWith(
-                            fontSize: ScaleHelper.scaleTextForDevice(16),
-                            color: Primary.mainColor,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
+                    MainButton(
+                      label: 'Masuk sebagai Tamu',
+                      onTap: () => Get.toNamed(Routes.HOME),
+                      backgroundColor: Neutral.white4,
+                      textColor: Primary.mainColor,
                     ),
                   ],
                 ),
