@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:tangaya_apps/app/data/models/tourPackageModel.dart';
+import 'package:tangaya_apps/app/data/models/tour_package_model.dart';
 
 class TourPackageService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
