@@ -6,12 +6,12 @@ import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/signIn_view.dart';
 import '../modules/chat/bindings/chat_binding.dart';
 import '../modules/chat/views/chat_view.dart';
-import '../modules/detailPack/bindings/detail_pack_binding.dart';
-import '../modules/detailPack/views/detail_pack_view.dart';
+import '../modules/details/bindings/detail_binding.dart';
+import '../modules/details/views/detail_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
-import '../modules/manageTour/bindings/manage_tour_binding.dart';
-import '../modules/manageTour/views/manage_tour_view.dart';
+import '../modules/manageTourAndEvent/bindings/manage_tour_event_binding.dart';
+import '../modules/manageTourAndEvent/views/manage_tour_event_view.dart';
 import '../modules/notification/bindings/notification_binding.dart';
 import '../modules/notification/views/notification_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
@@ -76,13 +76,13 @@ class AppPages {
       binding: ProfileBinding(),
     ),
     GetPage(
-      name: _Paths.MANAGE_TOUR,
-      page: () => const ManageTourView(),
-      binding: ManageTourBinding(),
+      name: _Paths.MANAGE_EVENT_TOUR,
+      page: () => const ManageTourEventView(),
+      binding: ManageTourEventBinding(),
     ),
     GetPage(
-      name: _Paths.DETAIL_PACK,
-      page: () => const DetailPackView(),
+      name: _Paths.DETAIL,
+      page: () => const DetailView(),
       binding: DetailPackBinding(),
     ),
     GetPage(
