@@ -27,20 +27,29 @@ class ProfileController extends GetxController {
     nameController.text = userModel?.name ?? '';
     phoneController.text = userModel?.phone ?? '';
     addressController.text = userModel?.address ?? '';
-    selectedGender.value = userModel?.gender ?? '';
+    selectedGender.value = userModel?.gender;
+    if (selectedGender.value != 'Laki-laki' &&
+        selectedGender.value != 'Perempuan') {
+      selectedGender.value = null; // Atau nilai default lain yang valid
+    }
   }
 
   Future<void> loadUserData() async {
     try {
+      dataLoaded.value = false; // Set loading state
       final user = authController.userModel.value;
       if (user != null) {
         userModel = user;
         _fillFormFields();
         dataLoaded.value = true;
+      } else {
+        dataLoaded.value = true; // Set loaded meskipun user null
       }
     } catch (e) {
       debugPrint('Error loading user data: $e');
-      dataLoaded.value = false;
+      dataLoaded.value = false; // Set loading state ke false saat error
+      Get.snackbar("Gagal", "Gagal memuat data profil: $e",
+          snackPosition: SnackPosition.BOTTOM); // Show error
     }
   }
 
@@ -64,7 +73,7 @@ class ProfileController extends GetxController {
       final address = addressController.text.trim();
       final gender = selectedGender.value ?? '';
 
-      await authController.updateUserProfile(
+      final success = await authController.updateUserProfile( // Tangkap nilai kembalian
         name: name,
         email: userModel?.email ?? '',
         gender: gender,
@@ -72,10 +81,16 @@ class ProfileController extends GetxController {
         address: address,
       );
 
-      await loadUserData();
-      return true;
+      if (success) { // Periksa keberhasilan
+        await loadUserData(); // Muat ulang data
+        return true;
+      } else {
+        return false; // Kembalikan false jika update gagal
+      }
     } catch (e) {
       debugPrint('Error saving user data: $e');
+      Get.snackbar("Gagal", "Gagal menyimpan data profil: $e",
+          snackPosition: SnackPosition.BOTTOM); // Show error
       return false;
     }
   }
