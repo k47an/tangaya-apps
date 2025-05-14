@@ -20,9 +20,9 @@ class AuthButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(
-          horizontal: ScaleHelper(context).scaleWidthForDevice(30),
-          vertical: ScaleHelper(context).scaleHeightForDevice(10),
+        padding: ScaleHelper.paddingSymmetric(
+          horizontal: 30,
+          vertical: 10,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
@@ -35,18 +35,18 @@ class AuthButton extends StatelessWidget {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                right: ScaleHelper(context).scaleWidthForDevice(10),
+                right: ScaleHelper.scaleWidthForDevice(10),
               ),
               child: SvgPicture.asset(
                 svgAssetPath,
-                width: ScaleHelper(context).scaleWidthForDevice(20),
-                height: ScaleHelper(context).scaleHeightForDevice(20),
+                width: ScaleHelper.scaleWidthForDevice(20),
+                height: ScaleHelper.scaleHeightForDevice(20),
               ),
             ),
             Text(
               label,
               style: semiBold.copyWith(
-                fontSize: ScaleHelper(context).scaleTextForDevice(16),
+                fontSize: ScaleHelper.scaleTextForDevice(16),
                 color: Neutral.dark3,
               ),
               textAlign: TextAlign.center,

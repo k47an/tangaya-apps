@@ -33,9 +33,9 @@ class InputField extends StatelessWidget {
         errorText: errorText?.isNotEmpty == true ? errorText : null,
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: ScaleHelper(context).scaleWidthForDevice(10),
-          vertical: ScaleHelper(context).scaleHeightForDevice(10),
+        contentPadding: ScaleHelper.paddingSymmetric(
+          horizontal: 10,
+          vertical: 10,
         ),
       ),
     );

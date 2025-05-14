@@ -29,7 +29,7 @@ class ArticleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      height: ScaleHelper(context).scaleHeightForDevice(150),
+      height: ScaleHelper.scaleHeightForDevice(150),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey, width: 0.2),
         borderRadius: BorderRadius.circular(20),
@@ -38,7 +38,7 @@ class ArticleCard extends StatelessWidget {
       child: Stack(
         children: [
           Container(
-            height: ScaleHelper(context).scaleHeightForDevice(150),
+            height: ScaleHelper.scaleHeightForDevice(150),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               gradient: LinearGradient(
@@ -57,7 +57,7 @@ class ArticleCard extends StatelessWidget {
               title,
               style: semiBold.copyWith(
                 color: Colors.white,
-                fontSize: ScaleHelper(context).scaleTextForDevice(14),
+                fontSize: ScaleHelper.scaleTextForDevice(14),
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

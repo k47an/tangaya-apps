@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/data/models/tourPackageModel.dart';
+import 'package:tangaya_apps/app/data/models/tour_package_model.dart';
 import 'package:tangaya_apps/app/modules/manageTour/bindings/manage_tour_binding.dart';
 import 'package:tangaya_apps/app/modules/manageTour/widgets/editTourView_widget.dart';
 

@@ -10,142 +10,106 @@ class WeatherWidget extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final weather = controller.currentWeather.value;
-      return Stack(
-        children: [
-          if (weather?.weatherIcon != null)
-            Positioned(
-              top: -30,
-              bottom: 0,
-              left: -100,
-              right: 100,
-              child: Opacity(
-                opacity: 0.1,
-                child: Center(
-                  child: Image.network(
-                    "https://openweathermap.org/img/wn/${weather?.weatherIcon}.png",
-                    height: ScaleHelper(context).scaleWidthForDevice(400),
-                    width: ScaleHelper(context).scaleHeightForDevice(400),
-                    fit: BoxFit.cover,
+
+      final weatherIconUrl =
+          weather?.weatherIcon != null
+              ? "https://openweathermap.org/img/wn/${weather!.weatherIcon}@4x.png"
+              : null;
+
+      final temperature =
+          weather?.temperature?.celsius?.toStringAsFixed(0) ?? '0';
+      final tempMin = weather?.tempMin?.celsius?.round() ?? 0;
+      final tempMax = weather?.tempMax?.celsius?.round() ?? 0;
+      final weatherDesc =
+          weather?.weatherDescription != null
+              ? weather!.weatherDescription!
+                  .split(' ')
+                  .map((word) => word[0].toUpperCase() + word.substring(1))
+                  .join(' ')
+              : 'Tidak Tersedia';
+
+      return Card(
+        color: Colors.transparent,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: ScaleHelper.paddingSymmetric(horizontal: 16),
+          child: Row(
+            children: [
+              // Weather Icon + Desc
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (weatherIconUrl != null)
+                    Image.network(
+                      weatherIconUrl,
+                      width: ScaleHelper.scaleWidthForDevice(120),
+                      height: ScaleHelper.scaleWidthForDevice(80),
+                      fit: BoxFit.fitWidth,
+                    )
+                  else
+                    Icon(
+                      Icons.wb_cloudy,
+                      size: ScaleHelper.scaleWidthForDevice(100),
+                      color: Colors.white.withOpacity(0.6),
+                    ),
+                  Text(
+                    weatherDesc,
+                    style: semiBold.copyWith(
+                      fontSize: ScaleHelper.scaleTextForDevice(14),
+                      color: Primary.subtleColor,
+                    ),
                   ),
-                ),
+                ],
               ),
-            ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: ScaleHelper(context).scaleWidthForDevice(20),
-              vertical: ScaleHelper(context).scaleHeightForDevice(20),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              Spacer(),
+              // Weather Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'Temp',
-                      style: light.copyWith(
-                        color: Primary.subtleColor,
-                        fontSize: ScaleHelper(context).scaleTextForDevice(12),
+                      'Pokdarwis Tangaya',
+                      style: regular.copyWith(
+                        fontSize: ScaleHelper.scaleTextForDevice(12),
+                        color: Neutral.white1,
                       ),
                     ),
-                    Container(
-                      width: ScaleHelper(context).scaleWidthForDevice(90),
-                      padding: EdgeInsets.only(
-                        left: ScaleHelper(context).scaleWidth(10),
-                      ),
-                      child: Stack(
-                        children: [
-                          Text(
-                            weather?.temperature?.celsius?.toStringAsFixed(0) ??
-                                '0',
-                            style: extraBold.copyWith(
-                              color: Primary.subtleColor,
-                              fontSize: ScaleHelper(
-                                context,
-                              ).scaleTextForDevice(50),
-                            ),
+                    SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          temperature,
+                          style: extraBold.copyWith(
+                            fontSize: ScaleHelper.scaleTextForDevice(44),
+                            color: Primary.subtleColor,
                           ),
-                          Positioned(
-                            top: -10,
-                            left: 53,
-                            child: Text(
-                              '°',
-                              style: extraBold.copyWith(
-                                color: Primary.subtleColor,
-                                fontSize: ScaleHelper(
-                                  context,
-                                ).scaleTextForDevice(50),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: ScaleHelper(context).scaleWidthForDevice(90),
-
-                      child: Text(
-                        '${(weather?.tempMin?.celsius?.toDouble() ?? 0).round()}°  /  ${(weather?.tempMax?.celsius?.toDouble() ?? 0).round()}°',
-                        style: semiBold.copyWith(
-                          color: Primary.subtleColor,
-                          fontSize: ScaleHelper(context).scaleTextForDevice(12),
                         ),
-                        textAlign: TextAlign.center,
+                        Text(
+                          '°C',
+                          style: extraBold.copyWith(
+                            fontSize: ScaleHelper.scaleTextForDevice(28),
+                            color: Primary.subtleColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '$tempMin° / $tempMax°',
+                      style: regular.copyWith(
+                        fontSize: ScaleHelper.scaleTextForDevice(12),
+                        color: Primary.subtleColor,
                       ),
                     ),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: ScaleHelper(context).scaleHeight(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Column(
-                        children: [
-                          Text(
-                            'Cuaca terkini',
-                            style: regular.copyWith(
-                              color: Primary.subtleColor,
-                              fontSize: ScaleHelper(
-                                context,
-                              ).scaleTextForDevice(10),
-                            ),
-                          ),
-                          Text(
-                            'POKDARWIS Tangaya',
-                            style: regular.copyWith(
-                              color: Primary.subtleColor,
-                              fontSize: ScaleHelper(
-                                context,
-                              ).scaleTextForDevice(10),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      Text(
-                        weather?.weatherDescription
-                                ?.split(' ')
-                                .map(
-                                  (word) =>
-                                      word[0].toUpperCase() + word.substring(1),
-                                )
-                                .join(' ') ??
-                            'Tidak Tersedia',
-                        style: bold.copyWith(
-                          color: Primary.subtleColor,
-                          fontSize: ScaleHelper(context).scaleTextForDevice(18),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       );
     });
   }

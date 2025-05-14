@@ -15,8 +15,8 @@ class SignInView extends GetView<AuthController> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
-            horizontal: ScaleHelper(context).scaleWidthForDevice(22),
-            vertical: ScaleHelper(context).scaleHeightForDevice(20),
+            horizontal: ScaleHelper.scaleWidthForDevice(22),
+            vertical: ScaleHelper.scaleHeightForDevice(20),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -24,19 +24,19 @@ class SignInView extends GetView<AuthController> {
               Text(
                 'Selamat Datang Kembali!',
                 style: semiBold.copyWith(
-                  fontSize: ScaleHelper(context).scaleTextForDevice(24),
+                  fontSize: ScaleHelper.scaleTextForDevice(24),
                   color: Primary.mainColor,
                 ),
               ),
-              SizedBox(height: ScaleHelper(context).scaleHeightForDevice(16)),
+              SizedBox(height: ScaleHelper.scaleHeightForDevice(16)),
               Text(
                 'Masuk untuk bisa melakukan pemesanan!',
                 style: regular.copyWith(
-                  fontSize: ScaleHelper(context).scaleTextForDevice(18),
+                  fontSize: ScaleHelper.scaleTextForDevice(18),
                   color: Neutral.dark3,
                 ),
               ),
-              SizedBox(height: ScaleHelper(context).scaleHeightForDevice(32)),
+              SizedBox(height: ScaleHelper.scaleHeightForDevice(32)),
               Center(
                 child: AuthButton(
                   svgAssetPath: 'assets/icons/google.svg',
@@ -49,20 +49,20 @@ class SignInView extends GetView<AuthController> {
                   },
                 ),
               ),
-              SizedBox(height: ScaleHelper(context).scaleHeightForDevice(30)),
+              SizedBox(height: ScaleHelper.scaleHeightForDevice(30)),
               Center(
                 child: GestureDetector(
                   onTap: () => Get.toNamed(Routes.HOME),
                   child: Text(
                     'Masuk sebagai tamu?',
                     style: bold.copyWith(
-                      fontSize: ScaleHelper(context).scaleTextForDevice(16),
+                      fontSize: ScaleHelper.scaleTextForDevice(16),
                       color: Neutral.dark2,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: ScaleHelper(context).scaleHeightForDevice(20)),
+              SizedBox(height: ScaleHelper.scaleHeightForDevice(20)),
             ],
           ),
         ),

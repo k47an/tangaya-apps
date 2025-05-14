@@ -1,38 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tangaya_apps/app/routes/app_pages.dart';
 
 class OnboardingController extends GetxController {
-  var selectedPageIndex = 0.obs;
-  var pageController = PageController();
-  bool get isLastPage => selectedPageIndex.value == items.length - 1;
+  late PageController pageController;
+  final selectedPageIndex = 0.obs;
+  final isLoading = false.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _checkLoginStatus();
-  }
-
-  // Periksa status login pengguna
-  void _checkLoginStatus() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      // Jika sudah login, arahkan ke Home
-      Get.offAllNamed(Routes.HOME);  // Ganti dengan rute halaman Home
-    }
-  }
-
-  forwardAction() {
-    if (isLastPage) {
-      Get.toNamed(Routes.WELCOME);
-    } else {
-      pageController.nextPage(duration: 300.milliseconds, curve: Curves.ease);
-    }
-  }
-
-  List<OnboardingInfo> items = [
+  final List<OnboardingInfo> items = [
     OnboardingInfo(
       title: "Camping",
       descriptions:
@@ -52,6 +28,41 @@ class OnboardingController extends GetxController {
       image: "assets/images/edutor.jpg",
     ),
   ];
+
+  bool get isLastPage => selectedPageIndex.value == items.length - 1;
+
+  @override
+  void onInit() {
+    super.onInit();
+    pageController = PageController();
+    _checkLoginStatus();
+  }
+
+  void _checkLoginStatus() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      Get.offAllNamed(Routes.HOME);
+    }
+  }
+
+  void onMainButtonPressed() {
+    if (isLastPage) {
+      Get.toNamed(Routes.WELCOME);
+    } else {
+      if (pageController.hasClients) {
+        pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+      }
+    }
+  }
+
+  @override
+  void onClose() {
+    pageController.dispose();
+    super.onClose();
+  }
 }
 
 class OnboardingInfo {

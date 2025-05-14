@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/data/models/tourPackageModel.dart';
-import 'package:tangaya_apps/app/data/services/tourPackageService.dart';
+import 'package:tangaya_apps/app/data/models/tour_package_model.dart';
+import 'package:tangaya_apps/app/data/services/tour_package_service.dart';
 
 mixin TourpackageMixin on GetxController {
   final TourPackageService _tourPackageService = TourPackageService();

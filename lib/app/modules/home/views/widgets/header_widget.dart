@@ -8,108 +8,104 @@ class HeaderWidget extends StatelessWidget {
   final String displayName;
   final String photoURL;
 
-  HeaderWidget({super.key, required this.displayName, required this.photoURL});
+  const HeaderWidget({
+    super.key,
+    required this.displayName,
+    required this.photoURL,
+  });
 
   @override
   Widget build(BuildContext context) {
     final auth = Get.find<AuthController>();
-
-    final String userDisplayName =
-        displayName.isNotEmpty ? displayName : 'Tamu';
-    final ImageProvider<Object> profileImage =
-        photoURL.isNotEmpty && photoURL.startsWith('http')
-            ? NetworkImage(photoURL)
-            : AssetImage(photoURL);
-
-    final bool isLoggedIn = auth.currentUser.value != null;
+    final isLoggedIn = auth.currentUser.value != null;
 
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Primary.mainColor,
+      backgroundColor: Neutral.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        side: BorderSide(color: Primary.darkColor, width: 1),
       ),
-      toolbarHeight: ScaleHelper(context).scaleHeightForDevice(80),
-      title: Row(
-        children: [
-          GestureDetector(
-            onTap: () {
-              if (auth.userRole.value == 'admin') {
-                Get.toNamed(Routes.ADMIN);
-              } else if (auth.userRole.value == 'user') {
-                Get.toNamed(Routes.PROFILE);
-              } else {
-                Get.toNamed(Routes.SIGNIN);
-              }
-            },
-            child: Container(
-              width: ScaleHelper(context).scaleWidthForDevice(50),
-              height: ScaleHelper(context).scaleHeightForDevice(50),
-              decoration: BoxDecoration(
-                border: Border.all(color: Primary.darkColor, width: 1),
-                image: DecorationImage(image: profileImage, fit: BoxFit.cover),
-                borderRadius: BorderRadius.circular(50),
+      toolbarHeight: ScaleHelper.scaleHeightForDevice(80),
+      title: _buildUserInfo(auth),
+      actions: [_buildNotificationButton(isLoggedIn)],
+    );
+  }
+
+  Widget _buildUserInfo(AuthController auth) {
+    final String userDisplayName =
+        displayName.isNotEmpty ? displayName : 'Tamu';
+
+    final ImageProvider<Object> profileImage =
+        photoURL.isNotEmpty && photoURL.startsWith('http')
+            ? NetworkImage(photoURL)
+            : AssetImage(photoURL) as ImageProvider;
+
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: () => _navigateProfile(auth),
+          child: CircleAvatar(
+            radius: 25,
+            backgroundColor: Neutral.white1,
+            backgroundImage: profileImage,
+            child:
+                photoURL.isEmpty
+                    ? Icon(Icons.person, color: Primary.darkColor)
+                    : null,
+          ),
+        ),
+        SizedBox(width: ScaleHelper.scaleWidthForDevice(10)),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Selamat Datang',
+              style: extraBold.copyWith(
+                color: Primary.subtleColor,
+                fontSize: ScaleHelper.scaleTextForDevice(14),
               ),
             ),
-          ),
-          SizedBox(width: ScaleHelper(context).scaleWidthForDevice(10)),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Selamat Datang',
-                style: extraBold.copyWith(
-                  color: Primary.subtleColor,
-                  fontSize: ScaleHelper(context).scaleTextForDevice(14),
-                ),
+            Text(
+              userDisplayName,
+              style: regular.copyWith(
+                color: Primary.subtleColor,
+                fontSize: ScaleHelper.scaleTextForDevice(14),
               ),
-              Text(
-                userDisplayName,
-                style: regular.copyWith(
-                  color: Primary.subtleColor,
-                  fontSize: ScaleHelper(context).scaleTextForDevice(14),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications),
-          color: Primary.subtleColor,
-          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
-          onPressed: () {
-            if (isLoggedIn) {
-              Get.toNamed(Routes.NOTIFICATION);
-            } else {
-              Get.toNamed(Routes.SIGNIN);
-            }
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.message_rounded),
-          color: Primary.subtleColor,
-          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
-          onPressed: () {
-            Get.toNamed(Routes.CHAT);
-          },
-        ),
-        IconButton(
-          icon: Icon(isLoggedIn ? Icons.logout_sharp : Icons.login),
-          color: Primary.subtleColor,
-          iconSize: ScaleHelper(context).scaleWidthForDevice(20),
-          onPressed: () async {
-            if (isLoggedIn) {
-              await auth.signOut();
-              Get.offAllNamed(Routes.SIGNIN);
-            } else {
-              Get.toNamed(Routes.SIGNIN);
-            }
-          },
+            ),
+          ],
         ),
       ],
     );
+  }
+
+  Widget _buildNotificationButton(bool isLoggedIn) {
+    return Container(
+      margin: ScaleHelper.paddingOnly(right: 16),
+      decoration: BoxDecoration(
+        color: Neutral.white1,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: IconButton(
+        icon: const Icon(Icons.notifications),
+        color: Neutral.dark1,
+        iconSize: ScaleHelper.scaleWidthForDevice(28),
+        onPressed: () => _handleNotification(isLoggedIn),
+      ),
+    );
+  }
+
+  void _navigateProfile(AuthController auth) {
+    final role = auth.userRole.value;
+    if (role == 'admin') {
+      Get.toNamed(Routes.ADMIN);
+    } else if (role == 'user') {
+      Get.toNamed(Routes.PROFILE);
+    } else {
+      Get.toNamed(Routes.SIGNIN);
+    }
+  }
+
+  void _handleNotification(bool isLoggedIn) {
+    Get.toNamed(isLoggedIn ? Routes.NOTIFICATION : Routes.SIGNIN);
   }
 }

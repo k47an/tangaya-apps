@@ -22,7 +22,7 @@ class AddTourPackageView extends StatelessWidget {
         title: Text(
           "Tambah Paket Wisata",
           style: semiBold.copyWith(
-            fontSize: ScaleHelper(context).scaleTextForDevice(20),
+            fontSize: ScaleHelper.scaleTextForDevice(20),
             color: Neutral.white1,
           ),
         ),
@@ -32,7 +32,7 @@ class AddTourPackageView extends StatelessWidget {
         elevation: 5.0,
       ),
       body: Padding(
-        padding: EdgeInsets.all(ScaleHelper(context).scaleWidthForDevice(16)),
+        padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
         child: Form(
           key: controller.formKey,
           child: SingleChildScrollView(

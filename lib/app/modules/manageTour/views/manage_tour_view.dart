@@ -41,7 +41,7 @@ class ManageTourView extends GetView<ManageTourController> {
           Text(
             "Management Tours and Events",
             style: semiBold.copyWith(
-              fontSize: ScaleHelper(context).scaleTextForDevice(20),
+              fontSize: ScaleHelper.scaleTextForDevice(20),
               color: Neutral.white1,
             ),
           ),

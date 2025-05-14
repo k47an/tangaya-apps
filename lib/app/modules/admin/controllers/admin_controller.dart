@@ -1,36 +1,64 @@
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:tangaya_apps/app/data/models/user_model.dart';
+import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 
 class AdminController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final AuthController authController = Get.find<AuthController>();
 
-  final RxList<Map<String, dynamic>> users = <Map<String, dynamic>>[].obs;
+  final RxList<UserModel> users = <UserModel>[].obs;
   final RxMap<String, List<Map<String, dynamic>>> ordersByMonth =
       <String, List<Map<String, dynamic>>>{}.obs;
-  final isLoading = false.obs;
+  final RxBool isLoading = false.obs;
+
+  final Rxn<UserModel> userModel = Rxn<UserModel>();
 
   @override
   void onInit() {
     super.onInit();
-    fetchUsers();
-    fetchApprovedOrders();
+    loadInitialData();
+  }
+
+  Future<void> loadInitialData() async {
+    try {
+      isLoading(true);
+      await Future.wait([getUserData(), fetchUsers(), fetchApprovedOrders()]);
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat data awal:\n$e');
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<void> getUserData() async {
+    try {
+      final uid = authController.currentUser.value?.uid;
+      if (uid == null) return;
+
+      final doc = await _firestore.collection('users').doc(uid).get();
+      if (doc.exists) {
+        userModel.value = UserModel.fromMap({'id': doc.id, ...doc.data()!});
+        print('✅ Admin user loaded: ${userModel.value?.toMap()}');
+      }
+    } catch (e) {
+      print('❌ Error getUserData: $e');
+      Get.snackbar('Error', 'Gagal mengambil data admin:\n$e');
+    }
   }
 
   Future<void> fetchUsers() async {
     try {
-      isLoading.value = true;
       final snapshot = await _firestore.collection('users').get();
       final userList =
-          snapshot.docs.map((doc) {
-            return {'id': doc.id, ...doc.data()};
-          }).toList();
-
+          snapshot.docs
+              .map((doc) => UserModel.fromMap({'id': doc.id, ...doc.data()}))
+              .toList();
       users.assignAll(userList);
     } catch (e) {
-      Get.snackbar('Error', 'Gagal mengambil data pengguna: $e');
-    } finally {
-      isLoading.value = false;
+      print('❌ Error fetchUsers: $e');
+      Get.snackbar('Error', 'Gagal mengambil data pengguna:\n$e');
     }
   }
 
@@ -43,37 +71,32 @@ class AdminController extends GetxController {
               .orderBy('date', descending: true)
               .get();
 
-      final Map<String, List<Map<String, dynamic>>> grouped = {};
+      final grouped = <String, List<Map<String, dynamic>>>{};
 
       for (var doc in snapshot.docs) {
         final data = doc.data();
 
-        final timestamp = data['date'];
-        DateTime? date;
-        if (timestamp is Timestamp) {
-          date = timestamp.toDate();
-        } else if (timestamp is String) {
-          date = DateTime.tryParse(timestamp);
-        }
+        final date =
+            (data['date'] is Timestamp)
+                ? (data['date'] as Timestamp).toDate()
+                : DateTime.tryParse(data['date'].toString());
 
         if (date == null) continue;
 
         final monthKey = DateFormat('MMMM yyyy').format(date);
 
-        final entry = {
+        grouped.putIfAbsent(monthKey, () => []).add({
           'packageTitle': data['packageTitle'] ?? 'Paket tidak diketahui',
           'name': data['name'] ?? 'Tanpa nama',
           'date': date,
-          'peopleNames':
-              (data['peopleNames'] is List) ? data['peopleNames'] : [],
-        };
-
-        grouped.putIfAbsent(monthKey, () => []).add(entry);
+          'peopleNames': List<String>.from(data['peopleNames'] ?? []),
+        });
       }
 
-      ordersByMonth.value = grouped;
+      ordersByMonth.assignAll(grouped);
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat data pesanan: $e');
+      print('❌ Error fetchApprovedOrders: $e');
+      Get.snackbar('Error', 'Gagal memuat data pesanan:\n$e');
     }
   }
 }
