@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
-import 'package:tangaya_apps/app/data/models/tour_package_model.dart';
+import 'package:tangaya_apps/app/data/models/tour_model.dart';
 
 class TourpackageWidget extends GetView<HomeController> {
   const TourpackageWidget({super.key});
@@ -11,7 +11,7 @@ class TourpackageWidget extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoading.value) {
+      if (controller.isTourLoading.value) {
         return const Center(child: CircularProgressIndicator());
       }
 
@@ -24,7 +24,10 @@ class TourpackageWidget extends GetView<HomeController> {
         itemCount: controller.tourPackages.length,
         itemBuilder: (context, index) {
           final tour = controller.tourPackages[index];
-          if (tour.imageUrls.isEmpty) return const SizedBox();
+          // Tambahkan null check di sini
+          if (tour.imageUrls == null || tour.imageUrls!.isEmpty) {
+            return const SizedBox();
+          }
           return TourPackageCard(tour: tour);
         },
         separatorBuilder: (_, __) => const SizedBox(height: 20),
@@ -41,7 +44,11 @@ class TourPackageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.DETAIL_PACK, arguments: tour.id),
+      onTap:
+          () => Get.toNamed(
+            Routes.DETAIL,
+            arguments: {'id': tour.id, 'type': 'tour'},
+          ),
       child: Container(
         decoration: BoxDecoration(
           color: Neutral.white4,
@@ -67,9 +74,16 @@ class TourPackageCard extends StatelessWidget {
                       bottom: Radius.circular(16),
                     ),
                     child: Image.network(
-                      tour.imageUrls.first,
+                      tour.imageUrls!.first,
                       width: double.infinity,
                       fit: BoxFit.fitHeight,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const SizedBox(
+                          height: 150, // Atur tinggi sesuai kebutuhan
+                          width: double.infinity,
+                          child: Center(child: Icon(Icons.image_not_supported)),
+                        );
+                      },
                     ),
                   ),
                   Positioned.fill(
@@ -94,14 +108,14 @@ class TourPackageCard extends StatelessWidget {
                     left: 12,
                     right: 12,
                     child: Text(
-                      tour.title,
+                      tour.title ?? '',
                       style: semiBold.copyWith(
                         fontSize: ScaleHelper.scaleTextForDevice(18),
                         color: Colors.white,
                         shadows: [
                           Shadow(
                             color: Neutral.dark1.withOpacity(0.5),
-                            offset: Offset(0, 1),
+                            offset: const Offset(0, 1),
                             blurRadius: 4,
                           ),
                         ],
@@ -125,7 +139,7 @@ class TourPackageCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Rp ${tour.price.toInt()}",
+                          "Rp ${tour.price?.toInt() ?? ''}",
                           style: bold.copyWith(
                             fontSize: ScaleHelper.scaleTextForDevice(20),
                             color: Primary.darkColor,
@@ -133,7 +147,7 @@ class TourPackageCard extends StatelessWidget {
                         ),
                         SizedBox(height: ScaleHelper.scaleHeightForDevice(4)),
                         Text(
-                          tour.description,
+                          tour.description ?? '',
                           style: regular.copyWith(
                             fontSize: 13,
                             color: Colors.grey.shade700,
@@ -147,7 +161,7 @@ class TourPackageCard extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     onPressed: () {
-                      Get.toNamed(Routes.DETAIL_PACK, arguments: tour.id);
+                      Get.toNamed(Routes.DETAIL, arguments: tour.id);
                     },
                     icon: const Icon(Icons.arrow_forward_ios, size: 14),
                     label: Text("Pesan", style: medium.copyWith(fontSize: 14)),
