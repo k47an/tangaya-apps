@@ -17,7 +17,8 @@ class AuthController extends GetxController {
   User? get user => currentUser.value;
   String get uid => user?.uid ?? '';
   String get userName => userModel.value?.name ?? user?.displayName ?? 'Tamu';
-  String get userGender => userModel.value?.gender ?? '-';
+  String get userGender =>
+      userModel.value?.gender ?? ''; // Perubahan: Default jadi ''
   String get userPhone => userModel.value?.phone ?? '-';
   String get userAddress => userModel.value?.address ?? '-';
   String get userEmail => userModel.value?.email ?? user?.email ?? '-';
@@ -61,21 +62,31 @@ class AuthController extends GetxController {
   Future<void> _initializeUserData() async {
     if (user == null) return;
 
-    final profile = await _authService.fetchUserProfile(user!.uid);
-    userModel.value = profile;
+    try {
+      final profile = await _authService.fetchUserProfile(user!.uid);
+      userModel.value = profile;
 
-    final role = await _authService.fetchUserRole(user!.uid);
-    userRole.value = role;
+      final role = await _authService.fetchUserRole(user!.uid);
+      userRole.value = role;
+    } catch (e) {
+      Get.snackbar(
+        "Gagal",
+        "Gagal memuat data pengguna: $e",
+        snackPosition: SnackPosition.BOTTOM,
+      ); // Tambahkan ini: Show error
+      // Handle error, maybe set userModel to a default value or show error message
+    }
   }
 
-  Future<void> updateUserProfile({
+  Future<bool> updateUserProfile({
+    // Perubahan: Ubah return type menjadi Future<bool>
     required String name,
     required String email,
     required String gender,
     required String phone,
     required String address,
   }) async {
-    if (user == null) return;
+    if (user == null) return false; // Perubahan: Return false jika user null
 
     try {
       if (user!.email != email) await user!.updateEmail(email);
@@ -96,10 +107,10 @@ class AuthController extends GetxController {
 
       await _authService.updateUserProfile(updated);
       userModel.value = updated;
-
-      Get.snackbar('Sukses', 'Profil berhasil diperbarui');
+      return true; // Perubahan: Return true jika berhasil
     } catch (e) {
       Get.snackbar('Update Gagal', e.toString());
+      return false; // Perubahan: Return false jika gagal
     }
   }
 

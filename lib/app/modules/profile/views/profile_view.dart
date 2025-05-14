@@ -58,10 +58,11 @@ class ProfileView extends GetView<ProfileController> {
         children: [
           CircleAvatar(
             radius: 32,
-            backgroundImage: user?.photoUrl != null && user!.photoUrl.isNotEmpty
-                ? NetworkImage(user.photoUrl)
-                : const AssetImage("assets/images/default_profile.png")
-                    as ImageProvider,
+            backgroundImage:
+                user?.photoUrl != null && user!.photoUrl.isNotEmpty
+                    ? NetworkImage(user.photoUrl)
+                    : const AssetImage("assets/images/default_profile.png")
+                        as ImageProvider,
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -70,7 +71,10 @@ class ProfileView extends GetView<ProfileController> {
               children: [
                 Text(user?.name ?? '-', style: bold.copyWith(fontSize: 18)),
                 const SizedBox(height: 4),
-                Text(user?.role ?? '-', style: medium.copyWith(color: Neutral.dark4)),
+                Text(
+                  user?.role ?? '-',
+                  style: medium.copyWith(color: Neutral.dark4),
+                ),
               ],
             ),
           ),
@@ -103,8 +107,19 @@ class ProfileView extends GetView<ProfileController> {
           const SizedBox(height: 8),
           _infoRow("Email", user?.email ?? "-"),
           _infoRow("Jenis Kelamin", controller.selectedGender.value ?? "-"),
-          _infoRow("Nomor HP", controller.phoneController.text.isEmpty ? "-" : controller.phoneController.text),
-          _infoRow("Alamat", controller.addressController.text.isEmpty ? "-" : controller.addressController.text, multiLine: true),
+          _infoRow(
+            "Nomor HP",
+            controller.phoneController.text.isEmpty
+                ? "-"
+                : controller.phoneController.text,
+          ),
+          _infoRow(
+            "Alamat",
+            controller.addressController.text.isEmpty
+                ? "-"
+                : controller.addressController.text,
+            multiLine: true,
+          ),
         ],
       ),
     );
@@ -114,9 +129,13 @@ class ProfileView extends GetView<ProfileController> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        crossAxisAlignment: multiLine ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+        crossAxisAlignment:
+            multiLine ? CrossAxisAlignment.start : CrossAxisAlignment.center,
         children: [
-          Expanded(flex: 2, child: Text(label, style: semiBold.copyWith(fontSize: 14))),
+          Expanded(
+            flex: 2,
+            child: Text(label, style: semiBold.copyWith(fontSize: 14)),
+          ),
           const SizedBox(width: 8),
           Expanded(
             flex: 3,
@@ -187,12 +206,26 @@ class ProfileView extends GetView<ProfileController> {
                   Obx(() {
                     return DropdownButtonFormField<String>(
                       value: controller.selectedGender.value,
-                      decoration: const InputDecoration(border: OutlineInputBorder()),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
                       hint: const Text('Pilih Jenis Kelamin'),
                       onChanged: controller.updateGender,
-                      items: ['Laki-laki', 'Perempuan']
-                          .map((val) => DropdownMenuItem(value: val, child: Text(val)))
-                          .toList(),
+                      items:
+                          ['Laki-laki', 'Perempuan']
+                              .map(
+                                (val) => DropdownMenuItem(
+                                  value: val,
+                                  child: Text(val),
+                                ),
+                              )
+                              .toList(),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Jenis kelamin harus diisi';
+                        }
+                        return null;
+                      },
                     );
                   }),
                 ],
@@ -211,7 +244,10 @@ class ProfileView extends GetView<ProfileController> {
                 return;
               }
 
-              Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
+              Get.dialog(
+                const Center(child: CircularProgressIndicator()),
+                barrierDismissible: false,
+              );
 
               final success = await controller.saveUserData();
               Get.back(); // close loading
@@ -220,7 +256,11 @@ class ProfileView extends GetView<ProfileController> {
                 await controller.loadUserData();
                 Get.back(); // close dialog
               } else {
-                Get.snackbar("Gagal", "Gagal menyimpan data", snackPosition: SnackPosition.BOTTOM);
+                Get.snackbar(
+                  "Gagal",
+                  "Gagal menyimpan data",
+                  snackPosition: SnackPosition.BOTTOM,
+                );
               }
             },
             child: const Text("Simpan"),

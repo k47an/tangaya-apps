@@ -152,7 +152,7 @@ class AdminView extends GetView<AdminController> {
           Text("Navigasi", style: bold.copyWith(fontSize: 16)),
           const Divider(color: Primary.mainColor, thickness: 1),
           const SizedBox(height: 8),
-          _navigableRow("List Paket dan Event", Routes.MANAGE_TOUR),
+          _navigableRow("List Paket dan Event", Routes.MANAGE_EVENT_TOUR),
           _navigableRow("List Order", Routes.ORDERVIEW),
         ],
       ),

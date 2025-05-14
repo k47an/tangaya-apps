@@ -2,16 +2,16 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tangaya_apps/app/modules/manageTour/controllers/manage_tour_controller.dart';
+import 'package:tangaya_apps/app/modules/manageTourAndEvent/controllers/manage_tour_event_controller.dart';
+import 'package:tangaya_apps/app/modules/manageTourAndEvent/views/manage_tour_event_view.dart';
 import 'package:tangaya_apps/constant/constant.dart';
-import 'package:tangaya_apps/app/modules/manageTour/views/manage_tour_view.dart';
 
 class AddTourPackageView extends StatelessWidget {
   const AddTourPackageView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ManageTourController>();
+    final controller = Get.find<ManageTourEventController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -34,16 +34,22 @@ class AddTourPackageView extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
         child: Form(
-          key: controller.formKey,
+          key:
+              controller
+                  .tourPackageFormKey, // Menggunakan formKey dari TourMixin
           child: SingleChildScrollView(
             child: Column(
               children: [
-                _buildTextInput(controller.titleController, 'Judul'),
+                _buildTextInput(
+                  controller.tourPackageTitleController,
+                  'Judul',
+                ), // Menggunakan controller dari TourMixin
                 const SizedBox(height: 12),
                 _buildDescriptionInput(controller),
                 const SizedBox(height: 12),
                 _buildTextInput(
-                  controller.priceController,
+                  controller
+                      .tourPackagePriceController, // Menggunakan controller dari TourMixin
                   'Harga',
                   isNumber: true,
                 ),
@@ -90,9 +96,11 @@ class AddTourPackageView extends StatelessWidget {
     );
   }
 
-  Widget _buildDescriptionInput(ManageTourController controller) {
-    return TextField(
-      controller: controller.descriptionController,
+  Widget _buildDescriptionInput(ManageTourEventController controller) {
+    return TextFormField(
+      controller:
+          controller
+              .tourPackageDescriptionController, // Menggunakan controller dari TourMixin
       decoration: InputDecoration(
         labelText: 'Deskripsi',
         labelStyle: TextStyle(color: Primary.mainColor),
@@ -108,15 +116,17 @@ class AddTourPackageView extends StatelessWidget {
     );
   }
 
-  Widget _buildImagePicker(ManageTourController controller) {
+  Widget _buildImagePicker(ManageTourEventController controller) {
     return Obx(() {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ElevatedButton.icon(
             onPressed: () async {
               final pickedFiles = await ImagePicker().pickMultiImage();
               if (pickedFiles.isNotEmpty) {
-                controller.selectedImages.addAll(
+                controller.selectedTourPackageImages.addAll(
+                  // Menggunakan selectedTourPackageImages dari TourMixin
                   pickedFiles.map((file) => File(file.path)),
                 );
               }
@@ -125,26 +135,32 @@ class AddTourPackageView extends StatelessWidget {
             label: const Text("Pilih Gambar"),
             style: ElevatedButton.styleFrom(backgroundColor: Neutral.white1),
           ),
-          if (controller.selectedImages.isNotEmpty) ...[
-            const SizedBox(height: 10),
+          const SizedBox(height: 10),
+          if (controller.selectedTourPackageImages.isNotEmpty)
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: controller.selectedImages.length,
+              itemCount:
+                  controller
+                      .selectedTourPackageImages
+                      .length, // Menggunakan selectedTourPackageImages dari TourMixin
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
               ),
               itemBuilder: (context, index) {
+                final imageFile =
+                    controller
+                        .selectedTourPackageImages[index]; // Menggunakan selectedTourPackageImages dari TourMixin
                 return Stack(
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: Image.file(
-                        controller.selectedImages[index]!,
-                        width: 150,
-                        height: 150,
+                        imageFile!,
+                        width: double.infinity,
+                        height: double.infinity,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -154,7 +170,9 @@ class AddTourPackageView extends StatelessWidget {
                       child: IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          controller.selectedImages.removeAt(index);
+                          controller.selectedTourPackageImages.removeAt(
+                            index,
+                          ); // Menggunakan selectedTourPackageImages dari TourMixin
                         },
                       ),
                     ),
@@ -162,43 +180,49 @@ class AddTourPackageView extends StatelessWidget {
                 );
               },
             ),
-          ],
         ],
       );
     });
   }
 
-  Widget _buildSaveButton(ManageTourController controller) {
+  Widget _buildSaveButton(ManageTourEventController controller) {
     return Obx(
       () =>
-          controller.isLoading.value
+          controller
+                  .isTourLoading
+                  .value // Menggunakan isLoading dari TourMixin (karena addTourPackage ada di TourMixin)
               ? const Center(child: CircularProgressIndicator())
-              : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Primary.subtleColor,
+              : SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Primary.subtleColor,
+                  ),
+                  onPressed: () async {
+                    if (controller.tourPackageFormKey.currentState!
+                            .validate() &&
+                        controller.selectedTourPackageImages.isNotEmpty) {
+                      await controller.addTourPackage();
+                      Get.snackbar(
+                        'Berhasil',
+                        'Paket wisata berhasil ditambahkan',
+                        backgroundColor: Colors.green,
+                        colorText: Colors.white,
+                      );
+                      controller.clearTourPackageForm();
+                      controller.fetchTourPackages();
+                      Get.off(() => const ManageTourEventView());
+                    } else {
+                      Get.snackbar(
+                        'Error',
+                        'Pastikan semua field dan minimal satu gambar sudah diisi!',
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                    }
+                  },
+                  child: const Text('Simpan', style: TextStyle(fontSize: 16)),
                 ),
-                onPressed: () async {
-                  if (controller.formKey.currentState!.validate()) {
-                    await controller.addTourPackage(
-                      title: controller.titleController.text,
-                      description: controller.descriptionController.text,
-                      price: double.parse(controller.priceController.text),
-                      imageFiles: controller.selectedImages,
-                    );
-                    Get.snackbar(
-                      'Berhasil',
-                      'Paket wisata berhasil ditambahkan',
-                      backgroundColor: Colors.green,
-                      colorText: Colors.white,
-                    );
-                    controller.titleController.clear();
-                    controller.descriptionController.clear();
-                    controller.priceController.clear();
-                    controller.selectedImages.clear();
-                    Get.off(() => ManageTourView());
-                  }
-                },
-                child: const Text('Simpan', style: TextStyle(fontSize: 16)),
               ),
     );
   }
