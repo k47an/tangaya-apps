@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
-import 'package:tangaya_apps/app/data/models/tourPackageModel.dart';
+import 'package:tangaya_apps/app/data/models/tour_package_model.dart';
 
 class TourpackageWidget extends GetView<HomeController> {
   const TourpackageWidget({super.key});
