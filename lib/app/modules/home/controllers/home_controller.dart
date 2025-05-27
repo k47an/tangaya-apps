@@ -7,34 +7,53 @@ import 'package:tangaya_apps/app/modules/manageTourAndEvent/mixin/event_mixin.da
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/mixin/tour_mixin.dart';
 
 class HomeController extends GetxController
-    with GetSingleTickerProviderStateMixin, WeatherMixin, TourMixin, EventMixin {
+    with
+        GetSingleTickerProviderStateMixin,
+        WeatherMixin,
+        TourMixin,
+        EventMixin {
   late TabController tabController;
   final RxInt currentTab = 0.obs;
-  final RxBool isExpanded = false.obs;
 
   final List<Map<String, String>> tabs = [
-    {'title': 'Tour Package', 'icon': 'assets/icons/tracking.svg'},
-    {'title': 'Events', 'icon': 'assets/icons/edutourism.svg'},
+    {'title': 'Paket Wisata', 'icon': 'assets/icons/tracking.svg'},
+    {'title': 'Event', 'icon': 'assets/icons/edutourism.svg'},
   ];
 
-  // Getter untuk memudahkan akses data tour dan event di view
-  RxList<TourPackage> get popularTours => tourPackages; 
-  // Asumsi Anda punya ini di EventMixin:
-  RxList<Event> get upcomingEvents => events; // Langsung dari EventMixin
+  final RxDouble currentPage = 0.0.obs;
+  final RxDouble currentEventPage = 0.0.obs;
+
+  final RxBool isLoading = false.obs;
+
+  List<TourPackage> cachedTours = [];
+  List<Event> cachedEvents = [];
+
+  void refreshData() async {
+    isLoading.value = true;
+
+    await fetchTourPackages();
+    await fetchEvents();
+    fetchCurrentWeather();
+
+    cachedTours = List.from(tourPackages);
+    cachedEvents = List.from(events);
+
+    isLoading.value = false;
+  }
 
   @override
   void onInit() {
     super.onInit();
     tabController = TabController(length: tabs.length, vsync: this);
     tabController.addListener(() => currentTab.value = tabController.index);
-    fetchCurrentWeather();
-    fetchTourPackages();
-    fetchEvents();
+
+    refreshData();
   }
 
   @override
   void onClose() {
     tabController.dispose();
+
     super.onClose();
   }
 

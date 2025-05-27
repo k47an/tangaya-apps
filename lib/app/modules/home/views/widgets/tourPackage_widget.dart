@@ -1,9 +1,13 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
-import 'package:tangaya_apps/constant/constant.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tangaya_apps/constant/constant.dart';
 
 class TourpackageWidget extends GetView<HomeController> {
   const TourpackageWidget({super.key});
@@ -11,26 +15,48 @@ class TourpackageWidget extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isTourLoading.value) {
+      if (controller.isLoading.value) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      if (controller.tourPackages.isEmpty) {
+      if (controller.cachedTours.isEmpty) {
         return const Center(child: Text("Tidak ada data paket wisata."));
       }
 
-      return ListView.separated(
-        padding: ScaleHelper.paddingSymmetric(horizontal: 4),
-        itemCount: controller.tourPackages.length,
-        itemBuilder: (context, index) {
-          final tour = controller.tourPackages[index];
-          // Tambahkan null check di sini
+      return CarouselSlider.builder(
+        itemCount: controller.cachedTours.length,
+        itemBuilder: (context, index, realIndex) {
+          final tour = controller.cachedTours[index];
           if (tour.imageUrls == null || tour.imageUrls!.isEmpty) {
             return const SizedBox();
           }
-          return TourPackageCard(tour: tour);
+          return Container(
+            margin: ScaleHelper.paddingOnly(bottom: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Neutral.dark1.withOpacity(0.15),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: TourPackageCard(tour: tour),
+            ),
+          );
         },
-        separatorBuilder: (_, __) => const SizedBox(height: 20),
+        options: CarouselOptions(
+          height: 480,
+          enlargeCenterPage: true,
+          viewportFraction: 0.9,
+          enableInfiniteScroll: false,
+          onPageChanged: (index, reason) {
+            controller.currentPage.value = index.toDouble();
+          },
+        ),
       );
     });
   }
@@ -43,147 +69,133 @@ class TourPackageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap:
-          () => Get.toNamed(
-            Routes.DETAIL,
-            arguments: {'id': tour.id, 'type': 'tour'},
-          ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Neutral.white4,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Primary.darkColor.withOpacity(0.3),
-              blurRadius: 4,
-              offset: const Offset(1, 2),
-            ),
-          ],
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        CachedNetworkImage(
+          imageUrl: tour.imageUrls!.first,
+          fit: BoxFit.cover,
+          placeholder:
+              (context, url) => const Center(
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+          errorWidget:
+              (context, url, error) => Container(
+                color: Colors.grey[300],
+                child: const Icon(Icons.broken_image, color: Colors.grey),
+              ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(3),
-              child: Stack(
+
+        // Overlay gradient gelap dari bawah
+        Positioned.fill(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [Colors.black87, Colors.transparent],
+              ),
+            ),
+          ),
+        ),
+
+        // Konten informasi
+        Positioned(
+          left: 16,
+          right: 16,
+          bottom: 20,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Desa Saniang Baka',
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
+              ),
+              const SizedBox(height: 4),
+
+              Text(
+                tour.title ?? '',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                      bottom: Radius.circular(16),
-                    ),
-                    child: Image.network(
-                      tour.imageUrls!.first,
-                      width: double.infinity,
-                      fit: BoxFit.fitHeight,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const SizedBox(
-                          height: 150, // Atur tinggi sesuai kebutuhan
-                          width: double.infinity,
-                          child: Center(child: Icon(Icons.image_not_supported)),
-                        );
-                      },
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Neutral.dark1.withOpacity(0.6),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 12,
-                    left: 12,
-                    right: 12,
-                    child: Text(
-                      tour.title ?? '',
-                      style: semiBold.copyWith(
-                        fontSize: ScaleHelper.scaleTextForDevice(18),
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            color: Neutral.dark1.withOpacity(0.5),
-                            offset: const Offset(0, 1),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  const Text('Rp', style: TextStyle(color: Colors.white)),
+                  const SizedBox(width: 4),
+                  Text(
+                    tour.price != null
+                        ? NumberFormat('#,###', 'id_ID').format(tour.price)
+                        : 'Tidak tersedia',
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
               ),
-            ),
-            Padding(
-              padding: ScaleHelper.paddingSymmetric(
-                horizontal: 14,
-                vertical: 8,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(height: 12),
+
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 5,
+                      horizontal: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(color: Colors.white24),
+                    ),
+                    child: Row(
                       children: [
-                        Text(
-                          "Rp ${tour.price?.toInt() ?? ''}",
-                          style: bold.copyWith(
-                            fontSize: ScaleHelper.scaleTextForDevice(20),
-                            color: Primary.darkColor,
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(
+                              Routes.DETAIL,
+                              arguments: {'id': tour.id, 'type': 'tour'},
+                            );
+                          },
+                          child: const Text(
+                            "See more",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                        SizedBox(height: ScaleHelper.scaleHeightForDevice(4)),
-                        Text(
-                          tour.description ?? '',
-                          style: regular.copyWith(
-                            fontSize: 13,
-                            color: Colors.grey.shade700,
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(
+                              Routes.DETAIL,
+                              arguments: {'id': tour.id, 'type': 'tour'},
+                            );
+                          },
+                          child: const CircleAvatar(
+                            radius: 14,
+                            backgroundColor: Colors.white24,
+                            child: Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 14,
+                              color: Colors.white,
+                            ),
                           ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                          softWrap: true,
                         ),
                       ],
                     ),
                   ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Get.toNamed(Routes.DETAIL, arguments: tour.id);
-                    },
-                    icon: const Icon(Icons.arrow_forward_ios, size: 14),
-                    label: Text("Pesan", style: medium.copyWith(fontSize: 14)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Primary.mainColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 14,
-                      ),
-                      elevation: 0,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

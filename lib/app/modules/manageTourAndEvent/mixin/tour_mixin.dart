@@ -25,6 +25,13 @@ mixin TourMixin on GetxController {
   // Data List
   final RxList<TourPackage> tourPackages = <TourPackage>[].obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    fetchTourPackages();
+    debugPrint('TourMixin initialized');
+  }
+
   Future<void> fetchTourPackages() async {
     try {
       isTourLoading.value = true;
@@ -53,7 +60,7 @@ mixin TourMixin on GetxController {
         title: tourPackageTitleController.text.trim(),
         description: tourPackageDescriptionController.text.trim(),
         price: double.parse(tourPackagePriceController.text.trim()),
-        imageFiles: selectedTourPackageImages.toList(), // Kirim List<File?>
+        imageFiles: selectedTourPackageImages.toList(),
       );
       fetchTourPackages();
       clearTourPackageForm();

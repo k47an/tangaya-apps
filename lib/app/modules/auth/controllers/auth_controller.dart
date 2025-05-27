@@ -18,7 +18,7 @@ class AuthController extends GetxController {
   String get uid => user?.uid ?? '';
   String get userName => userModel.value?.name ?? user?.displayName ?? 'Tamu';
   String get userGender =>
-      userModel.value?.gender ?? ''; // Perubahan: Default jadi ''
+      userModel.value?.gender ?? ''; 
   String get userPhone => userModel.value?.phone ?? '-';
   String get userAddress => userModel.value?.address ?? '-';
   String get userEmail => userModel.value?.email ?? user?.email ?? '-';

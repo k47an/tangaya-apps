@@ -24,6 +24,13 @@ mixin EventMixin on GetxController {
   // Data List
   final RxList<Event> events = <Event>[].obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    fetchEvents();
+    debugPrint('EventMixin initialized');
+  }
+
   Future<void> fetchEvents() async {
     try {
       isEventLoading.value = true;
