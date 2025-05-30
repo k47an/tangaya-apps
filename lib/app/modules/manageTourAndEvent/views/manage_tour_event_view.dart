@@ -141,10 +141,21 @@ class _TourPackageList extends GetView<ManageTourEventController> {
             child: TourPackageCard(
               tourPackage: tourPackage,
               onDelete: () async {
+                // 1. Tutup dialog konfirmasi terlebih dahulu secara manual
+                if (Get.isDialogOpen ?? false) {
+                  Get.back(); // Menutup dialog Get.defaultDialog
+                }
+
+                // 2. Lanjutkan dengan proses penghapusan paket wisata
+                // Pastikan controller Anda memiliki metode deleteTourPackage
                 await controller.deleteTourPackage(
-                  docId: '${tourPackage.id}',
-                  imageUrls: tourPackage.imageUrls ?? [],
+                  // Ganti dengan metode yang sesuai di controller Anda
+                  docId: tourPackage.id ?? '', // Handle jika id bisa null
+                  imageUrls:
+                      tourPackage.imageUrls ??
+                      [], // Atau cara Anda menghapus gambar tour
                 );
+                // Controller akan menangani snackbar dan pembaruan list
               },
             ),
           );
@@ -176,6 +187,13 @@ class _EventList extends GetView<ManageTourEventController> {
             child: EventCard(
               event: event,
               onDelete: () async {
+                // 1. Tutup dialog konfirmasi terlebih dahulu secara manual
+                if (Get.isDialogOpen ?? false) {
+                  Get.back(); // Menutup dialog Get.defaultDialog
+                }
+
+                // 2. Lanjutkan dengan proses penghapusan event
+                // Loading indicator akan dihandle oleh controller.deleteEvent
                 await controller.deleteEvent(
                   docId: event.id,
                   imageUrl: event.imageUrl,

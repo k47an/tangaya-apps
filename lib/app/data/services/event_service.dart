@@ -1,7 +1,8 @@
+// services
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../models/event_model.dart';
+import '../models/event_model.dart'; // Pastikan path ini benar
 
 class EventService {
   final _firestore = FirebaseFirestore.instance;
@@ -21,6 +22,7 @@ class EventService {
     required String location,
     required DateTime eventDate,
     required File? imageFile,
+    double? price, // <-- Ubah menjadi nullable (double?)
   }) async {
     final imageUrl = await _uploadImage(imageFile);
     await _firestore.collection(_collection).add({
@@ -29,6 +31,7 @@ class EventService {
       'location': location,
       'eventDate': eventDate,
       'imageUrl': imageUrl,
+      'price': price, // <-- Kirim price apa adanya
     });
   }
 
@@ -41,12 +44,28 @@ class EventService {
     required String oldImageUrl,
     required File? newImageFile,
     required bool deleteOldImage,
+    double? price, // <-- Ubah menjadi nullable (double?)
   }) async {
     String updatedImageUrl = oldImageUrl;
 
-    // Hapus gambar lama jika diminta dan ada gambar baru
-    if (deleteOldImage && newImageFile != null) {
-      await _storage.refFromURL(oldImageUrl).delete();
+    if (deleteOldImage && oldImageUrl.isNotEmpty) {
+      try {
+        if (oldImageUrl.startsWith('http')) {
+          await _storage.refFromURL(oldImageUrl).delete();
+        }
+      } catch (e) {
+        print("Error deleting old image: $e");
+      }
+      updatedImageUrl =
+          newImageFile != null ? await _uploadImage(newImageFile) : '';
+    } else if (newImageFile != null) {
+      if (oldImageUrl.isNotEmpty && oldImageUrl.startsWith('http')) {
+        try {
+          await _storage.refFromURL(oldImageUrl).delete();
+        } catch (e) {
+          print("Error deleting old image during replacement: $e");
+        }
+      }
       updatedImageUrl = await _uploadImage(newImageFile);
     }
 
@@ -56,6 +75,7 @@ class EventService {
       'location': location,
       'eventDate': eventDate,
       'imageUrl': updatedImageUrl,
+      'price': price, // <-- Kirim price apa adanya
     });
   }
 
@@ -63,7 +83,13 @@ class EventService {
     required String docId,
     required String imageUrl,
   }) async {
-    await _storage.refFromURL(imageUrl).delete();
+    if (imageUrl.isNotEmpty && imageUrl.startsWith('http')) {
+      try {
+        await _storage.refFromURL(imageUrl).delete();
+      } catch (e) {
+        print("Error deleting image from storage: $e");
+      }
+    }
     await _firestore.collection(_collection).doc(docId).delete();
   }
 
