@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/data/models/event_model.dart'; // Sesuaikan path jika perlu
-import 'package:tangaya_apps/app/data/models/tour_model.dart';  // Sesuaikan path jika perlu
+import 'package:tangaya_apps/app/data/models/tour_model.dart'; // Sesuaikan path jika perlu
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart'; // Sesuaikan path
 
 class OrderService extends GetxService {
@@ -16,23 +16,31 @@ class OrderService extends GetxService {
   /// Jika belum ada, dokumen baru akan dibuat.
   Future<void> saveOrderToFirestore({
     required String orderId,
-    required String paymentStatus, // Status pesanan, misal: "order_placed_pending_payment", "cod_pending_confirmation", "va_pending_admin_approval", "settlement", dll.
-    String? snapToken,         // Nullable, karena tidak semua pesanan (misal COD atau VA awal) memiliki snapToken
+    required String
+    paymentStatus, // Status pesanan, misal: "order_placed_pending_payment", "cod_pending_confirmation", "va_pending_admin_approval", "settlement", dll.
+    String?
+    snapToken, // Nullable, karena tidak semua pesanan (misal COD atau VA awal) memiliki snapToken
     required int totalPrice,
     required String customerName,
+    required String customerEmail,
     required String customerPhone,
     required String customerAddress,
-    required String peopleCountText, // Jumlah orang dalam bentuk teks, akan di-parse ke int
-    required dynamic detailItemValue, // Bisa TourPackage atau Event, atau null jika tidak relevan saat update
-    required String itemType,         // 'tour' atau 'event'
-    required String itemId,           // ID dari TourPackage atau Event
-    required DateTime? selectedDateValue, // Tanggal booking untuk tour, atau tanggal event
+    required String
+    peopleCountText, // Jumlah orang dalam bentuk teks, akan di-parse ke int
+    required dynamic
+    detailItemValue, // Bisa TourPackage atau Event, atau null jika tidak relevan saat update
+    required String itemType, // 'tour' atau 'event'
+    required String itemId, // ID dari TourPackage atau Event
+    required DateTime?
+    selectedDateValue, // Tanggal booking untuk tour, atau tanggal event
     required List<String> peopleNamesValues,
-    String? paymentMethodType,  // Nullable, misal: 'cod', 'virtual_account', 'webview_snap', atau null/not_selected
+    String?
+    paymentMethodType, // Nullable, misal: 'cod', 'virtual_account', 'webview_snap', atau null/not_selected
     bool isUpdate = false, // Flag untuk membedakan pembuatan baru atau update
   }) async {
     try {
-      final int peopleCount = int.tryParse(peopleCountText.isEmpty ? "1" : peopleCountText) ?? 1;
+      final int peopleCount =
+          int.tryParse(peopleCountText.isEmpty ? "1" : peopleCountText) ?? 1;
       final TourPackage? tour =
           (itemType == 'tour' && detailItemValue is TourPackage)
               ? detailItemValue
@@ -48,9 +56,13 @@ class OrderService extends GetxService {
         "userId": _authController.uid,
         "itemType": itemType,
         "itemId": itemId,
-        "packageTitle": tour?.title, // Akan null jika bukan tour atau detailItemValue null
-        "eventTitle": event?.title,   // Akan null jika bukan event atau detailItemValue null
+        "packageTitle":
+            tour?.title, // Akan null jika bukan tour atau detailItemValue null
+        "eventTitle":
+            event
+                ?.title, // Akan null jika bukan event atau detailItemValue null
         "customerName": customerName,
+        "customerEmail": customerEmail,
         "customerPhone": customerPhone,
         "customerAddress": customerAddress,
         "peopleCount": peopleCount,
@@ -64,7 +76,8 @@ class OrderService extends GetxService {
         "totalPrice": totalPrice,
         "status": paymentStatus,
         "paymentMethodType": paymentMethodType, // Bisa null jika belum dipilih
-        "updatedAt": FieldValue.serverTimestamp(), // Selalu update timestamp ini
+        "updatedAt":
+            FieldValue.serverTimestamp(), // Selalu update timestamp ini
       };
 
       // Hanya tambahkan field ini jika ini adalah pembuatan order baru
@@ -79,29 +92,37 @@ class OrderService extends GetxService {
       // Namun, jika ini adalah metode save/update generik, menyertakannya (bahkan sbg null) lebih sederhana.
       orderData["snapToken"] = snapToken;
 
-
       // Menggunakan .set() dengan merge: true akan membuat dokumen baru jika tidak ada,
       // atau memperbarui field yang ada jika dokumen sudah ada, tanpa menghapus field lain.
       // Jika ingin overwrite total (misal saat save awal), merge: false (default .set()).
       // Untuk metode save/update generik, merge:true lebih aman untuk update.
       // Tapi karena kita juga menangani pembuatan awal, kita bisa bedakan.
       if (isUpdate) {
-        await _firestore.collection("orders").doc(orderId).set(orderData, SetOptions(merge: true));
-         print("✅ Order berhasil diperbarui di Firestore dengan ID: $orderId");
+        await _firestore
+            .collection("orders")
+            .doc(orderId)
+            .set(orderData, SetOptions(merge: true));
+        print("✅ Order berhasil diperbarui di Firestore dengan ID: $orderId");
       } else {
         await _firestore.collection("orders").doc(orderId).set(orderData);
         print("✅ Order berhasil disimpan ke Firestore dengan ID: $orderId");
       }
-
     } catch (e) {
-      print("❌ Gagal menyimpan/memperbarui order di Firestore (OrderService): $e");
+      print(
+        "❌ Gagal menyimpan/memperbarui order di Firestore (OrderService): $e",
+      );
       Get.snackbar("Error Database", "Gagal memproses data pesanan: $e");
       rethrow; // Lemparkan kembali error agar bisa ditangani di pemanggil jika perlu
     }
   }
 
   /// Contoh metode untuk memperbarui status pesanan secara spesifik
-  Future<void> updateOrderStatus(String orderId, String newStatus, {String? paymentMethod, String? updatedSnapToken}) async {
+  Future<void> updateOrderStatus(
+    String orderId,
+    String newStatus, {
+    String? paymentMethod,
+    String? updatedSnapToken,
+  }) async {
     try {
       Map<String, dynamic> dataToUpdate = {
         'status': newStatus,
@@ -110,7 +131,8 @@ class OrderService extends GetxService {
       if (paymentMethod != null) {
         dataToUpdate['paymentMethodType'] = paymentMethod;
       }
-      if (updatedSnapToken != null) { // Jika ada snapToken baru saat pembayaran VA
+      if (updatedSnapToken != null) {
+        // Jika ada snapToken baru saat pembayaran VA
         dataToUpdate['snapToken'] = updatedSnapToken;
       }
 

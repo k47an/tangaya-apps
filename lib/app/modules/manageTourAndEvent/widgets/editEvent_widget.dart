@@ -1,8 +1,6 @@
-import 'dart:io'; // Untuk File
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Untuk TextInputFormatter
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart'; // Untuk ImagePicker
 import 'package:intl/intl.dart'; // Untuk DateFormat dan NumberFormat
 import 'package:tangaya_apps/app/data/models/event_model.dart'; // Model Event Anda
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/controllers/manage_tour_event_controller.dart'; // Controller Anda

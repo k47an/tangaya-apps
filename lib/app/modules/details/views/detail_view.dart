@@ -1,4 +1,5 @@
-// detail_pack_view.dart
+// detail_view.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -21,6 +22,12 @@ class DetailView extends GetView<DetailController> {
             child: CircularProgressIndicator(color: Primary.mainColor),
           );
         }
+        if (controller.detailItem.value == null &&
+            !controller.isLoading.value) {
+          return const Center(
+            child: Text("Detail item tidak ditemukan atau gagal dimuat."),
+          );
+        }
         return _buildBody(context);
       }),
     );
@@ -38,14 +45,8 @@ class DetailView extends GetView<DetailController> {
 
   Widget _buildBody(BuildContext context) {
     final item = controller.detailItem.value;
-
     if (item == null) {
-      return Center(
-        child: Text(
-          "${controller.itemType == 'tour' ? 'Paket wisata' : 'Event'} tidak ditemukan.",
-          style: const TextStyle(color: Colors.grey),
-        ),
-      );
+      return const Center(child: Text("Data item tidak tersedia."));
     }
 
     return SingleChildScrollView(
@@ -56,7 +57,7 @@ class DetailView extends GetView<DetailController> {
           _buildItemImage(item),
           const SizedBox(height: 16),
           Text(
-            item.title ?? '',
+            item.title ?? 'Tanpa Judul',
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -67,7 +68,10 @@ class DetailView extends GetView<DetailController> {
           _buildItemPriceLocation(item),
           const SizedBox(height: 16),
           Text(
-            item.description ?? '',
+            (item is TourPackage
+                    ? item.description
+                    : (item is Event ? item.description : '')) ??
+                'Tidak ada deskripsi.',
             style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),
           const SizedBox(height: 24),
@@ -87,13 +91,23 @@ class DetailView extends GetView<DetailController> {
     if (item is Event && item.imageUrl.isNotEmpty) {
       return _buildEventImage(item.imageUrl);
     }
-    return const SizedBox.shrink();
+    return Container(
+      height: 200,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Center(
+        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+      ),
+    );
   }
 
   Widget _buildItemPriceLocation(dynamic item) {
     if (item is TourPackage) {
       return Text(
-        "Rp ${NumberFormat('#,###', 'id_ID').format(item.price ?? 0)}",
+        "Rp ${NumberFormat('#,###', 'id_ID').format(item.price ?? 0)} / orang",
         style: TextStyle(
           fontSize: 20,
           color: Primary.mainColor,
@@ -102,8 +116,18 @@ class DetailView extends GetView<DetailController> {
       );
     }
     if (item is Event) {
+      String eventDisplay = "";
+      num price = item.price ?? 0;
+      if (price > 0) {
+        eventDisplay = "Rp ${NumberFormat('#,###', 'id_ID').format(price)}";
+        if (item.location.isNotEmpty) eventDisplay += " - ${item.location}";
+      } else if (item.location.isNotEmpty) {
+        eventDisplay = item.location;
+      } else {
+        eventDisplay = "Detail event";
+      }
       return Text(
-        item.location,
+        eventDisplay,
         style: const TextStyle(fontSize: 16, color: Colors.grey),
       );
     }
@@ -194,7 +218,12 @@ class DetailView extends GetView<DetailController> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        onPressed: () => showOrderBottomSheet(context),
+        onPressed: () {
+          if (controller.itemType == 'tour') {
+            controller.fetchUnavailableDates();
+          }
+          showOrderBottomSheet(context);
+        },
         child: Text(
           controller.itemType == 'tour' ? "Pesan Paket Ini" : "Ikuti Event Ini",
           style: const TextStyle(fontSize: 18),
@@ -204,30 +233,36 @@ class DetailView extends GetView<DetailController> {
   }
 
   Widget _buildTextField(
-    TextEditingController controller,
+    TextEditingController tc,
     String label, {
     bool readOnly = false,
     VoidCallback? onTap,
+    TextInputType? keyboardType,
+    void Function(String)? onChanged,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
-        controller: controller,
+        controller: tc,
         decoration: InputDecoration(
           hintText: label,
+          labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
         ),
         readOnly: readOnly,
         onTap: onTap,
+        keyboardType: keyboardType,
+        onChanged: onChanged,
       ),
     );
   }
 
   void showOrderBottomSheet(BuildContext context) {
-    controller.fetchUnavailableDates();
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(
+          16,
+        ).copyWith(bottom: MediaQuery.of(context).viewInsets.bottom + 16),
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -235,56 +270,62 @@ class DetailView extends GetView<DetailController> {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               _buildBottomSheetTitle(),
               const SizedBox(height: 16),
               _buildTextField(controller.nameC, "Nama Lengkap"),
-              _buildTextField(controller.phoneC, "Nomor Telepon"),
+              _buildTextField(
+                controller.phoneC,
+                "Nomor Telepon",
+                keyboardType: TextInputType.phone,
+              ),
               _buildTextField(controller.addressC, "Alamat"),
               const SizedBox(height: 16),
               const Text(
-                "Jumlah Orang (Opsional)",
+                "Jumlah Orang",
                 style: TextStyle(fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
-              TextField(
-                controller: controller.peopleC,
+              _buildTextField(
+                controller.peopleC,
+                "Masukkan jumlah orang",
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  hintText: 'Masukkan jumlah orang',
-                ),
                 onChanged: (value) {
                   final count = int.tryParse(value) ?? 0;
                   controller.setPeopleCount(count);
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               Obx(
                 () =>
                     controller.peopleCount.value > 0
                         ? Column(
-                          children: List.generate(
-                            controller.peopleCount.value,
-                            (i) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: _buildTextField(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Nama Peserta:",
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(height: 8),
+                            ...List.generate(controller.peopleCount.value, (i) {
+                              if (i < controller.peopleNames.length) {
+                                return _buildTextField(
                                   controller.peopleNames[i],
                                   "Nama Orang ke-${i + 1}",
-                                ),
-                              );
-                            },
-                          ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            }),
+                          ],
                         )
                         : const SizedBox.shrink(),
               ),
               const SizedBox(height: 16),
+
               if (controller.itemType == 'tour') ...[
                 const Text(
-                  "Pilih Tanggal",
+                  "Pilih Tanggal Booking",
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
@@ -295,51 +336,38 @@ class DetailView extends GetView<DetailController> {
                       initialDate:
                           controller.selectedDate.value ??
                           DateTime.now().add(const Duration(days: 1)),
-                      firstDate: DateTime.now(),
+                      firstDate: DateTime.now().add(const Duration(days: 1)),
                       lastDate: DateTime.now().add(const Duration(days: 365)),
-                      selectableDayPredicate: (date) {
-                        return !controller.unavailableDates.any(
-                          (d) =>
-                              d.year == date.year &&
-                              d.month == date.month &&
-                              d.day == date.day,
-                        );
-                      },
+                      selectableDayPredicate:
+                          (date) =>
+                              !controller.unavailableDates.any(
+                                (d) => DateUtils.isSameDay(d, date),
+                              ),
                     );
                     if (picked != null) {
                       controller.selectedDate.value = picked;
                       controller.selectedDateFormatted.value = DateFormat(
-                        'dd-MM-yyyy',
+                        'dd MMMM yyyy',
+                        'id_ID',
                       ).format(picked);
-                      controller.dateC.text =
-                          controller.selectedDateFormatted.value;
                     }
                   },
-                  child: IgnorePointer(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Obx(
-                        () => TextField(
-                          key: ValueKey(controller.selectedDateFormatted.value),
-                          controller: TextEditingController(
-                            text: controller.selectedDateFormatted.value,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "Tanggal",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          readOnly: true,
+                  child: AbsorbPointer(
+                    child: Obx(
+                      () => _buildTextField(
+                        TextEditingController(
+                          text: controller.selectedDateFormatted.value,
                         ),
+                        "Tanggal Booking",
+                        readOnly: true,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
               ],
+
               if (controller.itemType == 'event') ...[
-                const SizedBox(height: 24),
                 const Text(
                   "Tanggal Event",
                   style: TextStyle(fontWeight: FontWeight.w500),
@@ -348,19 +376,26 @@ class DetailView extends GetView<DetailController> {
                 Obx(
                   () => Text(
                     controller.detailItem.value?.eventDate != null
-                        ? DateFormat(
-                          'dd-MM-yyyy',
-                        ).format((controller.detailItem.value!.eventDate))
+                        ? DateFormat('dd MMMM yyyy', 'id_ID').format(
+                          (controller.detailItem.value!.eventDate as Timestamp)
+                              .toDate(),
+                        )
                         : 'Tanggal belum ditentukan',
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
                 const SizedBox(height: 24),
               ],
+
+              // BAGIAN PEMILIHAN METODE PEMBAYARAN DIHAPUS DARI SINI
+              // const Text("Pilih Metode Pembayaran", style: TextStyle(fontWeight: FontWeight.w500)),
+              // Obx(() => Column(children: [ ... RadioListTiles ... ])),
+              const SizedBox(height: 24), // Sesuaikan spacing jika perlu
+
               SizedBox(
                 width: double.infinity,
                 child: Obx(
                   () => ElevatedButton(
-                    key: const Key('event_submit_button'), // Key opsional
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Primary.mainColor,
                       foregroundColor: Colors.white,
@@ -375,8 +410,13 @@ class DetailView extends GetView<DetailController> {
                             : controller.submitOrder,
                     child:
                         controller.isOrdering.value
-                            ? const CircularProgressIndicator(
-                              color: Colors.white,
+                            ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
                             )
                             : Text(
                               controller.itemType == 'tour'

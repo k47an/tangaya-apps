@@ -15,6 +15,7 @@ abstract class Routes {
   static const MANAGE_EVENT_TOUR = _Paths.MANAGE_EVENT_TOUR;
   static const DETAIL = _Paths.DETAIL;
   static const NOTIFICATION = _Paths.NOTIFICATION;
+  static const PAYMENT = _Paths.PAYMENT;
 }
 
 abstract class _Paths {
@@ -31,4 +32,5 @@ abstract class _Paths {
   static const MANAGE_EVENT_TOUR = '/manage-tour';
   static const DETAIL = '/detail-pack';
   static const NOTIFICATION = '/notification';
+  static const PAYMENT = '/payment';
 }

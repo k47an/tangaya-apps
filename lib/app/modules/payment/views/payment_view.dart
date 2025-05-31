@@ -4,8 +4,6 @@ import 'package:tangaya_apps/app/modules/payment/controllers/payment_controller.
 import 'package:webview_flutter/webview_flutter.dart';
 
 
-
-// Sekarang menjadi GetView
 class PaymentView extends GetView<PaymentController> {
   const PaymentView({super.key});
 

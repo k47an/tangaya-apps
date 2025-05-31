@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/admin/views/components/orderView.dart';
+import 'package:tangaya_apps/app/modules/payment/bindings/payment_binding.dart';
+import 'package:tangaya_apps/app/modules/payment/views/payment_view.dart';
 import '../modules/admin/bindings/admin_binding.dart';
 import '../modules/admin/views/admin_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
@@ -89,6 +91,11 @@ class AppPages {
       name: _Paths.NOTIFICATION,
       page: () => const NotificationView(),
       binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT,
+      page: () => const PaymentView(),
+      binding: PaymentBinding(),
     ),
   ];
 }
