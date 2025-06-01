@@ -111,11 +111,17 @@ class OrderView extends GetView<AdminController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Riwayat Pesanan Terproses'),
-        backgroundColor:
-            Primary
-                .mainColor, // Menggunakan Primary.mainColor dari constant.dart
-        foregroundColor: Colors.white,
+        backgroundColor: Primary.darkColor,
+        centerTitle: true,
+        elevation: 0,
+        title: Text(
+          "Riwayat Pemesanan ",
+          style: semiBold.copyWith(color: Colors.white, fontSize: 18),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: Obx(() {
         if (controller.isLoadingOrders.value) {

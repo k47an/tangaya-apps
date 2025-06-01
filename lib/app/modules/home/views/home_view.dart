@@ -89,9 +89,14 @@ class HomeView extends GetView<HomeController> {
       child: Obx(() {
         return TabBar(
           controller: controller.tabController,
-          indicator: const BoxDecoration(color: Colors.transparent),
+          indicator: UnderlineTabIndicator(
+            borderSide: BorderSide(width: 2.0, color: Neutral.white2),
+            insets: EdgeInsets.symmetric(
+              horizontal: ScaleHelper.scaleWidthForDevice(32),
+            ),
+          ),
           indicatorSize: TabBarIndicatorSize.label,
-          dividerColor: Neutral.transparent,
+          dividerColor: Colors.transparent,
           labelPadding: EdgeInsets.zero,
           tabs: List.generate(controller.tabs.length, (index) {
             final isSelected = controller.currentTab.value == index;
@@ -100,14 +105,11 @@ class HomeView extends GetView<HomeController> {
                 controller.tabController.animateTo(index);
                 controller.currentTab.value = index;
               },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  color: isSelected ? Primary.subtleColor : Colors.transparent,
-                  borderRadius: BorderRadius.circular(40),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: ScaleHelper.scaleHeightForDevice(
+                    5,
+                  ), // Tambahkan jarak antara garis dan text
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -116,16 +118,16 @@ class HomeView extends GetView<HomeController> {
                       controller.getTabIcon(index),
                       width: ScaleHelper.scaleWidthForDevice(20),
                       height: ScaleHelper.scaleHeightForDevice(20),
-                      color: isSelected ? Primary.darkColor : Neutral.white2,
+                      color: isSelected ? Neutral.white1 : Neutral.white4,
                     ),
                     SizedBox(width: ScaleHelper.scaleWidthForDevice(8)),
                     Text(
                       controller.getTabTitle(index),
                       style: TextStyle(
-                        color: isSelected ? Primary.darkColor : Neutral.white2,
+                        color: isSelected ? Neutral.white1 : Neutral.white4,
                         fontSize: ScaleHelper.scaleTextForDevice(14),
                         fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
+                            isSelected ? FontWeight.w800 : FontWeight.normal,
                       ),
                     ),
                   ],

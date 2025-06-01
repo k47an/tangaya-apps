@@ -24,6 +24,7 @@ dependencies:
   carousel_slider: ^5.0.0
   cached_network_image: ^3.4.1
   webview_flutter: ^4.13.0
+  flutter_launcher_icons: ^0.14.3
 
 dev_dependencies:
   flutter_test:
@@ -51,3 +52,8 @@ flutter:
           weight: 700
         - asset: assets/fonts/Poppins-ExtraBold.ttf
           weight: 800
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo.png"

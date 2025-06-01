@@ -22,9 +22,32 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
               Column(
                 children: [
                   Container(
-                    color: Primary.mainColor,
+                    padding: EdgeInsets.symmetric(
+                      vertical: ScaleHelper.scaleHeightForDevice(10),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Primary.darkColor,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(
+                          ScaleHelper.scaleWidthForDevice(20),
+                        ),
+                        bottomRight: Radius.circular(
+                          ScaleHelper.scaleWidthForDevice(20),
+                        ),
+                      ),
+                    ),
                     child: TabBar(
-                      indicatorColor: Colors.white,
+                      dividerColor: Neutral.transparent,
+                      labelColor: Colors.white,
+                      indicatorColor: Neutral.transparent,
+                      unselectedLabelColor: Colors.white70,
+                      labelStyle: semiBold.copyWith(
+                        fontSize: ScaleHelper.scaleTextForDevice(16),
+                      ),
+                      unselectedLabelStyle: regular.copyWith(
+                        fontSize: ScaleHelper.scaleTextForDevice(14),
+                      ),
+                      indicatorSize: TabBarIndicatorSize.tab,
                       tabs: [
                         Tab(icon: const Icon(Icons.tour), text: 'Paket Wisata'),
                         Tab(icon: const Icon(Icons.event), text: 'Event'),
@@ -48,8 +71,13 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
                 bottom: ScaleHelper.scaleHeightForDevice(20),
                 left: ScaleHelper.scaleWidthForDevice(20),
                 child: FloatingActionButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  elevation: 5,
                   onPressed: () => _showAddBottomSheet(context),
-                  backgroundColor: Primary.mainColor,
+                  backgroundColor: Primary.darkColor,
+                  foregroundColor: Neutral.white1,
                   child: const Icon(Icons.add),
                 ),
               ),
@@ -62,16 +90,19 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new),
-        onPressed: () => Get.back(),
-      ),
-      backgroundColor: Primary.mainColor,
+      backgroundColor: Primary.darkColor,
       centerTitle: true,
+      elevation: 0,
       title: Text(
-        "Manajemen Tours & Events",
-        style: semiBold.copyWith(color: Colors.white, fontSize: 16),
-        overflow: TextOverflow.ellipsis,
+        "Manajemen Paket Wisata & Event",
+        style: semiBold.copyWith(
+          color: Colors.white,
+          fontSize: ScaleHelper.scaleTextForDevice(18),
+        ),
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+        onPressed: () => Get.back(),
       ),
     );
   }

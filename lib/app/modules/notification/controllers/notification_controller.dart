@@ -308,7 +308,6 @@ class NotificationController extends GetxController {
       "DEBUG: updateOrderStatusAfterPayment called with status: ${paymentResult.transactionStatus} for order: ${paymentResult.orderId}",
     );
 
-    String newStatusBasedOnMidtrans = paymentResult.transactionStatus;
     String? finalAppStatus;
 
     // Mapping status Midtrans ke status aplikasi Anda

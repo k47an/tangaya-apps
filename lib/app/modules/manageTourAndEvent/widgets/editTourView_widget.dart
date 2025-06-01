@@ -96,7 +96,7 @@ class _EditTourViewState extends State<EditTourView> {
         ),
       ),
       centerTitle: true,
-      backgroundColor: Primary.mainColor,
+      backgroundColor: Primary.darkColor,
     );
   }
 

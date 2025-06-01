@@ -24,7 +24,7 @@ class AdminView extends GetView<AdminController> {
       child: Scaffold(
         backgroundColor: Neutral.white4,
         appBar: AppBar(
-          backgroundColor: Primary.mainColor,
+          backgroundColor: Primary.darkColor,
           centerTitle: true,
           elevation: 0,
           title: Text(

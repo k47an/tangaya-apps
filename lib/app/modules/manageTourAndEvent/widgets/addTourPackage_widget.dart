@@ -35,7 +35,7 @@ class AddTourPackageView extends StatelessWidget {
             color: Neutral.white1,
           ),
         ),
-        backgroundColor: Primary.mainColor,
+        backgroundColor: Primary.darkColor,
         iconTheme: const IconThemeData(color: Neutral.white1),
         centerTitle: true,
         elevation: 5.0,
@@ -284,7 +284,7 @@ class AddTourPackageView extends StatelessWidget {
                     foregroundColor: Neutral.white1,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(50),
                     ),
                     textStyle: semiBold.copyWith(fontSize: 16),
                   ),
