@@ -8,7 +8,7 @@ class MidtransService {
   // Kredensial Midtrans Anda (Sandbox)
   // static const String _merchantId = 'G504648997'; // Ganti jika perlu
   // static const String _clientKey =
-      'SB-Mid-client-PiR75Nck1zn_QgZp'; // Ganti jika perlu
+  // 'SB-Mid-client-PiR75Nck1zn_QgZp'; // Ganti jika perlu
   static const String _serverKey =
       'SB-Mid-server-G26K49GHhN6aFnx5E9GCPMgj'; // Ganti jika perlu
 

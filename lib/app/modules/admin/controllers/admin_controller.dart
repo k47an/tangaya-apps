@@ -65,7 +65,7 @@ class AdminController extends GetxController {
       final snapshot = await _firestore.collection('users').get();
       final userList =
           snapshot.docs
-              .map((doc) => UserModel.fromMap({'id': doc.id, ...doc.data()!}))
+              .map((doc) => UserModel.fromMap({'id': doc.id, ...doc.data()}))
               .toList();
       users.assignAll(userList);
     } catch (e) {

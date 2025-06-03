@@ -125,8 +125,7 @@ class ProfileView extends GetView<ProfileController> {
                               child: Text(
                                 user.role == 'user'
                                     ? 'Pengunjung'
-                                    : (user.role!.capitalizeFirst ??
-                                        user.role!),
+                                    : (user.role.capitalizeFirst ?? user.role),
                                 style: medium.copyWith(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 13,
@@ -189,7 +188,7 @@ class ProfileView extends GetView<ProfileController> {
 
     String displayPhone =
         controller.phoneController.text.trim().isEmpty &&
-                (user?.phone?.isEmpty ?? true)
+                (user?.phone.isEmpty ?? true)
             ? "-"
             : controller.phoneController.text.trim().isNotEmpty
             ? controller.phoneController.text
@@ -197,7 +196,7 @@ class ProfileView extends GetView<ProfileController> {
 
     String displayAddress =
         controller.addressController.text.trim().isEmpty &&
-                (user?.address?.isEmpty ?? true)
+                (user?.address.isEmpty ?? true)
             ? "-"
             : controller.addressController.text.trim().isNotEmpty
             ? controller.addressController.text
@@ -205,7 +204,7 @@ class ProfileView extends GetView<ProfileController> {
 
     String displayGender =
         controller.selectedGender.value?.isEmpty ?? true
-            ? (user?.gender?.isEmpty ?? true ? "-" : user!.gender!)
+            ? (user?.gender.isEmpty ?? true ? "-" : user!.gender)
             : controller.selectedGender.value!;
 
     return Container(
@@ -334,7 +333,7 @@ class ProfileView extends GetView<ProfileController> {
   void _showEditDialog(BuildContext context) {
     final user = controller.userModel;
 
-    InputDecoration _inputDecoration(
+    InputDecoration inputDecoration(
       String label,
       IconData prefixIcon, {
       String? hint,
@@ -392,7 +391,7 @@ class ProfileView extends GetView<ProfileController> {
               children: [
                 TextFormField(
                   controller: controller.nameController,
-                  decoration: _inputDecoration(
+                  decoration: inputDecoration(
                     "Nama Lengkap",
                     Icons.person_outline_rounded,
                   ),
@@ -407,7 +406,7 @@ class ProfileView extends GetView<ProfileController> {
                 TextFormField(
                   controller: TextEditingController(text: user?.email ?? ''),
                   enabled: false,
-                  decoration: _inputDecoration(
+                  decoration: inputDecoration(
                     "Email",
                     Icons.email_outlined,
                     hint: "Email (tidak dapat diubah)",
@@ -417,7 +416,7 @@ class ProfileView extends GetView<ProfileController> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: controller.phoneController,
-                  decoration: _inputDecoration(
+                  decoration: inputDecoration(
                     "Nomor HP",
                     Icons.phone_iphone_rounded,
                   ),
@@ -434,7 +433,7 @@ class ProfileView extends GetView<ProfileController> {
                   controller: controller.addressController,
                   maxLines: 3,
                   minLines: 1,
-                  decoration: _inputDecoration(
+                  decoration: inputDecoration(
                     "Alamat",
                     Icons.location_on_outlined,
                   ),
@@ -452,7 +451,7 @@ class ProfileView extends GetView<ProfileController> {
                         controller.selectedGender.value?.isNotEmpty == true
                             ? controller.selectedGender.value
                             : null,
-                    decoration: _inputDecoration(
+                    decoration: inputDecoration(
                       "Jenis Kelamin",
                       Icons.wc_rounded,
                       hint: "Pilih Jenis Kelamin",
