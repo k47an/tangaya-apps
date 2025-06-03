@@ -23,6 +23,7 @@ mixin TourMixin on GetxController {
       <File?>[].obs; // Tetap File? untuk fleksibilitas picker
   final RxList<String> tourPackageImagesToDelete = <String>[].obs;
   final RxList<String> currentTourPackageImageUrls = <String>[].obs;
+  RxBool isTourPackageFormSubmitted = false.obs;
 
   // Data List
   final RxList<TourPackage> tourPackages = <TourPackage>[].obs;

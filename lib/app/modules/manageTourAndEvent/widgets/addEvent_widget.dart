@@ -17,55 +17,63 @@ class AddEventView extends StatelessWidget {
     // Untuk form tambah, biasanya lebih baik bersih saat masuk.
     // controller.clearEventForm(); // Pertimbangkan penempatan ini
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Tambah Event",
-          style: semiBold.copyWith(
-            fontSize: ScaleHelper.scaleTextForDevice(20),
-            color: Neutral.white1,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Tambah Event",
+            style: semiBold.copyWith(
+              fontSize: ScaleHelper.scaleTextForDevice(20),
+              color: Neutral.white1,
+            ),
           ),
+          backgroundColor: Primary.darkColor,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              controller.clearEventForm(); // Bersihkan form saat kembali manual
+              Get.back();
+            },
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+          ),
+          centerTitle: true,
+          elevation: 5.0,
+          iconTheme: const IconThemeData(color: Neutral.white1),
         ),
-        backgroundColor: Primary.darkColor,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () {
-            controller.clearEventForm(); // Bersihkan form saat kembali manual
-            Get.back();
-          },
-        ),
-        centerTitle: true,
-        elevation: 5.0,
-        iconTheme: const IconThemeData(color: Neutral.white1),
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
-        child: Form(
-          key: controller.eventFormKey,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildTextInput(controller.eventTitleController, 'Judul Event'),
-                const SizedBox(height: 12),
-                _buildTextArea(
-                  controller.eventDescriptionController,
-                  'Deskripsi Event',
-                ),
-                const SizedBox(height: 12),
-                _buildTextInput(controller.eventLocationController, 'Lokasi'),
-                const SizedBox(height: 12),
-                _buildPriceInput(
-                  // <-- Tambahkan input harga
-                  controller.eventPriceController,
-                  'Harga Event',
-                ),
-                const SizedBox(height: 12),
-                _buildDatePicker(controller),
-                const SizedBox(height: 12),
-                _buildImagePicker(controller),
-                const SizedBox(height: 24),
-                _buildSaveButton(controller),
-              ],
+        body: Padding(
+          padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
+          child: Form(
+            key: controller.eventFormKey,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildTextInput(
+                    controller.eventTitleController,
+                    'Judul Event',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildTextArea(
+                    controller.eventDescriptionController,
+                    'Deskripsi Event',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildTextInput(controller.eventLocationController, 'Lokasi'),
+                  const SizedBox(height: 12),
+                  _buildPriceInput(
+                    // <-- Tambahkan input harga
+                    controller.eventPriceController,
+                    'Harga Event',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildDatePicker(controller),
+                  const SizedBox(height: 12),
+                  _buildImagePicker(controller),
+                  const SizedBox(height: 24),
+                  _buildSaveButton(controller),
+                ],
+              ),
             ),
           ),
         ),

@@ -19,61 +19,68 @@ class AddTourPackageView extends StatelessWidget {
     //   controller.clearTourPackageForm();
     // });
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () {
-            // controller.clearTourPackageForm(); // Opsional: Bersihkan form saat kembali manual
-            Get.back();
-          },
-        ),
-        title: Text(
-          "Tambah Paket Wisata",
-          style: semiBold.copyWith(
-            fontSize: ScaleHelper.scaleTextForDevice(20),
-            color: Neutral.white1,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              // controller.clearTourPackageForm(); // Opsional: Bersihkan form saat kembali manual
+              Get.back();
+            },
+          ),
+          title: Text(
+            "Tambah Paket Wisata",
+            style: semiBold.copyWith(
+              fontSize: ScaleHelper.scaleTextForDevice(20),
+              color: Neutral.white1,
+            ),
+          ),
+          backgroundColor: Primary.darkColor,
+          iconTheme: const IconThemeData(color: Neutral.white1),
+          centerTitle: true,
+          elevation: 5.0,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
           ),
         ),
-        backgroundColor: Primary.darkColor,
-        iconTheme: const IconThemeData(color: Neutral.white1),
-        centerTitle: true,
-        elevation: 5.0,
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
-        child: Form(
-          key:
-              controller
-                  .tourPackageFormKey, // Menggunakan formKey dari TourMixin
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Agar label rata kiri
-              children: [
-                _buildTextInput(
-                  controller.tourPackageTitleController,
-                  'Judul Paket Wisata',
-                ),
-                const SizedBox(height: 12),
-                _buildDescriptionInput(
-                  controller.tourPackageDescriptionController,
-                  'Deskripsi',
-                ), // Menggunakan controller dari TourMixin
-                const SizedBox(height: 12),
-                _buildTextInput(
-                  controller.tourPackagePriceController,
-                  'Harga',
-                  isNumber: true,
-                  prefixText: 'Rp ', // Tambahkan prefix Rp
-                ),
-                const SizedBox(
-                  height: 16,
-                ), // Beri jarak lebih sebelum image picker
-                _buildImagePicker(controller), // Image Picker yang dimodifikasi
-                const SizedBox(height: 24), // Jarak sebelum tombol simpan
-                _buildSaveButton(controller),
-              ],
+        body: Padding(
+          padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
+          child: Form(
+            key:
+                controller
+                    .tourPackageFormKey, // Menggunakan formKey dari TourMixin
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start, // Agar label rata kiri
+                children: [
+                  _buildTextInput(
+                    controller.tourPackageTitleController,
+                    'Judul Paket Wisata',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildDescriptionInput(
+                    controller.tourPackageDescriptionController,
+                    'Deskripsi',
+                  ), // Menggunakan controller dari TourMixin
+                  const SizedBox(height: 12),
+                  _buildTextInput(
+                    controller.tourPackagePriceController,
+                    'Harga',
+                    isNumber: true,
+                    prefixText: 'Rp ', // Tambahkan prefix Rp
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ), // Beri jarak lebih sebelum image picker
+                  _buildImagePicker(
+                    controller,
+                  ), // Image Picker yang dimodifikasi
+                  const SizedBox(height: 24), // Jarak sebelum tombol simpan
+                  _buildSaveButton(controller),
+                ],
+              ),
             ),
           ),
         ),

@@ -17,6 +17,7 @@ void main() async {
   Get.put(ManageTourEventController());
   runApp(
     GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "Pokdarwis Tangaya",
       initialRoute: AppPages.initial,
       getPages: AppPages.routes,

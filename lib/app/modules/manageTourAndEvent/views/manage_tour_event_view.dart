@@ -12,9 +12,9 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: SafeArea(
+    return SafeArea(
+      child: DefaultTabController(
+        length: 2,
         child: Scaffold(
           appBar: _buildAppBar(context),
           body: Stack(

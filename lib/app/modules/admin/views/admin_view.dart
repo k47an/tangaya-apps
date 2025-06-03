@@ -21,51 +21,53 @@ class AdminView extends GetView<AdminController> {
         homeC.refreshData();
         return true;
       },
-      child: Scaffold(
-        backgroundColor: Neutral.white4,
-        appBar: AppBar(
-          backgroundColor: Primary.darkColor,
-          centerTitle: true,
-          elevation: 0,
-          title: Text(
-            "Profil Admin",
-            style: semiBold.copyWith(color: Colors.white),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-            onPressed: () {
-              final homeC = Get.find<HomeController>();
-              homeC.refreshData();
-              Get.back();
-            },
-          ),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-          ),
-        ),
-        body: Obx(() {
-          final isLoading = controller.isLoading.value;
-          final user = controller.userModel.value;
-
-          if (isLoading || user == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _buildProfileHeader(user),
-                const SizedBox(height: 24),
-                _buildInfoSection(user),
-                const SizedBox(height: 24),
-                _buildNavigationSection(),
-                const SizedBox(height: 24),
-                _buildLogoutButton(),
-              ],
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Neutral.white4,
+          appBar: AppBar(
+            backgroundColor: Primary.darkColor,
+            centerTitle: true,
+            elevation: 0,
+            title: Text(
+              "Profil Admin",
+              style: semiBold.copyWith(color: Colors.white),
             ),
-          );
-        }),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              onPressed: () {
+                final homeC = Get.find<HomeController>();
+                homeC.refreshData();
+                Get.back();
+              },
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+          ),
+          body: Obx(() {
+            final isLoading = controller.isLoading.value;
+            final user = controller.userModel.value;
+
+            if (isLoading || user == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _buildProfileHeader(user),
+                  const SizedBox(height: 24),
+                  _buildInfoSection(user),
+                  const SizedBox(height: 24),
+                  _buildNavigationSection(),
+                  const SizedBox(height: 24),
+                  _buildLogoutButton(),
+                ],
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
@@ -168,7 +170,7 @@ class AdminView extends GetView<AdminController> {
             "Manajemen Paket Wisata dan Event",
             Routes.MANAGE_EVENT_TOUR,
           ),
-          _navigableRow("List Pemesanan", Routes.ORDERVIEW),
+          _navigableRow("Riwayat Pemesanan", Routes.ORDERVIEW),
         ],
       ),
     );

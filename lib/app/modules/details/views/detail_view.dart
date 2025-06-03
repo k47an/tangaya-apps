@@ -13,32 +13,34 @@ class DetailView extends GetView<DetailController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: Primary.mainColor),
-          );
-        }
-        if (controller.detailItem.value == null &&
-            !controller.isLoading.value) {
-          return const Center(
-            child: Text("Detail item tidak ditemukan atau gagal dimuat."),
-          );
-        }
-        // The main content will be a CustomScrollView to allow the image to be part of the scroll
-        // or a Column with a fixed bottom bar. For simplicity with the image, let's use Column + SingleChildScrollView
-        // and a fixed bottomNavigationBar for the booking section.
-        return _buildBodyWithFixedBottomBar(context);
-      }),
-      bottomNavigationBar: Obx(() {
-        // Show booking bar only if item is loaded
-        if (controller.detailItem.value != null &&
-            !controller.isLoading.value) {
-          return _buildBookingBar(context, controller.detailItem.value);
-        }
-        return const SizedBox.shrink(); // Return empty if no item
-      }),
+    return SafeArea(
+      child: Scaffold(
+        body: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(color: Primary.mainColor),
+            );
+          }
+          if (controller.detailItem.value == null &&
+              !controller.isLoading.value) {
+            return const Center(
+              child: Text("Detail item tidak ditemukan atau gagal dimuat."),
+            );
+          }
+          // The main content will be a CustomScrollView to allow the image to be part of the scroll
+          // or a Column with a fixed bottom bar. For simplicity with the image, let's use Column + SingleChildScrollView
+          // and a fixed bottomNavigationBar for the booking section.
+          return _buildBodyWithFixedBottomBar(context);
+        }),
+        bottomNavigationBar: Obx(() {
+          // Show booking bar only if item is loaded
+          if (controller.detailItem.value != null &&
+              !controller.isLoading.value) {
+            return _buildBookingBar(context, controller.detailItem.value);
+          }
+          return const SizedBox.shrink(); // Return empty if no item
+        }),
+      ),
     );
   }
 
@@ -166,13 +168,11 @@ class DetailView extends GetView<DetailController> {
         ),
         // ... (Overlay buttons tetap sama)
         Positioned(
-          top:
-              MediaQuery.of(context).padding.top +
-              10, // Sesuaikan dengan status bar
-          left: 10,
+          top: ScaleHelper.scaleHeightForDevice(10),
+          left: ScaleHelper.scaleWidthForDevice(10),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.35),
+              color: Colors.black.withOpacity(0.70),
               shape: BoxShape.circle,
             ),
             child: IconButton(
@@ -327,7 +327,7 @@ class DetailView extends GetView<DetailController> {
     return Container(
       padding: EdgeInsets.only(
         top: 12,
-        bottom: MediaQuery.of(context).padding.bottom + 12,
+        bottom: ScaleHelper.scaleHeightForDevice(10),
         left: 20,
         right: 20,
       ),
@@ -447,115 +447,37 @@ class DetailView extends GetView<DetailController> {
     // controller.resetFormFields(); // You might need a method like this in your controller
 
     Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.only(
-          top: 20,
-          left: 20,
-          right: 20,
-          bottom:
-              MediaQuery.of(context).viewInsets.bottom +
-              50, // Adjust for keyboard
-        ),
-        decoration: const BoxDecoration(
-          color: Colors.white, // Or a slightly off-white like Color(0xFFF9F9F9)
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: SingleChildScrollView(
-          // Important for keyboard
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildBottomSheetTitle(),
-              const SizedBox(height: 20),
-              _buildTextField(controller.nameC, "Nama Lengkap"),
-              _buildTextField(
-                controller.phoneC,
-                "Nomor Telepon",
-                keyboardType: TextInputType.phone,
-              ),
-              _buildTextField(controller.addressC, "Alamat"),
-              const SizedBox(height: 12),
-              const Text(
-                "Jumlah Orang",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                  color: Primary.darkColor,
+      SafeArea(
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: ScaleHelper.scaleHeightForDevice(20),
+          ),
+          decoration: const BoxDecoration(
+            color:
+                Colors.white, // Or a slightly off-white like Color(0xFFF9F9F9)
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: SingleChildScrollView(
+            // Important for keyboard
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildBottomSheetTitle(),
+                const SizedBox(height: 20),
+                _buildTextField(controller.nameC, "Nama Lengkap"),
+                _buildTextField(
+                  controller.phoneC,
+                  "Nomor Telepon",
+                  keyboardType: TextInputType.phone,
                 ),
-              ),
-              const SizedBox(height: 8),
-              _buildTextField(
-                controller.peopleC,
-                "Masukkan jumlah orang (maks 20)",
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  final count = int.tryParse(value) ?? 0;
-                  if (count > 20) {
-                    controller.setPeopleCount(20);
-                    controller.peopleC.text = '20';
-                    controller.peopleC.selection = TextSelection.fromPosition(
-                      const TextPosition(offset: 2),
-                    );
-                  } else {
-                    controller.setPeopleCount(count);
-                  }
-                },
-              ),
-              Obx(
-                () =>
-                    controller.peopleCount.value > 20
-                        ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            Text(
-                              "Maksimal 20 orang diperbolehkan.",
-                              style: TextStyle(
-                                color: Colors.red.shade700,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        )
-                        : controller.peopleCount.value > 0
-                        ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (controller.peopleCount.value > 1) ...[
-                              const SizedBox(height: 8),
-                              Text(
-                                "Nama Peserta:",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              ...List.generate(controller.peopleCount.value, (
-                                i,
-                              ) {
-                                while (i >= controller.peopleNames.length) {
-                                  controller.peopleNames.add(
-                                    TextEditingController(),
-                                  );
-                                }
-                                return _buildTextField(
-                                  controller.peopleNames[i],
-                                  "Nama Orang ke-${i + 1}",
-                                );
-                              }),
-                            ],
-                          ],
-                        )
-                        : const SizedBox.shrink(),
-              ),
-              const SizedBox(height: 16),
-              if (controller.itemType == 'tour') ...[
+                _buildTextField(controller.addressC, "Alamat"),
+                const SizedBox(height: 12),
                 const Text(
-                  "Pilih Tanggal Booking",
+                  "Jumlah Orang",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
@@ -563,147 +485,230 @@ class DetailView extends GetView<DetailController> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                InkWell(
-                  onTap: () async {
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate:
-                          controller.selectedDate.value ??
-                          DateTime.now().add(const Duration(days: 1)),
-                      firstDate: DateTime.now().add(const Duration(days: 1)),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                      selectableDayPredicate:
-                          (date) =>
-                              !controller.unavailableDates.any(
-                                (d) => DateUtils.isSameDay(d, date),
-                              ),
-                      builder: (context, child) {
-                        // Optional: Theme the date picker
-                        return Theme(
-                          data: ThemeData.light().copyWith(
-                            colorScheme: const ColorScheme.light(
-                              primary:
-                                  Primary.mainColor, // header background color
-                              onPrimary: Colors.white, // header text color
-                              onSurface: Primary.darkColor, // body text color
-                            ),
-                            textButtonTheme: TextButtonThemeData(
-                              style: TextButton.styleFrom(
-                                foregroundColor:
-                                    Primary.mainColor, // button text color
-                              ),
-                            ),
-                          ),
-                          child: child!,
-                        );
-                      },
-                    );
-                    if (picked != null) {
-                      controller.selectedDate.value = picked;
-                      controller.selectedDateFormatted.value = DateFormat(
-                        'dd MMMM yyyy', // Changed format
-                        'id_ID',
-                      ).format(picked);
+                _buildTextField(
+                  controller.peopleC,
+                  "Masukkan jumlah orang (maks 20)",
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    final count = int.tryParse(value) ?? 0;
+                    if (count > 20) {
+                      controller.setPeopleCount(20);
+                      controller.peopleC.text = '20';
+                      controller.peopleC.selection = TextSelection.fromPosition(
+                        const TextPosition(offset: 2),
+                      );
+                    } else {
+                      controller.setPeopleCount(count);
                     }
                   },
-                  child: AbsorbPointer(
-                    child: Obx(
-                      () => _buildTextField(
-                        TextEditingController(
-                          text:
-                              controller.selectedDateFormatted.value.isNotEmpty
-                                  ? controller.selectedDateFormatted.value
-                                  : "Pilih tanggal", // Placeholder
-                        ),
-                        "Tanggal Booking",
-                        readOnly: true,
-                      ),
-                    ),
-                  ),
+                ),
+                Obx(
+                  () =>
+                      controller.peopleCount.value > 20
+                          ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              Text(
+                                "Maksimal 20 orang diperbolehkan.",
+                                style: TextStyle(
+                                  color: Colors.red.shade700,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          )
+                          : controller.peopleCount.value > 0
+                          ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (controller.peopleCount.value > 1) ...[
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Nama Peserta:",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 15,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                ...List.generate(controller.peopleCount.value, (
+                                  i,
+                                ) {
+                                  while (i >= controller.peopleNames.length) {
+                                    controller.peopleNames.add(
+                                      TextEditingController(),
+                                    );
+                                  }
+                                  return _buildTextField(
+                                    controller.peopleNames[i],
+                                    "Nama Orang ke-${i + 1}",
+                                  );
+                                }),
+                              ],
+                            ],
+                          )
+                          : const SizedBox.shrink(),
                 ),
                 const SizedBox(height: 16),
-              ],
-              if (controller.itemType == 'event') ...[
-                const Text(
-                  "Tanggal Event",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Primary.darkColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Obx(
-                  () => Container(
-                    // Added container for better visual grouping
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Text(
-                      controller.detailItem.value?.eventDate != null
-                          ? DateFormat('dd MMMM yyyy', 'id_ID').format(
-                            controller
-                                .detailItem
-                                .value!
-                                .eventDate, // Langsung gunakan jika sudah DateTime
-                          )
-                          : 'Tanggal belum ditentukan',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Primary.darkColor,
-                      ),
+                if (controller.itemType == 'tour') ...[
+                  const Text(
+                    "Pilih Tanggal Booking",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: Primary.darkColor,
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-              ],
-              const SizedBox(height: 10), // Adjusted spacing
-              SizedBox(
-                width: double.infinity,
-                child: Obx(
-                  () => ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Primary.mainColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed:
-                        controller.isOrdering.value
-                            ? null
-                            : controller
-                                .submitOrder, // Make sure this method exists and is correct
-                    child:
-                        controller.isOrdering.value
-                            ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 3,
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate:
+                            controller.selectedDate.value ??
+                            DateTime.now().add(const Duration(days: 1)),
+                        firstDate: DateTime.now().add(const Duration(days: 1)),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                        selectableDayPredicate:
+                            (date) =>
+                                !controller.unavailableDates.any(
+                                  (d) => DateUtils.isSameDay(d, date),
+                                ),
+                        builder: (context, child) {
+                          // Optional: Theme the date picker
+                          return Theme(
+                            data: ThemeData.light().copyWith(
+                              colorScheme: const ColorScheme.light(
+                                primary:
+                                    Primary
+                                        .mainColor, // header background color
+                                onPrimary: Colors.white, // header text color
+                                onSurface: Primary.darkColor, // body text color
                               ),
-                            )
-                            : Text(
-                              controller.itemType == 'tour'
-                                  ? "Kirim Pemesanan"
-                                  : "Daftar Event",
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor:
+                                      Primary.mainColor, // button text color
+                                ),
+                              ),
                             ),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (picked != null) {
+                        controller.selectedDate.value = picked;
+                        controller.selectedDateFormatted.value = DateFormat(
+                          'dd MMMM yyyy', // Changed format
+                          'id_ID',
+                        ).format(picked);
+                      }
+                    },
+                    child: AbsorbPointer(
+                      child: Obx(
+                        () => _buildTextField(
+                          TextEditingController(
+                            text:
+                                controller
+                                        .selectedDateFormatted
+                                        .value
+                                        .isNotEmpty
+                                    ? controller.selectedDateFormatted.value
+                                    : "Pilih tanggal", // Placeholder
+                          ),
+                          "Tanggal Booking",
+                          readOnly: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if (controller.itemType == 'event') ...[
+                  const Text(
+                    "Tanggal Event",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: Primary.darkColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Obx(
+                    () => Container(
+                      // Added container for better visual grouping
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Text(
+                        controller.detailItem.value?.eventDate != null
+                            ? DateFormat('dd MMMM yyyy', 'id_ID').format(
+                              controller
+                                  .detailItem
+                                  .value!
+                                  .eventDate, // Langsung gunakan jika sudah DateTime
+                            )
+                            : 'Tanggal belum ditentukan',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Primary.darkColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                const SizedBox(height: 10), // Adjusted spacing
+                SizedBox(
+                  width: double.infinity,
+                  child: Obx(
+                    () => ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Primary.mainColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onPressed:
+                          controller.isOrdering.value
+                              ? null
+                              : controller
+                                  .submitOrder, // Make sure this method exists and is correct
+                      child:
+                          controller.isOrdering.value
+                              ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 3,
+                                ),
+                              )
+                              : Text(
+                                controller.itemType == 'tour'
+                                    ? "Kirim Pemesanan"
+                                    : "Daftar Event",
+                              ),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

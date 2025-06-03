@@ -334,67 +334,75 @@ class EditEventView extends StatelessWidget {
     // dengan yang sudah ada di form, atau jika form belum terisi.
     controller.fillEventForm(event);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Edit Event',
-          style: semiBold.copyWith(
-            // Asumsi style dari constant.dart
-            fontSize: ScaleHelper.scaleTextForDevice(
-              20,
-            ), // Asumsi ScaleHelper dari constant.dart
-            color: Neutral.white1, // Asumsi Neutral.white1 dari constant.dart
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Edit Event',
+            style: semiBold.copyWith(
+              // Asumsi style dari constant.dart
+              fontSize: ScaleHelper.scaleTextForDevice(
+                20,
+              ), // Asumsi ScaleHelper dari constant.dart
+              color: Neutral.white1, // Asumsi Neutral.white1 dari constant.dart
+            ),
           ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+          ),
+          backgroundColor: Primary.darkColor,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new),
+            onPressed: () {
+              // Pertimbangkan untuk memanggil controller.clearEventForm() di sini jika
+              // Anda ingin form selalu bersih saat pengguna menekan tombol kembali secara manual,
+              // sebelum memilih event lain untuk diedit.
+              // Jika tidak, _idOfDataInEventForm akan tetap, dan jika pengguna kembali
+              // lalu memilih event yang sama, form tidak akan diisi ulang (sesuai logika fillEventForm).
+              // controller.clearEventForm(); // Opsional, tergantung behavior yang diinginkan
+              Get.back();
+            },
+          ),
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Neutral.white1),
         ),
-        backgroundColor: Primary.darkColor,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new),
-          onPressed: () {
-            // Pertimbangkan untuk memanggil controller.clearEventForm() di sini jika
-            // Anda ingin form selalu bersih saat pengguna menekan tombol kembali secara manual,
-            // sebelum memilih event lain untuk diedit.
-            // Jika tidak, _idOfDataInEventForm akan tetap, dan jika pengguna kembali
-            // lalu memilih event yang sama, form tidak akan diisi ulang (sesuai logika fillEventForm).
-            // controller.clearEventForm(); // Opsional, tergantung behavior yang diinginkan
-            Get.back();
-          },
-        ),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Neutral.white1),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
-        child: Form(
-          key: controller.eventFormKey, // eventFormKey dari EventMixin
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildEditTextInput(
-                controller.eventTitleController,
-                'Judul Event',
-              ),
-              const SizedBox(height: 12),
-              _buildEditTextArea(
-                controller.eventDescriptionController,
-                'Deskripsi Event',
-              ),
-              const SizedBox(height: 12),
-              _buildEditTextInput(controller.eventLocationController, 'Lokasi'),
-              const SizedBox(height: 12),
-              _buildEditPriceInput(
-                controller.eventPriceController,
-                'Harga Event',
-              ),
-              const SizedBox(height: 12),
-              _buildDatePicker(controller),
-              const SizedBox(height: 12),
-              _buildEditImageSection(controller),
-              const SizedBox(height: 24),
-              _buildEditSaveButton(
-                controller,
-                event.id,
-              ), // Menggunakan event.id dari parameter widget
-            ],
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(16)),
+          child: Form(
+            key: controller.eventFormKey, // eventFormKey dari EventMixin
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildEditTextInput(
+                  controller.eventTitleController,
+                  'Judul Event',
+                ),
+                const SizedBox(height: 12),
+                _buildEditTextArea(
+                  controller.eventDescriptionController,
+                  'Deskripsi Event',
+                ),
+                const SizedBox(height: 12),
+                _buildEditTextInput(
+                  controller.eventLocationController,
+                  'Lokasi',
+                ),
+                const SizedBox(height: 12),
+                _buildEditPriceInput(
+                  controller.eventPriceController,
+                  'Harga Event',
+                ),
+                const SizedBox(height: 12),
+                _buildDatePicker(controller),
+                const SizedBox(height: 12),
+                _buildEditImageSection(controller),
+                const SizedBox(height: 24),
+                _buildEditSaveButton(
+                  controller,
+                  event.id,
+                ), // Menggunakan event.id dari parameter widget
+              ],
+            ),
           ),
         ),
       ),

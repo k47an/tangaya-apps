@@ -12,6 +12,7 @@ class WelcomeView extends GetView<OnboardingController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Neutral.white1,
         body: Container(
           alignment: Alignment.center,
           child: Column(
