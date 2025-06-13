@@ -15,20 +15,24 @@ class EventWidget extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoading.value) {
+      // PERBAIKAN: Gunakan isEventLoading dari EventMixin
+      if (controller.isEventLoading.value && controller.events.isEmpty) {
         return const Center(
           child: CircularProgressIndicator(color: Primary.mainColor),
         );
       }
 
-      if (controller.cachedEvents.isEmpty) {
+      // PERBAIKAN: Gunakan RxList events, bukan cachedEvents
+      if (controller.events.isEmpty) {
         return const Center(child: Text("Tidak ada data event."));
       }
 
       return CarouselSlider.builder(
-        itemCount: controller.cachedEvents.length,
+        itemCount: controller.events.length,
         itemBuilder: (context, index, realIndex) {
-          final event = controller.cachedEvents[index];
+          // PERBAIKAN: Gunakan RxList events
+          final event = controller.events[index];
+          // ... (sisa kode itemBuilder tetap sama)
           return Container(
             width: MediaQuery.of(context).size.width,
             // --- MODIFIKASI MARGIN ---
@@ -47,8 +51,8 @@ class EventWidget extends GetView<HomeController> {
               495, // Sebelumnya 480, ditambah sedikit untuk margin bawah item
           enlargeCenterPage: true,
           viewportFraction: 0.85,
-          enableInfiniteScroll: controller.cachedEvents.length > 1,
-          autoPlay: controller.cachedEvents.length > 1,
+          enableInfiniteScroll: controller.events.length > 1,
+          autoPlay: controller.events.length > 1,
           autoPlayInterval: const Duration(seconds: 5),
           onPageChanged: (index, reason) {
             controller.currentPage.value = index.toDouble();

@@ -15,18 +15,20 @@ class TourpackageWidget extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (controller.isLoading.value) {
+      // PERBAIKAN: Gunakan isTourLoading dari TourMixin
+      if (controller.isTourLoading.value && controller.tourPackages.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      if (controller.cachedTours.isEmpty) {
+      // PERBAIKAN: Gunakan RxList tourPackages, bukan cachedTours
+      if (controller.tourPackages.isEmpty) {
         return const Center(child: Text("Tidak ada data paket wisata."));
       }
 
       return CarouselSlider.builder(
-        itemCount: controller.cachedTours.length,
+        itemCount: controller.tourPackages.length,
         itemBuilder: (context, index, realIndex) {
-          final tour = controller.cachedTours[index];
+          final tour = controller.tourPackages[index];
           if (tour.imageUrls == null || tour.imageUrls!.isEmpty) {
             return const SizedBox();
           }

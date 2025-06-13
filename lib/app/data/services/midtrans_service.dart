@@ -1,20 +1,11 @@
-// lib/app/services/midtrans_service.dart
 import 'dart:convert';
-import 'package:http/http.dart'
-    as http; // Pastikan package http sudah ada di pubspec.yaml
+import 'package:http/http.dart' as http;
+import 'package:tangaya_apps/app/data/api/api.dart';
 
 class MidtransService {
-  // Bisa juga extends GetxService jika ingin di-manage oleh GetX
-  // Kredensial Midtrans Anda (Sandbox)
-  // static const String _merchantId = 'G504648997'; // Ganti jika perlu
-  // static const String _clientKey =
-  // 'SB-Mid-client-PiR75Nck1zn_QgZp'; // Ganti jika perlu
-  static const String _serverKey =
-      'SB-Mid-server-G26K49GHhN6aFnx5E9GCPMgj'; // Ganti jika perlu
-
+  static String _serverKey = Api.midtransServerKey;
   static const String _baseUrl =
       'https://app.sandbox.midtrans.com/snap/v1/transactions';
-  // URL callback untuk WebView, pastikan sama dengan yang dipantau di PaymentWebViewController
   static const String _finishRedirectUrl =
       "https://tangaya-apps.web.app/payment-callback";
 
@@ -50,7 +41,6 @@ class MidtransService {
       );
 
       if (response.statusCode == 201) {
-        // Berhasil dibuat
         final jsonResponse = jsonDecode(response.body);
         final snapToken = jsonResponse['token'] as String?;
         print('✅ Snap Token berhasil dibuat (MidtransService): $snapToken');

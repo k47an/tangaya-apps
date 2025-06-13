@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/data/models/event_model.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
+import 'package:tangaya_apps/app/data/services/event_service.dart';
+import 'package:tangaya_apps/app/data/services/tourPackage_service.dart';
 import 'package:tangaya_apps/app/modules/home/mixin/weather_mixin.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/mixin/event_mixin.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/mixin/tour_mixin.dart';
@@ -12,6 +14,8 @@ class HomeController extends GetxController
         WeatherMixin,
         TourMixin,
         EventMixin {
+  final _tourService = Get.find<TourPackageService>();
+  final _eventService = Get.find<EventService>();
   late TabController tabController;
   final RxInt currentTab = 0.obs;
 
@@ -23,22 +27,19 @@ class HomeController extends GetxController
   final RxDouble currentPage = 0.0.obs;
   final RxDouble currentEventPage = 0.0.obs;
 
-  final RxBool isLoading = false.obs;
+  String getTabIcon(int index) => tabs[index]['icon'] ?? '';
+  String getTabTitle(int index) => tabs[index]['title'] ?? '';
 
-  List<TourPackage> cachedTours = [];
-  List<Event> cachedEvents = [];
+  // Gunakan RxList lokal
+  final RxList<TourPackage> tourPackages = <TourPackage>[].obs;
+  final RxList<Event> events = <Event>[].obs;
 
   void refreshData() async {
-    isLoading.value = true;
-
-    await fetchTourPackages();
-    await fetchEvents();
-    fetchCurrentWeather();
-
-    cachedTours = List.from(tourPackages);
-    cachedEvents = List.from(events);
-
-    isLoading.value = false;
+    // ...
+    // Panggil service langsung
+    tourPackages.assignAll(await _tourService.fetchTourPackages());
+    events.assignAll(await _eventService.fetchEvents());
+    // ...
   }
 
   @override
@@ -56,7 +57,4 @@ class HomeController extends GetxController
 
     super.onClose();
   }
-
-  String getTabIcon(int index) => tabs[index]['icon'] ?? '';
-  String getTabTitle(int index) => tabs[index]['title'] ?? '';
 }

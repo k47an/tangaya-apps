@@ -1,25 +1,29 @@
+
 class TourPackage {
-  String? id;
-  String? title;
-  String? description;
-  double? price;
-  List<String>? imageUrls;
+  final String? id;
+  final String? title;
+  final String? description;
+  final double? price;
+  final List<String>? imageUrls;
 
   TourPackage({
     this.id,
-    this.title,
-    this.description,
-    this.price,
-    this.imageUrls,
+    required this.title,
+    required this.description,
+    required this.price,
+    required this.imageUrls,
   });
 
-  factory TourPackage.fromJson(String id, Map<String, dynamic> data) {
+  factory TourPackage.fromJson(String id, Map<String, dynamic> json) {
     return TourPackage(
       id: id,
-      title: data['title'] as String?,
-      description: data['description'] as String?,
-      price: (data['price'] as num?)?.toDouble(),
-      imageUrls: (data['imageUrls'] as List<dynamic>?)?.cast<String>(),
+      title: json['title'] as String?,
+      description: json['description'] as String?,
+      price: (json['price'] as num?)?.toDouble(),
+      imageUrls:
+          (json['imageUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
     );
   }
 
@@ -29,6 +33,7 @@ class TourPackage {
       'description': description,
       'price': price,
       'imageUrls': imageUrls,
+     
     };
   }
 }

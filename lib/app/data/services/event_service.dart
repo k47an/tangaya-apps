@@ -1,16 +1,19 @@
-// services
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../models/event_model.dart'; // Pastikan path ini benar
+import '../models/event_model.dart';
 
 class EventService {
   final _firestore = FirebaseFirestore.instance;
   final _storage = FirebaseStorage.instance;
-  final _collection = 'events';
+  final String _collectionPath = 'events';
 
   Future<List<Event>> fetchEvents() async {
-    final snapshot = await _firestore.collection(_collection).get();
+    final snapshot =
+        await _firestore
+            .collection(_collectionPath)
+            .orderBy('eventDate', descending: true)
+            .get();
     return snapshot.docs
         .map((doc) => Event.fromJson(doc.data(), doc.id))
         .toList();
@@ -21,17 +24,17 @@ class EventService {
     required String description,
     required String location,
     required DateTime eventDate,
-    required File? imageFile,
-    double? price, // <-- Ubah menjadi nullable (double?)
+    required File imageFile,
+    double? price,
   }) async {
-    final imageUrl = await _uploadImage(imageFile);
-    await _firestore.collection(_collection).add({
+    String imageUrl = await _uploadImage(imageFile);
+    await _firestore.collection(_collectionPath).add({
       'title': title,
       'description': description,
       'location': location,
       'eventDate': eventDate,
       'imageUrl': imageUrl,
-      'price': price, // <-- Kirim price apa adanya
+      'price': price,
     });
   }
 
@@ -41,41 +44,30 @@ class EventService {
     required String description,
     required String location,
     required DateTime eventDate,
-    required String oldImageUrl,
-    required File? newImageFile,
-    required bool deleteOldImage,
-    double? price, // <-- Ubah menjadi nullable (double?)
+    String? oldImageUrl,
+    File? newImageFile,
+    double? price,
   }) async {
-    String updatedImageUrl = oldImageUrl;
+    String finalImageUrl = oldImageUrl ?? '';
 
-    if (deleteOldImage && oldImageUrl.isNotEmpty) {
-      try {
-        if (oldImageUrl.startsWith('http')) {
-          await _storage.refFromURL(oldImageUrl).delete();
-        }
-      } catch (e) {
-        print("Error deleting old image: $e");
-      }
-      updatedImageUrl =
-          newImageFile != null ? await _uploadImage(newImageFile) : '';
-    } else if (newImageFile != null) {
-      if (oldImageUrl.isNotEmpty && oldImageUrl.startsWith('http')) {
+    if (newImageFile != null) {
+      finalImageUrl = await _uploadImage(newImageFile);
+      if (oldImageUrl != null && oldImageUrl.isNotEmpty) {
         try {
           await _storage.refFromURL(oldImageUrl).delete();
         } catch (e) {
-          print("Error deleting old image during replacement: $e");
+          print("Gagal menghapus gambar lama saat mengganti: $e");
         }
       }
-      updatedImageUrl = await _uploadImage(newImageFile);
     }
 
-    await _firestore.collection(_collection).doc(docId).update({
+    await _firestore.collection(_collectionPath).doc(docId).update({
       'title': title,
       'description': description,
       'location': location,
       'eventDate': eventDate,
-      'imageUrl': updatedImageUrl,
-      'price': price, // <-- Kirim price apa adanya
+      'imageUrl': finalImageUrl,
+      'price': price,
     });
   }
 
@@ -83,22 +75,35 @@ class EventService {
     required String docId,
     required String imageUrl,
   }) async {
-    if (imageUrl.isNotEmpty && imageUrl.startsWith('http')) {
+    if (imageUrl.isNotEmpty) {
       try {
         await _storage.refFromURL(imageUrl).delete();
       } catch (e) {
-        print("Error deleting image from storage: $e");
+        print("Gagal menghapus gambar dari storage: $e");
       }
     }
-    await _firestore.collection(_collection).doc(docId).delete();
+    await _firestore.collection(_collectionPath).doc(docId).delete();
   }
 
-  Future<String> _uploadImage(File? imageFile) async {
-    if (imageFile == null) return '';
+  Future<String> _uploadImage(File imageFile) async {
     final ref = _storage.ref().child(
       'event_images/${DateTime.now().millisecondsSinceEpoch}',
     );
     await ref.putFile(imageFile);
     return await ref.getDownloadURL();
+  }
+
+  Future<Event?> getEventById(String id) async {
+    try {
+      final doc = await _firestore.collection(_collectionPath).doc(id).get();
+      if (doc.exists && doc.data() != null) {
+        return Event.fromJson(doc.data()!, doc.id);
+      }
+      return null; // Return null jika dokumen tidak ditemukan
+    } catch (e) {
+      print("Error fetching event by ID: $e");
+      // Melempar exception kembali agar controller bisa menanganinya
+      throw Exception('Gagal mengambil detail event: $e');
+    }
   }
 }

@@ -82,7 +82,6 @@ class HomeView extends GetView<HomeController> {
   Widget _buildTabBar() {
     return Container(
       margin: EdgeInsets.symmetric(
-        // horizontal: ScaleHelper.scaleWidthForDevice(20),
         vertical: ScaleHelper.scaleHeightForDevice(10),
       ),
 
@@ -96,7 +95,7 @@ class HomeView extends GetView<HomeController> {
             ),
           ),
           indicatorSize: TabBarIndicatorSize.label,
-          dividerColor: Colors.transparent,
+          dividerColor: Neutral.transparent,
           labelPadding: EdgeInsets.zero,
           tabs: List.generate(controller.tabs.length, (index) {
             final isSelected = controller.currentTab.value == index;

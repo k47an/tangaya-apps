@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/profile/controllers/profile_controller.dart';
-import 'package:tangaya_apps/constant/constant.dart'; // Pastikan path ini benar
+import 'package:tangaya_apps/constant/constant.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 class ProfileView extends GetView<ProfileController> {
   const ProfileView({super.key});
@@ -536,19 +537,11 @@ class ProfileView extends GetView<ProfileController> {
               if (success) {
                 await controller.loadUserData();
                 Get.back(); // close edit dialog
-                // Get.snackbar(
-                //   "Berhasil",
-                //   "Data profil berhasil diperbarui.",
-                //   snackPosition: SnackPosition.TOP,
-                //   backgroundColor: .withOpacity(0.9),
-                //   colorText: Colors.white,
-                //   margin: const EdgeInsets.all(12),
-                //   borderRadius: 8,
-                //   icon: const Icon(
-                //     Icons.check_circle_outline,
-                //     color: Colors.white,
-                //   ),
-                // );
+                CustomSnackBar.show(
+                  context: context,
+                  message: "Profil berhasil diperbarui.",
+                  type: SnackBarType.success,
+                );
               }
             },
             style: ElevatedButton.styleFrom(

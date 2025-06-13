@@ -25,6 +25,7 @@ dependencies:
   cached_network_image: ^3.4.1
   webview_flutter: ^4.13.0
   flutter_launcher_icons: ^0.14.3
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -34,9 +35,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  
   assets:
     - assets/icons/
     - assets/images/    
+    - .env
   fonts: 
     - family: Poppins
       fonts: 

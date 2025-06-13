@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tangaya_apps/app/data/models/midtrans_model.dart'; // Impor MidtransModel
-// Sesuaikan path jika services Anda ada di 'app/data/services/'
+import 'package:tangaya_apps/app/data/models/midtrans_model.dart'; 
 import 'package:tangaya_apps/app/data/services/midtrans_service.dart';
 import '../../auth/controllers/auth_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
@@ -16,7 +15,7 @@ class NotificationController extends GetxController {
   RxString uid = ''.obs;
 
   final RxBool isProcessingPayment =
-      false.obs; // Untuk user memulai pembayaran online
+      false.obs;
   final RxBool isAdminActionInProgress = false.obs; // Untuk aksi admin
   final RxBool isUserChoosingCod = false.obs; // Untuk user memilih metode COD
 

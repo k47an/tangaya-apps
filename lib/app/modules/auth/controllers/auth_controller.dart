@@ -73,20 +73,18 @@ class AuthController extends GetxController {
         "Gagal",
         "Gagal memuat data pengguna: $e",
         snackPosition: SnackPosition.BOTTOM,
-      ); // Tambahkan ini: Show error
-      // Handle error, maybe set userModel to a default value or show error message
+      ); 
     }
   }
 
   Future<bool> updateUserProfile({
-    // Perubahan: Ubah return type menjadi Future<bool>
     required String name,
     required String email,
     required String gender,
     required String phone,
     required String address,
   }) async {
-    if (user == null) return false; // Perubahan: Return false jika user null
+    if (user == null) return false;
 
     try {
       if (user!.email != email) await user!.updateEmail(email);
@@ -107,10 +105,10 @@ class AuthController extends GetxController {
 
       await _authService.updateUserProfile(updated);
       userModel.value = updated;
-      return true; // Perubahan: Return true jika berhasil
+      return true;
     } catch (e) {
       Get.snackbar('Update Gagal', e.toString());
-      return false; // Perubahan: Return false jika gagal
+      return false;
     }
   }
 

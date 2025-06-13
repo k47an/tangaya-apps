@@ -1,8 +1,13 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class DefaultFirebaseOptions {
+class FirebaseEnvOptions {
+  static String _get(String name) {
+    return dotenv.env[name] ?? '';
+  }
+
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       return web;
@@ -28,49 +33,53 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAWdppvgNXVaCahr0mvNfd09lesSFnsKXo',
-    appId: '1:209624047180:web:0b72b232532b1fea851ee9',
-    messagingSenderId: '209624047180',
-    projectId: 'palala-app-b1873',
-    authDomain: 'palala-app-b1873.firebaseapp.com',
-    storageBucket: 'palala-app-b1873.appspot.com',
-    measurementId: 'G-EP1Y99JGLJ',
-  );
+  static final String _projectId = _get('FIREBASE_PROJECT_ID');
+  static final String _messagingSenderId = _get('FIREBASE_MESSAGING_SENDER_ID');
+  static final String _storageBucket = _get('FIREBASE_STORAGE_BUCKET');
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD7i-Z9okQEdm9P0jgEfA3whvubusUE26w',
-    appId: '1:209624047180:android:38ef5662148e6e27851ee9',
-    messagingSenderId: '209624047180',
-    projectId: 'palala-app-b1873',
-    storageBucket: 'palala-app-b1873.appspot.com',
-  );
+  static FirebaseOptions get web => FirebaseOptions(
+        apiKey: _get('FIREBASE_WEB_API_KEY'),
+        appId: _get('FIREBASE_WEB_APP_ID'),
+        messagingSenderId: _messagingSenderId,
+        projectId: _projectId,
+        authDomain: _get('FIREBASE_WEB_AUTH_DOMAIN'),
+        storageBucket: _storageBucket,
+        measurementId: _get('FIREBASE_WEB_MEASUREMENT_ID'),
+      );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCj7H5oa9PTxEYaA-_yrWonKbqA53YFfbg',
-    appId: '1:209624047180:ios:ecc947aaa5680713851ee9',
-    messagingSenderId: '209624047180',
-    projectId: 'palala-app-b1873',
-    storageBucket: 'palala-app-b1873.appspot.com',
-    iosBundleId: 'com.example.tangayaApps',
-  );
+  static FirebaseOptions get android => FirebaseOptions(
+        apiKey: _get('FIREBASE_ANDROID_API_KEY'),
+        appId: _get('FIREBASE_ANDROID_APP_ID'),
+        messagingSenderId: _messagingSenderId,
+        projectId: _projectId,
+        storageBucket: _storageBucket,
+      );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCj7H5oa9PTxEYaA-_yrWonKbqA53YFfbg',
-    appId: '1:209624047180:ios:ecc947aaa5680713851ee9',
-    messagingSenderId: '209624047180',
-    projectId: 'palala-app-b1873',
-    storageBucket: 'palala-app-b1873.appspot.com',
-    iosBundleId: 'com.example.tangayaApps',
-  );
+  static FirebaseOptions get ios => FirebaseOptions(
+        apiKey: _get('FIREBASE_IOS_API_KEY'),
+        appId: _get('FIREBASE_IOS_APP_ID'),
+        messagingSenderId: _messagingSenderId,
+        projectId: _projectId,
+        storageBucket: _storageBucket,
+        iosBundleId: _get('FIREBASE_IOS_BUNDLE_ID'),
+      );
 
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAWdppvgNXVaCahr0mvNfd09lesSFnsKXo',
-    appId: '1:209624047180:web:dbe85e05dc4ce721851ee9',
-    messagingSenderId: '209624047180',
-    projectId: 'palala-app-b1873',
-    authDomain: 'palala-app-b1873.firebaseapp.com',
-    storageBucket: 'palala-app-b1873.appspot.com',
-    measurementId: 'G-JR32TJZ2DV',
-  );
+  static FirebaseOptions get macos => FirebaseOptions(
+        apiKey: _get('FIREBASE_IOS_API_KEY'), 
+        appId: _get('FIREBASE_IOS_APP_ID'),   
+        messagingSenderId: _messagingSenderId,
+        projectId: _projectId,
+        storageBucket: _storageBucket,
+        iosBundleId: _get('FIREBASE_IOS_BUNDLE_ID'),
+      );
+
+  static FirebaseOptions get windows => FirebaseOptions(
+        apiKey: _get('FIREBASE_WINDOWS_API_KEY'),
+        appId: _get('FIREBASE_WINDOWS_APP_ID'),
+        messagingSenderId: _messagingSenderId,
+        projectId: _projectId,
+        authDomain: _get('FIREBASE_WINDOWS_AUTH_DOMAIN'),
+        storageBucket: _storageBucket,
+        measurementId: _get('FIREBASE_WINDOWS_MEASUREMENT_ID'),
+      );
 }
