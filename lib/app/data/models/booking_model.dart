@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Order {
+class Booking {
   final String orderId;
   final String userId;
   final String itemType;
@@ -21,7 +21,7 @@ class Order {
   final DateTime orderTimestamp;
   final DateTime updatedAt;
 
-  Order({
+  Booking({
     required this.orderId,
     required this.userId,
     required this.itemType,
@@ -45,9 +45,10 @@ class Order {
 
   String get itemTitle => packageTitle ?? eventTitle ?? 'Item Tidak Diketahui';
 
-  factory Order.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Order(
+  factory Booking.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+
+    return Booking(
       orderId: doc.id,
       userId: data['userId'] ?? '',
       itemType: data['itemType'] ?? '',
@@ -69,5 +70,18 @@ class Order {
           (data['orderTimestamp'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'itemName': itemTitle,
+      'itemType': itemType,
+      'itemId': itemId,
+      'quantity': peopleCount,
+      'totalPrice': totalPrice,
+      'orderDate': Timestamp.fromDate(orderTimestamp),
+      'status': status,
+    };
   }
 }

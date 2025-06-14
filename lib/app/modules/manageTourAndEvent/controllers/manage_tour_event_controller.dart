@@ -6,8 +6,8 @@ import 'package:tangaya_apps/app/data/models/event_model.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/mixin/event_mixin.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/mixin/tour_mixin.dart';
-import 'package:tangaya_apps/app/modules/manageTourAndEvent/widgets/upsertEvent.dart';
-import 'package:tangaya_apps/app/modules/manageTourAndEvent/widgets/upsertTour.dart';
+import 'package:tangaya_apps/app/modules/manageTourAndEvent/views/widgets/upsertEvent.dart';
+import 'package:tangaya_apps/app/modules/manageTourAndEvent/views/widgets/upsertTour.dart';
 
 class ManageTourEventController extends GetxController with TourMixin, EventMixin {
   

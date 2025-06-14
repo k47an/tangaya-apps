@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:tangaya_apps/app/data/services/event_service.dart';
-import 'package:tangaya_apps/app/data/services/order_service.dart';
+import 'package:tangaya_apps/app/data/services/booking_service.dart';
 import 'package:tangaya_apps/app/data/services/tourPackage_service.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 import 'package:tangaya_apps/constant/theme.dart';
@@ -20,7 +20,7 @@ void main() async {
   Get.put(AuthController());
   Get.put(TourPackageService());
   Get.put(EventService());
-  Get.put(OrderService());
+  Get.put(BookingService());
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,

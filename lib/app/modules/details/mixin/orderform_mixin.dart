@@ -3,19 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/data/models/event_model.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
-import 'package:tangaya_apps/app/data/services/order_service.dart';
+import 'package:tangaya_apps/app/data/services/booking_service.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 
 mixin OrderFormMixin on GetxController {
   AuthController get authController;
-  OrderService get orderService;
+  BookingService get orderService;
   Rx<dynamic> get detailItem;
   String get itemType;
   String get itemId;
 
   final isOrdering = false.obs;
   final unavailableDates = <DateTime>[].obs;
-
   final nameC = TextEditingController();
   final phoneC = TextEditingController();
   final addressC = TextEditingController();
@@ -24,6 +23,13 @@ mixin OrderFormMixin on GetxController {
   final selectedDateFormatted = ''.obs;
   final peopleCount = 0.obs;
   final peopleNames = <TextEditingController>[].obs;
+  final isFetchingDates = false.obs;
+
+  late final ScrollController scrollController;
+  late final FocusNode nameNode;
+  late final FocusNode phoneNode;
+  late final FocusNode addressNode;
+  late final FocusNode peopleCountNode;
 
   void initFormControllers() {
     if (authController.user != null) {
@@ -31,6 +37,16 @@ mixin OrderFormMixin on GetxController {
       phoneC.text = authController.userPhone;
       addressC.text = authController.userAddress;
     }
+    scrollController = ScrollController();
+    nameNode = FocusNode();
+    phoneNode = FocusNode();
+    addressNode = FocusNode();
+    peopleCountNode = FocusNode();
+
+    nameNode.addListener(() => _scrollToFocus(nameNode));
+    phoneNode.addListener(() => _scrollToFocus(phoneNode));
+    addressNode.addListener(() => _scrollToFocus(addressNode));
+    peopleCountNode.addListener(() => _scrollToFocus(peopleCountNode));
   }
 
   void disposeFormControllers() {
@@ -40,6 +56,30 @@ mixin OrderFormMixin on GetxController {
     peopleC.dispose();
     for (var c in peopleNames) {
       c.dispose();
+    }
+    scrollController.dispose();
+    nameNode.dispose();
+    phoneNode.dispose();
+    addressNode.dispose();
+    peopleCountNode.dispose();
+  }
+
+  void _scrollToFocus(FocusNode node) {
+    try {
+      if (node.hasFocus) {
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (node.context != null) {
+            Scrollable.ensureVisible(
+              node.context!,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOut,
+              alignment: 1.0,
+            );
+          }
+        });
+      }
+    } catch (e) {
+      print("Error scrolling to focus: $e");
     }
   }
 
@@ -70,6 +110,7 @@ mixin OrderFormMixin on GetxController {
       unavailableDates.clear();
       return;
     }
+    isFetchingDates.value = true;
     try {
       final snapshot =
           await FirebaseFirestore.instance
@@ -79,26 +120,26 @@ mixin OrderFormMixin on GetxController {
               .where(
                 "status",
                 whereIn: [
-                  "settlement",
-                  "approved",
-                  "cod_confirmed_awaiting_delivery",
-                  "approved_pending_payment",
-                  "approved_awaiting_payment_choice",
-                  "payment_initiated_post_approval",
+                  "panding_approval",
+                  "awaiting_payment_choice",
+                  "cod_selected",
+                  "paid",
                 ],
               )
               .get();
 
-      unavailableDates.assignAll(
-        snapshot.docs
-            .map((d) => (d.data()['bookingDate'] as Timestamp?)?.toDate())
-            .whereType<DateTime>()
-            .toList(),
-      );
-      print("Unavailable dates for tour $itemId: $unavailableDates");
+      final fetchedDates =
+          snapshot.docs
+              .map((d) => (d.data()['bookingDate'] as Timestamp?)?.toDate())
+              .whereType<DateTime>()
+              .toList();
+
+      unavailableDates.assignAll(fetchedDates);
     } catch (e) {
-      print("Failed to fetch unavailable dates for tour: $e");
       Get.snackbar('Error', 'Gagal memuat tanggal tidak tersedia.');
+      print("ERROR fetchUnavailableDates: $e");
+    } finally {
+      isFetchingDates.value = false;
     }
   }
 
@@ -123,19 +164,16 @@ mixin OrderFormMixin on GetxController {
     }
 
     isOrdering.value = true;
-
     try {
       final currentItem = detailItem.value;
-      if (currentItem == null) {
-        throw Exception("Detail item tidak tersedia. Coba lagi.");
-      }
+      if (currentItem == null) throw Exception("Detail item tidak tersedia.");
 
       final newOrderId =
           FirebaseFirestore.instance.collection("orders").doc().id;
       final customerEmail =
           authController.userEmail.isNotEmpty
               ? authController.userEmail
-              : "Tidak ada email yang tersedia";
+              : "${phoneC.text.replaceAll(RegExp(r'[^0-9]'), '')}@placeholder.email";
 
       num itemUnitPrice =
           (itemType == 'tour' && currentItem is TourPackage)
@@ -144,15 +182,12 @@ mixin OrderFormMixin on GetxController {
               ? currentItem.price ?? 0
               : -1;
 
-      if (itemUnitPrice < 0) {
-        throw Exception("Tipe atau harga item tidak dikenal untuk pemesanan.");
-      }
-      int totalPrice = itemUnitPrice.toInt();
+      if (itemUnitPrice < 0) throw Exception("Harga item tidak dikenal.");
 
       await orderService.saveOrderToFirestore(
         orderId: newOrderId,
         paymentStatus: "pending_approval",
-        totalPrice: totalPrice,
+        totalPrice: itemUnitPrice.toInt(),
         customerName: nameC.text,
         customerEmail: customerEmail,
         customerPhone: phoneC.text,
@@ -172,10 +207,8 @@ mixin OrderFormMixin on GetxController {
         "Pemesanan berhasil dikirim dan menunggu persetujuan admin.",
       );
       resetForm();
-    } catch (e, stackTrace) {
+    } catch (e) {
       Get.snackbar("Error Pesanan", "Terjadi kesalahan: $e");
-      print("ERROR submitOrder: $e");
-      print("STACKTRACE submitOrder: $stackTrace");
     } finally {
       isOrdering.value = false;
     }

@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/data/models/event_model.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
+import 'package:tangaya_apps/app/data/models/booking_model.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 
-class OrderService extends GetxService {
+class BookingService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthController _authController = Get.find<AuthController>();
 
@@ -111,6 +112,29 @@ class OrderService extends GetxService {
     } catch (e) {
       print("❌ Gagal mengupdate status order $orderId: $e");
       Get.snackbar("Error Update", "Gagal memperbarui status pesanan: $e");
+      rethrow;
+    }
+  }
+
+  Stream<List<Booking>> getOrdersStream() {
+    return _firestore
+        .collection('orders')
+        .orderBy('orderTimestamp', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs
+              .map((doc) => Booking.fromFirestore(doc))
+              .toList();
+        });
+  }
+
+  Future<void> deleteOrder(String orderId) async {
+    try {
+      await _firestore.collection('orders').doc(orderId).delete();
+      print("✅ Order $orderId berhasil dihapus.");
+    } catch (e) {
+      print("❌ Gagal menghapus order $orderId: $e");
+      Get.snackbar("Error", "Gagal menghapus pesanan.");
       rethrow;
     }
   }
