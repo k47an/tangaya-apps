@@ -5,8 +5,8 @@ import 'package:tangaya_apps/constant/constant.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;
-  final VoidCallback onEdit; // PERBAIKAN: Callback untuk Edit
-  final VoidCallback onDelete; // PERBAIKAN: Callback untuk Delete
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   const EventCard({
     super.key,
@@ -30,7 +30,9 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: ScaleHelper.scaleHeightForDevice(8)),
+      margin: EdgeInsets.symmetric(
+        vertical: ScaleHelper.scaleHeightForDevice(8),
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 3,
       child: ListTile(
@@ -50,17 +52,24 @@ class EventCard extends StatelessWidget {
                 if (loadingProgress == null) return child;
                 return Center(
                   child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                        : null,
+                    value:
+                        loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
                     strokeWidth: 2.0,
                   ),
                 );
               },
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: Colors.grey[300],
-                child: Icon(Icons.broken_image, size: ScaleHelper.scaleTextForDevice(30), color: Colors.grey[600]),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    color: Colors.grey[300],
+                    child: Icon(
+                      Icons.broken_image,
+                      size: ScaleHelper.scaleTextForDevice(30),
+                      color: Colors.grey[600],
+                    ),
+                  ),
             ),
           ),
         ),
@@ -91,7 +100,10 @@ class EventCard extends StatelessWidget {
             Text(
               _formatPrice(event.price),
               style: semiBold.copyWith(
-                color: (event.price == null || event.price == 0) ? Colors.green : Primary.mainColor,
+                color:
+                    (event.price == null || event.price == 0)
+                        ? Colors.green
+                        : Primary.mainColor,
                 fontSize: ScaleHelper.scaleTextForDevice(13),
               ),
             ),
@@ -99,24 +111,36 @@ class EventCard extends StatelessWidget {
         ),
         trailing: PopupMenuButton<String>(
           icon: Icon(Icons.more_vert, color: Neutral.dark1),
-          // PERBAIKAN: Logika disederhanakan, hanya memanggil callback
           onSelected: (value) {
             if (value == 'edit') {
-              onEdit(); // Panggil callback onEdit
+              onEdit();
             } else if (value == 'delete') {
-              onDelete(); // Panggil callback onDelete
+              onDelete();
             }
           },
-          itemBuilder: (context) => <PopupMenuEntry<String>>[
-            PopupMenuItem<String>(
-              value: 'edit',
-              child: const Row(children: [Icon(Icons.edit_outlined), SizedBox(width: 8), Text('Edit')]),
-            ),
-            PopupMenuItem<String>(
-              value: 'delete',
-              child: const Row(children: [Icon(Icons.delete_outline, color: Colors.red), SizedBox(width: 8), Text('Hapus', style: TextStyle(color: Colors.red))]),
-            ),
-          ],
+          itemBuilder:
+              (context) => <PopupMenuEntry<String>>[
+                PopupMenuItem<String>(
+                  value: 'edit',
+                  child: const Row(
+                    children: [
+                      Icon(Icons.edit_outlined),
+                      SizedBox(width: 8),
+                      Text('Edit'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: const Row(
+                    children: [
+                      Icon(Icons.delete_outline, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Hapus', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
         ),
         isThreeLine: true,
       ),

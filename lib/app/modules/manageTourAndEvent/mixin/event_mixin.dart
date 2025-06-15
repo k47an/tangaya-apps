@@ -8,8 +8,6 @@ import 'package:tangaya_apps/app/data/services/event_service.dart';
 mixin EventMixin on GetxController {
   final EventService _eventService = Get.find<EventService>();
   final RxBool isEventLoading = false.obs;
-
-  // Form State
   final GlobalKey<FormState> eventFormKey = GlobalKey<FormState>();
   final TextEditingController eventTitleController = TextEditingController();
   final TextEditingController eventDescriptionController =
@@ -17,12 +15,8 @@ mixin EventMixin on GetxController {
   final TextEditingController eventLocationController = TextEditingController();
   final TextEditingController eventPriceController = TextEditingController();
   final Rxn<DateTime> selectedEventDate = Rxn<DateTime>();
-
-  // Image State
   final Rx<File?> selectedEventImage = Rx<File?>(null);
   final RxnString currentEventImageUrl = RxnString();
-
-  // Data List
   final RxList<Event> events = <Event>[].obs;
 
   @override
@@ -57,7 +51,6 @@ mixin EventMixin on GetxController {
     }
   }
 
-  // PERBAIKAN: Validasi terpusat
   bool _validateEventForm({bool isEditMode = false}) {
     if (!(eventFormKey.currentState?.validate() ?? false)) {
       return false;
@@ -70,7 +63,6 @@ mixin EventMixin on GetxController {
       );
       return false;
     }
-    // Gambar wajib diisi hanya saat menambah event baru
     if (!isEditMode && selectedEventImage.value == null) {
       Get.snackbar(
         'Gambar Wajib',
@@ -181,7 +173,6 @@ mixin EventMixin on GetxController {
     }
   }
 
-  // Menyiapkan form untuk mode TAMBAH
   void prepareForAddEvent() {
     eventFormKey.currentState?.reset();
     eventTitleController.clear();
@@ -193,9 +184,8 @@ mixin EventMixin on GetxController {
     currentEventImageUrl.value = null;
   }
 
-  // Menyiapkan form untuk mode EDIT
   void prepareForEditEvent(Event event) {
-    prepareForAddEvent(); // Bersihkan form terlebih dahulu
+    prepareForAddEvent();
     eventTitleController.text = event.title;
     eventDescriptionController.text = event.description;
     eventLocationController.text = event.location;

@@ -5,8 +5,8 @@ import 'package:tangaya_apps/constant/constant.dart';
 
 class TourPackageCard extends StatelessWidget {
   final TourPackage tourPackage;
-  final VoidCallback onEdit; // PERBAIKAN: Callback untuk Edit
-  final VoidCallback onDelete; // PERBAIKAN: Callback untuk Delete
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   const TourPackageCard({
     super.key,
@@ -18,7 +18,9 @@ class TourPackageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: ScaleHelper.scaleHeightForDevice(8)),
+      margin: EdgeInsets.symmetric(
+        vertical: ScaleHelper.scaleHeightForDevice(8),
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 3,
       child: ListTile(
@@ -34,12 +36,17 @@ class TourPackageCard extends StatelessWidget {
             child: Image.network(
               (tourPackage.imageUrls?.isNotEmpty ?? false)
                   ? tourPackage.imageUrls!.first
-                  : 'https://via.placeholder.com/150', // URL Placeholder
+                  : 'https://via.placeholder.com/150',
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: Colors.grey[300],
-                child: Icon(Icons.broken_image, size: ScaleHelper.scaleTextForDevice(30), color: Colors.grey[600]),
-              ),
+              errorBuilder:
+                  (context, error, stackTrace) => Container(
+                    color: Colors.grey[300],
+                    child: Icon(
+                      Icons.broken_image,
+                      size: ScaleHelper.scaleTextForDevice(30),
+                      color: Colors.grey[600],
+                    ),
+                  ),
             ),
           ),
         ),
@@ -68,7 +75,11 @@ class TourPackageCard extends StatelessWidget {
             ),
             SizedBox(height: ScaleHelper.scaleHeightForDevice(4)),
             Text(
-              NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0).format(tourPackage.price ?? 0),
+              NumberFormat.currency(
+                locale: 'id_ID',
+                symbol: 'Rp ',
+                decimalDigits: 0,
+              ).format(tourPackage.price ?? 0),
               style: semiBold.copyWith(
                 color: Primary.mainColor,
                 fontSize: ScaleHelper.scaleTextForDevice(13),
@@ -79,7 +90,6 @@ class TourPackageCard extends StatelessWidget {
         isThreeLine: true,
         trailing: PopupMenuButton<String>(
           icon: Icon(Icons.more_vert, color: Neutral.dark1),
-          // PERBAIKAN: Logika disederhanakan, hanya memanggil callback
           onSelected: (value) {
             if (value == 'edit') {
               onEdit();
@@ -87,16 +97,29 @@ class TourPackageCard extends StatelessWidget {
               onDelete();
             }
           },
-          itemBuilder: (context) => <PopupMenuEntry<String>>[
-            PopupMenuItem<String>(
-              value: 'edit',
-              child: const Row(children: [Icon(Icons.edit_outlined), SizedBox(width: 8), Text('Edit')]),
-            ),
-            PopupMenuItem<String>(
-              value: 'delete',
-              child: const Row(children: [Icon(Icons.delete_outline, color: Colors.red), SizedBox(width: 8), Text('Hapus', style: TextStyle(color: Colors.red))]),
-            ),
-          ],
+          itemBuilder:
+              (context) => <PopupMenuEntry<String>>[
+                PopupMenuItem<String>(
+                  value: 'edit',
+                  child: const Row(
+                    children: [
+                      Icon(Icons.edit_outlined),
+                      SizedBox(width: 8),
+                      Text('Edit'),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<String>(
+                  value: 'delete',
+                  child: const Row(
+                    children: [
+                      Icon(Icons.delete_outline, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Hapus', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                ),
+              ],
         ),
       ),
     );

@@ -1,14 +1,42 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:tangaya_apps/app/data/models/booking_model.dart';
 import 'package:tangaya_apps/app/data/models/event_model.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
-import 'package:tangaya_apps/app/data/models/booking_model.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 
 class BookingService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Menggunakan lazy-find untuk memastikan AuthController sudah siap saat dipanggil
   final AuthController _authController = Get.find<AuthController>();
 
+  // METHOD BARU: Mengambil stream pesanan untuk Admin (hanya yang butuh persetujuan)
+  Stream<List<Booking>> getAdminOrdersStream() {
+    return _firestore
+        .collection('orders')
+        .where('status', isEqualTo: 'pending_approval')
+        .orderBy('orderTimestamp', descending: true)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => Booking.fromFirestore(doc)).toList());
+  }
+
+  // METHOD BARU: Mengambil stream pesanan untuk User tertentu
+  Stream<List<Booking>> getUserOrdersStream(String userId) {
+    if (userId.isEmpty) {
+      // Mengembalikan stream kosong jika tidak ada user ID
+      return Stream.value([]);
+    }
+    return _firestore
+        .collection('orders')
+        .where('userId', isEqualTo: userId)
+        .orderBy('updatedAt', descending: true)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => Booking.fromFirestore(doc)).toList());
+  }
+
+  // Method untuk menyimpan pesanan baru
   Future<void> saveOrderToFirestore({
     required String orderId,
     required String paymentStatus,
@@ -25,7 +53,6 @@ class BookingService extends GetxService {
     required DateTime? selectedDateValue,
     required List<String> peopleNamesValues,
     String? paymentMethodType,
-    bool isUpdate = false,
   }) async {
     try {
       final int peopleCount =
@@ -61,39 +88,28 @@ class BookingService extends GetxService {
         "totalPrice": totalPrice,
         "status": paymentStatus,
         "paymentMethodType": paymentMethodType,
+        "orderTimestamp": FieldValue.serverTimestamp(),
         "updatedAt": FieldValue.serverTimestamp(),
+        "snapToken": snapToken,
       };
 
-      if (!isUpdate) {
-        orderData["orderTimestamp"] = FieldValue.serverTimestamp();
-      }
-
-      orderData["snapToken"] = snapToken;
-
-      if (isUpdate) {
-        await _firestore
-            .collection("orders")
-            .doc(orderId)
-            .set(orderData, SetOptions(merge: true));
-        print("✅ Order berhasil diperbarui di Firestore dengan ID: $orderId");
-      } else {
-        await _firestore.collection("orders").doc(orderId).set(orderData);
-        print("✅ Order berhasil disimpan ke Firestore dengan ID: $orderId");
-      }
+      await _firestore.collection("orders").doc(orderId).set(orderData);
+      print("✅ Order berhasil disimpan ke Firestore dengan ID: $orderId");
     } catch (e) {
-      print(
-        "❌ Gagal menyimpan/memperbarui order di Firestore (OrderService): $e",
-      );
+      print("❌ Gagal menyimpan order di Firestore (BookingService): $e");
       Get.snackbar("Error Database", "Gagal memproses data pesanan: $e");
       rethrow;
     }
   }
-
+  
+  // Method untuk memperbarui status pesanan. Cukup fleksibel untuk berbagai kebutuhan.
   Future<void> updateOrderStatus(
     String orderId,
     String newStatus, {
     String? paymentMethod,
     String? updatedSnapToken,
+    String? paymentTransactionStatus,
+    String? paymentStatusCode,
   }) async {
     try {
       Map<String, dynamic> dataToUpdate = {
@@ -106,6 +122,12 @@ class BookingService extends GetxService {
       if (updatedSnapToken != null) {
         dataToUpdate['snapToken'] = updatedSnapToken;
       }
+       if (paymentTransactionStatus != null) {
+        dataToUpdate['paymentTransactionStatus'] = paymentTransactionStatus;
+      }
+       if (paymentStatusCode != null) {
+        dataToUpdate['paymentStatusCode'] = paymentStatusCode;
+      }
 
       await _firestore.collection('orders').doc(orderId).update(dataToUpdate);
       print("✅ Status order $orderId berhasil diupdate menjadi $newStatus");
@@ -116,18 +138,7 @@ class BookingService extends GetxService {
     }
   }
 
-  Stream<List<Booking>> getOrdersStream() {
-    return _firestore
-        .collection('orders')
-        .orderBy('orderTimestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
-          return snapshot.docs
-              .map((doc) => Booking.fromFirestore(doc))
-              .toList();
-        });
-  }
-
+  // Method untuk menghapus pesanan
   Future<void> deleteOrder(String orderId) async {
     try {
       await _firestore.collection('orders').doc(orderId).delete();

@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get.dart';
 import '../models/event_model.dart';
 
-class EventService {
+class EventService extends GetxService {
   final _firestore = FirebaseFirestore.instance;
   final _storage = FirebaseStorage.instance;
   final String _collectionPath = 'events';

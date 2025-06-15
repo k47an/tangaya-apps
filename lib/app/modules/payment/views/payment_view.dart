@@ -9,11 +9,6 @@ class PaymentView extends GetView<PaymentController> {
 
   @override
   Widget build(BuildContext context) {
-    // Controller akan di-inject oleh GetX, pastikan Anda punya Binding
-    // atau Get.put() di tempat yang sesuai sebelum navigasi ke halaman ini.
-    // Untuk contoh ini, kita akan buat binding nanti.
-    // Atau, jika controller sudah diinisialisasi oleh Get.to, ia akan tersedia.
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Proses Pembayaran'),

@@ -1,4 +1,3 @@
-// lib/app/modules/manageTourAndEvent/views/manage_tour_event_view.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/components/eventCard.dart';
@@ -11,7 +10,6 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
 
   @override
   Widget build(BuildContext context) {
-    // DefaultTabController akan mengelola state tab secara otomatis
     return DefaultTabController(
       length: 2,
       child: SafeArea(
@@ -25,8 +23,7 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
               ),
             ],
           ),
-          // Menggunakan Builder agar context yang digunakan untuk showModalBottomSheet
-          // adalah context yang berada di bawah Scaffold.
+
           floatingActionButton: Builder(
             builder:
                 (context) => FloatingActionButton(
@@ -65,8 +62,7 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
       child: TabBar(
         labelColor: Colors.white,
         unselectedLabelColor: Colors.white70,
-        indicatorColor:
-            Primary.mainColor, // Memberi warna pada indicator agar lebih jelas
+        indicatorColor: Primary.mainColor,
         indicatorWeight: 3,
         tabs: const [
           Tab(icon: Icon(Icons.tour), text: 'Paket Wisata'),
@@ -88,7 +84,6 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
                   title: const Text('Tambah Paket Wisata'),
                   onTap: () {
                     Navigator.pop(context);
-                    // PERBAIKAN: Panggil method controller, bukan Get.to langsung
                     controller.goToUpsertTourView();
                   },
                 ),
@@ -97,7 +92,6 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
                   title: const Text('Tambah Event'),
                   onTap: () {
                     Navigator.pop(context);
-                    // PERBAIKAN: Panggil method controller, bukan Get.to langsung
                     controller.goToUpsertEventView();
                   },
                 ),
@@ -108,15 +102,12 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
   }
 }
 
-// ============== WIDGETS UNTUK LIST ==============
-
 class _TourPackageList extends GetView<ManageTourEventController> {
   const _TourPackageList();
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Menampilkan loading indicator khusus untuk list ini jika diperlukan
       if (controller.isTourLoading.value && controller.tourPackages.isEmpty) {
         return const Center(child: CircularProgressIndicator());
       }
@@ -132,10 +123,8 @@ class _TourPackageList extends GetView<ManageTourEventController> {
             final tourPackage = controller.tourPackages[index];
             return TourPackageCard(
               tourPackage: tourPackage,
-              // PERBAIKAN: Sambungkan callback onEdit ke method controller
               onEdit:
                   () => controller.goToUpsertTourView(tourPackage: tourPackage),
-              // PERBAIKAN: Sambungkan callback onDelete ke method controller
               onDelete:
                   () => controller.deleteTourPackage(package: tourPackage),
             );
@@ -167,9 +156,7 @@ class _EventList extends GetView<ManageTourEventController> {
             final event = controller.events[index];
             return EventCard(
               event: event,
-              // PERBAIKAN: Sambungkan callback onEdit ke method controller
               onEdit: () => controller.goToUpsertEventView(event: event),
-              // PERBAIKAN: Sambungkan callback onDelete ke method controller
               onDelete: () => controller.deleteEvent(event),
             );
           },

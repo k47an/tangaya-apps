@@ -198,7 +198,6 @@ mixin OrderFormMixin on GetxController {
         itemId: itemId,
         selectedDateValue: itemType == 'tour' ? selectedDate.value : null,
         peopleNamesValues: peopleNames.map((c) => c.text).toList(),
-        isUpdate: false,
       );
 
       Get.back();

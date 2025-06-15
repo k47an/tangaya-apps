@@ -1,9 +1,14 @@
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:tangaya_apps/app/data/api/api.dart';
+import 'package:tangaya_apps/app/data/models/booking_model.dart';
+import 'package:tangaya_apps/app/data/models/midtrans_model.dart';
 
-class MidtransService {
-  static String _serverKey = Api.midtransServerKey;
+class MidtransService extends GetxService {
+  static const String finishRedirectUrlHost = "tangaya-apps.web.app";
+  static const String finishRedirectUrlPath = "/payment-callback";
+  static final String _serverKey = Api.midtransServerKey;
   static const String _baseUrl =
       'https://app.sandbox.midtrans.com/snap/v1/transactions';
   static const String _finishRedirectUrl =
@@ -55,5 +60,64 @@ class MidtransService {
       print('Terjadi error saat menghubungi Midtrans (MidtransService): $e');
       return null;
     }
+  }
+
+  Future<String?> createTransactionForOrder(Booking booking) async {
+    if (booking.totalPrice <= 0) {
+      print("❌ Error: Total harga untuk order ${booking.orderId} tidak valid.");
+      return null;
+    }
+
+    final itemDetails = [
+      {
+        "id": booking.itemId,
+        "price": booking.totalPrice,
+        "quantity": 1,
+        "name": booking.itemTitle,
+      },
+    ];
+
+    final customerNameParts = booking.customerName.split(" ");
+    final firstName = customerNameParts.first;
+    final lastName =
+        customerNameParts.length > 1
+            ? customerNameParts.sublist(1).join(" ")
+            : '';
+
+    final customerDetails = {
+      "first_name": firstName,
+      "last_name": lastName,
+      "email": booking.customerEmail,
+      "phone": booking.customerPhone,
+    };
+
+    return await createTransaction(
+      orderId: booking.orderId,
+      grossAmount: booking.totalPrice,
+      itemDetails: itemDetails,
+      customerDetails: customerDetails,
+    );
+  }
+
+  MidtransModel? parseRedirectUrl(Uri url) {
+    if (url.host == finishRedirectUrlHost &&
+        url.path == finishRedirectUrlPath) {
+      final String? orderId = url.queryParameters['order_id'];
+      final String? transactionStatus =
+          url.queryParameters['transaction_status'];
+      final String? statusCode = url.queryParameters['status_code'];
+
+      if (orderId != null && transactionStatus != null && statusCode != null) {
+        print(
+          'MidtransService: Payment callback intercepted for orderId: $orderId',
+        );
+        return MidtransModel(
+          orderId: orderId,
+          transactionStatus: transactionStatus,
+          statusCode: statusCode,
+        );
+      }
+    }
+    return null;
   }
 }

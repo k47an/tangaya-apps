@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; // Diperlukan untuk format tanggal
+import 'package:intl/intl.dart';
 import 'package:tangaya_apps/app/data/models/event_model.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/controllers/manage_tour_event_controller.dart';
 import 'package:tangaya_apps/constant/constant.dart';
@@ -104,7 +104,6 @@ class UpsertEventView extends StatelessWidget {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            // Pengecualian untuk harga, boleh kosong
             if (label.contains('Harga')) return null;
             return '$label wajib diisi.';
           }
@@ -148,14 +147,11 @@ class UpsertEventView extends StatelessWidget {
     return Obx(() {
       Widget imagePreview;
       if (controller.selectedEventImage.value != null) {
-        // Tampilkan gambar baru yang dipilih
         imagePreview = Image.file(controller.selectedEventImage.value!);
       } else if (controller.currentEventImageUrl.value != null &&
           controller.currentEventImageUrl.value!.isNotEmpty) {
-        // Tampilkan gambar lama dari network
         imagePreview = Image.network(controller.currentEventImageUrl.value!);
       } else {
-        // Tampilan placeholder jika tidak ada gambar
         imagePreview = Container(
           height: 150,
           color: Colors.grey[200],

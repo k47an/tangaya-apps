@@ -12,7 +12,6 @@ class UpsertTourView extends StatelessWidget {
 
   const UpsertTourView({super.key, this.tourPackage});
 
-  // Cek apakah sedang dalam mode edit
   bool get isEditMode => tourPackage != null;
 
   @override
@@ -52,14 +51,12 @@ class UpsertTourView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- FORM FIELDS ---
                   _buildTextInput(
                     controller: controller.tourPackageTitleController,
                     label: 'Judul Paket Wisata',
                   ),
                   const SizedBox(height: 12),
                   _buildDescriptionInput(
-                    // Diperbaiki menggunakan TextFormField
                     controller: controller.tourPackageDescriptionController,
                     label: 'Deskripsi',
                   ),
@@ -73,8 +70,6 @@ class UpsertTourView extends StatelessWidget {
                   const SizedBox(height: 16),
                   _buildImagePickerSection(controller),
                   const SizedBox(height: 24),
-
-                  // --- SAVE BUTTON ---
                   Obx(
                     () =>
                         controller.isTourLoading.value
@@ -122,8 +117,6 @@ class UpsertTourView extends StatelessWidget {
     );
   }
 
-  // --- WIDGET HELPERS (Bisa digunakan bersama) ---
-
   Widget _buildTextInput({
     required TextEditingController controller,
     required String label,
@@ -160,7 +153,6 @@ class UpsertTourView extends StatelessWidget {
     required TextEditingController controller,
     required String label,
   }) {
-    // PERBAIKAN: Menggunakan TextFormField agar terintegrasi dengan Form Key
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -197,7 +189,6 @@ class UpsertTourView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // Grid untuk menampilkan semua gambar (yang lama dan baru)
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -210,7 +201,6 @@ class UpsertTourView extends StatelessWidget {
               mainAxisSpacing: 8,
             ),
             itemBuilder: (context, index) {
-              // Menentukan apakah gambar berasal dari network (sudah ada) atau dari file (baru)
               bool isNetworkImage =
                   index < controller.currentTourPackageImageUrls.length;
 
@@ -233,8 +223,6 @@ class UpsertTourView extends StatelessWidget {
             },
           ),
           const SizedBox(height: 12),
-
-          // Tombol untuk menambah gambar baru
           Center(
             child: ElevatedButton.icon(
               onPressed: () async {
@@ -259,7 +247,6 @@ class UpsertTourView extends StatelessWidget {
     });
   }
 
-  // Widget kecil untuk item gambar di grid, agar tidak duplikat kode
   Widget _buildImageTile({
     required Widget imageWidget,
     required VoidCallback onDelete,
