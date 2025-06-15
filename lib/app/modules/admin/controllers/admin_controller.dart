@@ -17,6 +17,40 @@ class AdminController extends GetxController {
 
   final Rxn<UserModel> userModel = Rxn<UserModel>();
 
+  Future<void> updateOrderStatus(String orderId, String newStatus) async {
+    try {
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
+      await FirebaseFirestore.instance.collection('orders').doc(orderId).update(
+        {'status': newStatus},
+      );
+
+      Get.back();
+
+      Get.snackbar(
+        "Berhasil",
+        "Status pesanan berhasil diubah menjadi Lunas.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      fetchProcessedOrders();
+    } catch (e) {
+      Get.back();
+      Get.snackbar(
+        "Gagal",
+        "Terjadi kesalahan saat memperbarui status: $e",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -39,7 +73,7 @@ class AdminController extends GetxController {
     try {
       final uid = authController.currentUser.value?.uid;
       if (uid == null) {
-        debugPrint('❌ Error getUserData: UID is null');
+        debugPrint('Error getUserData: UID is null');
         return;
       }
 
@@ -48,7 +82,7 @@ class AdminController extends GetxController {
         userModel.value = UserModel.fromMap({'id': doc.id, ...doc.data()!});
       } else {}
     } catch (e) {
-      debugPrint('❌ Error getUserData: $e');
+      debugPrint('Error getUserData: $e');
     }
   }
 
@@ -61,7 +95,7 @@ class AdminController extends GetxController {
               .toList();
       users.assignAll(userList);
     } catch (e) {
-      debugPrint('❌ Error fetchUsers: $e');
+      debugPrint('Error fetchUsers: $e');
     }
   }
 
@@ -102,7 +136,7 @@ class AdminController extends GetxController {
       }
       ordersByMonth.assignAll(grouped);
     } catch (e) {
-      debugPrint('❌ Error fetching processed orders: $e');
+      debugPrint('Error fetching processed orders: $e');
     } finally {
       isLoadingOrders(false);
     }

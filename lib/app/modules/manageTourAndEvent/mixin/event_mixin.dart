@@ -72,7 +72,6 @@ mixin EventMixin on GetxController {
   }
 
   double? _parsePrice() {
-    // 2. BERSIHKAN FORMATTER SEBELUM PARSING
     final priceText = eventPriceController.text.trim().replaceAll('.', '');
     if (priceText.isEmpty) {
       return null;

@@ -9,7 +9,6 @@ class TourPackageService extends GetxService {
   final firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
 
-  // Menambahkan paket wisata baru
   Future<void> addTourPackage({
     required String title,
     required String description,
@@ -38,7 +37,6 @@ class TourPackageService extends GetxService {
     }
   }
 
-  // Mengunggah gambar ke Firebase Storage
   Future<String?> _uploadImage(File imageFile) async {
     try {
       String fileName =
@@ -52,7 +50,6 @@ class TourPackageService extends GetxService {
     }
   }
 
-  // Mengambil daftar paket wisata
   Future<List<TourPackage>> fetchTourPackages() async {
     try {
       final snapshot = await _firestore.collection('tours').get();
@@ -64,7 +61,6 @@ class TourPackageService extends GetxService {
     }
   }
 
-  // Mengambil detail paket wisata berdasarkan ID
   Future<TourPackage?> getTourPackageById(String id) async {
     try {
       final DocumentSnapshot doc =
@@ -78,7 +74,6 @@ class TourPackageService extends GetxService {
     }
   }
 
-  // Mengedit paket wisata
   Future<void> editTourPackage({
     required String docId,
     required String newTitle,
@@ -89,7 +84,6 @@ class TourPackageService extends GetxService {
     required List<String> imagesToDelete,
   }) async {
     try {
-      // Hapus gambar lama dari storage
       for (final url in imagesToDelete) {
         try {
           await _storage.refFromURL(url).delete();
@@ -98,7 +92,6 @@ class TourPackageService extends GetxService {
         }
       }
 
-      // Unggah gambar baru
       List<String> newUrls = [];
       for (final file in newImageFiles) {
         final url = await _uploadImage(file);
@@ -124,7 +117,6 @@ class TourPackageService extends GetxService {
     }
   }
 
-  // Menghapus paket wisata
   Future<void> deleteTourPackage({
     required String docId,
     required List<String> imageUrls,

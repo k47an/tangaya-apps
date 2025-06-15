@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tangaya_apps/app/modules/admin/controllers/admin_controller.dart';
-import 'package:tangaya_apps/constant/constant.dart'; // Asumsi Anda punya Primary.mainColor di sini
+import 'package:tangaya_apps/constant/constant.dart';
 
 class OrderView extends GetView<AdminController> {
   const OrderView({super.key});
 
-  // Helper widget untuk baris info
   Widget _buildInfoRow(
     BuildContext context,
     IconData icon,
@@ -65,7 +64,6 @@ class OrderView extends GetView<AdminController> {
     );
   }
 
-  // Helper untuk status chip
   Widget _buildStatusChip(String status, String paymentMethod) {
     String displayStatusText = status;
     Color statusColor = Colors.grey;
@@ -76,16 +74,23 @@ class OrderView extends GetView<AdminController> {
           paymentMethod == 'cod' ? 'COD (Lunas)' : 'Lunas (Online)';
       statusColor = Colors.green.shade700;
       statusIcon = Icons.check_circle_outline;
-    } else if (status == 'cod_selected_awaiting_delivery') {
-      displayStatusText = 'COD (Menunggu Pengiriman)';
-      statusColor = Colors.orange.shade800;
-      statusIcon = Icons.local_shipping_outlined;
-    } else if (status == 'cod_completed') {
-      displayStatusText = 'COD (Selesai)';
+    } else if (status == 'cod_selected') {
+      displayStatusText = 'COD (Konfirmasi Bayar)';
       statusColor = Colors.blue.shade700;
-      statusIcon = Icons.done_all_outlined;
+      statusIcon = Icons.touch_app_outlined;
+    } else if (status == 'pending' || status == 'awaiting_payment_choice') {
+      displayStatusText = 'Menunggu Pembayaran';
+      statusColor = Colors.orange.shade700;
+      statusIcon = Icons.hourglass_empty_outlined;
+    } else if (status == 'cancelled') {
+      displayStatusText = 'Dibatalkan';
+      statusColor = Colors.red.shade700;
+      statusIcon = Icons.cancel_outlined;
+    } else if (status == 'expired') {
+      displayStatusText = 'Kedaluwarsa';
+      statusColor = Colors.grey.shade600;
+      statusIcon = Icons.timer_off_outlined;
     }
-    // Anda bisa menambahkan mapping status lain di sini
 
     return Chip(
       avatar: Icon(statusIcon, color: Colors.white, size: 16),
@@ -99,11 +104,33 @@ class OrderView extends GetView<AdminController> {
       ),
       backgroundColor: statusColor,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      labelPadding: const EdgeInsets.only(
-        left: 2,
-        right: 6,
-      ), // Sesuaikan padding label
+      labelPadding: const EdgeInsets.only(left: 2, right: 6),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    );
+  }
+
+  void _showConfirmationDialog(BuildContext context, String orderId) {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: const Text('Konfirmasi Pembayaran'),
+        content: const Text(
+          'Apakah pesanan ini sudah dibayar lunas oleh pelanggan?',
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            onPressed: () {
+              controller.updateOrderStatus(orderId, 'paid');
+            },
+            child: const Text(
+              'Ya, Sudah Lunas',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -129,7 +156,6 @@ class OrderView extends GetView<AdminController> {
         ),
         body: Obx(() {
           if (controller.isLoadingOrders.value) {
-            // Menggunakan isLoadingOrders
             return const Center(
               child: CircularProgressIndicator(color: Primary.mainColor),
             );
@@ -190,6 +216,7 @@ class OrderView extends GetView<AdminController> {
                     itemCount: ordersInMonth.length,
                     itemBuilder: (context, orderIndex) {
                       final orderDataMap = ordersInMonth[orderIndex];
+                      final String orderId = orderDataMap['orderId'] ?? '';
                       final String packageTitle = orderDataMap['packageTitle'];
                       final String customerName = orderDataMap['customerName'];
                       final DateTime bookingDate = orderDataMap['bookingDate'];
@@ -236,7 +263,7 @@ class OrderView extends GetView<AdminController> {
                                 Icons.calendar_today_rounded,
                                 "Tanggal:",
                                 DateFormat(
-                                  'EEEE, dd MMM yyyy',
+                                  'EEEE, dd MMMM yyyy',
                                   'id_ID',
                                 ).format(bookingDate),
                               ),
@@ -264,7 +291,17 @@ class OrderView extends GetView<AdminController> {
                               const SizedBox(height: 10),
                               Align(
                                 alignment: Alignment.centerRight,
-                                child: _buildStatusChip(status, paymentMethod),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (status == 'cod_selected') {
+                                      _showConfirmationDialog(context, orderId);
+                                    }
+                                  },
+                                  child: _buildStatusChip(
+                                    status,
+                                    paymentMethod,
+                                  ),
+                                ),
                               ),
                             ],
                           ),

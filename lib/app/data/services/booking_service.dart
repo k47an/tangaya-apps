@@ -7,10 +7,8 @@ import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 
 class BookingService extends GetxService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // Menggunakan lazy-find untuk memastikan AuthController sudah siap saat dipanggil
   final AuthController _authController = Get.find<AuthController>();
 
-  // METHOD BARU: Mengambil stream pesanan untuk Admin (hanya yang butuh persetujuan)
   Stream<List<Booking>> getAdminOrdersStream() {
     return _firestore
         .collection('orders')
@@ -21,10 +19,8 @@ class BookingService extends GetxService {
             snapshot.docs.map((doc) => Booking.fromFirestore(doc)).toList());
   }
 
-  // METHOD BARU: Mengambil stream pesanan untuk User tertentu
   Stream<List<Booking>> getUserOrdersStream(String userId) {
     if (userId.isEmpty) {
-      // Mengembalikan stream kosong jika tidak ada user ID
       return Stream.value([]);
     }
     return _firestore
@@ -36,7 +32,6 @@ class BookingService extends GetxService {
             snapshot.docs.map((doc) => Booking.fromFirestore(doc)).toList());
   }
 
-  // Method untuk menyimpan pesanan baru
   Future<void> saveOrderToFirestore({
     required String orderId,
     required String paymentStatus,
@@ -102,7 +97,6 @@ class BookingService extends GetxService {
     }
   }
   
-  // Method untuk memperbarui status pesanan. Cukup fleksibel untuk berbagai kebutuhan.
   Future<void> updateOrderStatus(
     String orderId,
     String newStatus, {

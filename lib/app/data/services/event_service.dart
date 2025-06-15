@@ -100,10 +100,9 @@ class EventService extends GetxService {
       if (doc.exists && doc.data() != null) {
         return Event.fromJson(doc.data()!, doc.id);
       }
-      return null; // Return null jika dokumen tidak ditemukan
+      return null; 
     } catch (e) {
       print("Error fetching event by ID: $e");
-      // Melempar exception kembali agar controller bisa menanganinya
       throw Exception('Gagal mengambil detail event: $e');
     }
   }
