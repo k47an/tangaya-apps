@@ -3,30 +3,23 @@ import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/payment/controllers/payment_controller.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-
 class PaymentView extends GetView<PaymentController> {
   const PaymentView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Proses Pembayaran'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => controller.handleCloseButton(),
-        ),
-      ),
-      body: Obx( // Gunakan Obx untuk merebuild saat isLoading berubah
-        () => Stack(
-          children: [
-            WebViewWidget(controller: controller.webViewController),
-            if (controller.isLoading.value)
-              const Center(
-                child: CircularProgressIndicator(),
-              ),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        body: Obx(
+          () => Stack(
+            children: [
+              WebViewWidget(controller: controller.webViewController),
+              if (controller.isLoading.value)
+                const Center(child: CircularProgressIndicator()),
+            ],
+          ),
         ),
       ),
     );
-  }}
+  }
+}

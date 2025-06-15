@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/controllers/manage_tour_event_controller.dart';
 import 'package:tangaya_apps/constant/constant.dart';
+import 'package:tangaya_apps/utils/helper/formater_price.dart';
 
 class UpsertTourView extends StatelessWidget {
   final TourPackage? tourPackage;
@@ -71,42 +72,41 @@ class UpsertTourView extends StatelessWidget {
                   _buildImagePickerSection(controller),
                   const SizedBox(height: 24),
                   Obx(
-                    () =>
-                        controller.isTourLoading.value
-                            ? const Center(
-                              child: CircularProgressIndicator(
-                                color: Primary.mainColor,
+                    () => controller.isTourLoading.value
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Primary.mainColor,
+                            ),
+                          )
+                        : SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Primary.mainColor,
+                                foregroundColor: Neutral.white1,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                textStyle: semiBold.copyWith(fontSize: 16),
                               ),
-                            )
-                            : SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Primary.mainColor,
-                                  foregroundColor: Neutral.white1,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  textStyle: semiBold.copyWith(fontSize: 16),
-                                ),
-                                onPressed: () {
-                                  if (isEditMode) {
-                                    controller.editTourPackage(
-                                      docId: tourPackage!.id!,
-                                    );
-                                  } else {
-                                    controller.addTourPackage();
-                                  }
-                                },
-                                child: Text(
-                                  buttonTitle,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
+                              onPressed: () {
+                                if (isEditMode) {
+                                  controller.editTourPackage(
+                                    docId: tourPackage!.id!,
+                                  );
+                                } else {
+                                  controller.addTourPackage();
+                                }
+                              },
+                              child: Text(
+                                buttonTitle,
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
+                          ),
                   ),
                 ],
               ),
@@ -123,6 +123,15 @@ class UpsertTourView extends StatelessWidget {
     bool isNumber = false,
     String? prefixText,
   }) {
+    final List<TextInputFormatter> inputFormatters = [];
+
+    if (isNumber) {
+      inputFormatters.add(FilteringTextInputFormatter.digitsOnly);
+      if (label.toLowerCase() == 'harga') {
+        inputFormatters.add(ThousandsSeparatorInputFormatter());
+      }
+    }
+
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -137,13 +146,18 @@ class UpsertTourView extends StatelessWidget {
         prefixStyle: const TextStyle(color: Colors.black54, fontSize: 16),
       ),
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      inputFormatters: isNumber ? [FilteringTextInputFormatter.digitsOnly] : [],
+      inputFormatters: inputFormatters,
       validator: (value) {
         if (value == null || value.isEmpty) return '$label wajib diisi';
-        if (isNumber && double.tryParse(value) == null)
-          return 'Masukkan angka yang valid';
-        if (isNumber && (double.tryParse(value) ?? -1) < 0)
-          return 'Harga tidak boleh negatif';
+        if (isNumber) {
+          final numericValue = value.replaceAll('.', '');
+          if (double.tryParse(numericValue) == null) {
+            return 'Masukkan angka yang valid';
+          }
+          if ((double.tryParse(numericValue) ?? -1) < 0) {
+            return 'Harga tidak boleh negatif';
+          }
+        }
         return null;
       },
     );
@@ -188,12 +202,10 @@ class UpsertTourView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount:
-                controller.currentTourPackageImageUrls.length +
+            itemCount: controller.currentTourPackageImageUrls.length +
                 controller.selectedTourPackageImages.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,

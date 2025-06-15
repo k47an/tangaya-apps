@@ -63,7 +63,6 @@ class WeatherWidget extends GetView<HomeController> {
                 ],
               ),
               Spacer(),
-              // Weather Info
               Expanded(
                 child: Column(
                   children: [

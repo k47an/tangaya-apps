@@ -5,7 +5,7 @@ import 'package:weather/weather.dart';
 
 mixin WeatherMixin on GetxController {
   WeatherFactory wf = WeatherFactory(
-    Api.keyWeather, // Ambil dari Api.keyWeather
+    Api.keyWeather,
     language: Language.INDONESIAN,
   );
 

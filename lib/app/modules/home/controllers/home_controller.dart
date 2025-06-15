@@ -30,16 +30,12 @@ class HomeController extends GetxController
   String getTabIcon(int index) => tabs[index]['icon'] ?? '';
   String getTabTitle(int index) => tabs[index]['title'] ?? '';
 
-  // Gunakan RxList lokal
   final RxList<TourPackage> tourPackages = <TourPackage>[].obs;
   final RxList<Event> events = <Event>[].obs;
 
   void refreshData() async {
-    // ...
-    // Panggil service langsung
     tourPackages.assignAll(await _tourService.fetchTourPackages());
     events.assignAll(await _eventService.fetchEvents());
-    // ...
   }
 
   @override

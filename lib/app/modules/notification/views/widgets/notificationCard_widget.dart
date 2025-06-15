@@ -26,9 +26,7 @@ class NotificationCardWidget extends GetView<NotificationController> {
 
   @override
   Widget build(BuildContext context) {
-    // Mendapatkan informasi status (teks dan warna) dari helper method
     final statusInfo = _getStatusInfo(order.status);
-    // Mendapatkan tombol aksi yang sesuai dengan status dan role
     final actionButtons = _buildActionButtons();
 
     return Card(
@@ -139,7 +137,6 @@ class NotificationCardWidget extends GetView<NotificationController> {
     );
   }
 
-  // Helper method untuk menentukan teks dan warna berdasarkan status
   Map<String, dynamic> _getStatusInfo(String status) {
     switch (status) {
       case 'pending_approval':
@@ -191,14 +188,13 @@ class NotificationCardWidget extends GetView<NotificationController> {
         };
       default:
         return {
-          'text': status.capitalizeFirst ?? 'Unknown',
+          'text': status.capitalizeFirst ?? 'Tidak Diketahui',
           'color': Colors.grey.shade800,
           'bgColor': Colors.grey.shade300,
         };
     }
   }
 
-  // Helper method untuk membangun tombol aksi berdasarkan status dan role
   List<Widget> _buildActionButtons() {
     if (isAdmin) {
       if (order.status == 'pending_approval') {
@@ -225,7 +221,6 @@ class NotificationCardWidget extends GetView<NotificationController> {
         ];
       }
     } else {
-      // Tombol untuk User
       switch (order.status) {
         case 'awaiting_payment_choice':
           return [
@@ -234,32 +229,43 @@ class NotificationCardWidget extends GetView<NotificationController> {
               child: const Text("Pilih Bayar"),
             ),
           ];
+
         case 'midtrans_pending_payment':
+        case 'midtrans_payment_pending':
           return [
-            ElevatedButton(
-              onPressed: onUserContinuePayment,
-              child: const Text("Lanjutkan Bayar"),
-            ),
             const SizedBox(width: 8),
             OutlinedButton(
               onPressed: onUserChangePayment,
               child: const Text("Ubah Metode"),
             ),
           ];
+
         case 'cod_selected':
-        case 'payment_failed_or_cancelled':
           return [
             OutlinedButton(
               onPressed: onUserChangePayment,
               child: const Text("Ubah Metode Bayar"),
             ),
           ];
+
+        case 'payment_failed_or_cancelled':
+        case 'expire':
+        case 'cancel':
+        case 'deny':
+          return [
+            OutlinedButton(
+              onPressed: onUserChangePayment,
+              child: const Text("Coba Bayar Lagi"),
+            ),
+          ];
+
+        default:
+          return [];
       }
     }
-    return []; // Return list kosong jika tidak ada aksi
+    return [];
   }
 
-  // Helper method untuk membuat baris info (icon, label, value)
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(top: 4.0),

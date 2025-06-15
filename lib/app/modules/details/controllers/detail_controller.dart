@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/data/services/booking_service.dart';
 import 'package:tangaya_apps/app/data/services/event_service.dart';
@@ -26,7 +27,7 @@ class DetailController extends GetxController
     if (Get.arguments == null ||
         Get.arguments['type'] == null ||
         Get.arguments['id'] == null) {
-      Get.snackbar('Error', 'Informasi item tidak lengkap.');
+      debugPrint('Informasi item tidak lengkap.');
       Get.back();
       return;
     }
@@ -67,7 +68,7 @@ class DetailController extends GetxController
       detailItem.value = fetchedData;
       initializeActiveHeroImage();
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat detail: $e');
+      debugPrint('Gagal memuat detail: $e');
       detailItem.value = null;
     } finally {
       isLoading.value = false;

@@ -6,6 +6,7 @@ import 'package:tangaya_apps/app/data/models/tour_model.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 class BookingBarWidget extends StatelessWidget {
   final dynamic item;
@@ -20,7 +21,10 @@ class BookingBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authController = Get.find<AuthController>();
-    final num price = (item is TourPackage) ? (item.price ?? 0) : ((item is Event) ? (item.price ?? 0) : 0);
+    final num price =
+        (item is TourPackage)
+            ? (item.price ?? 0)
+            : ((item is Event) ? (item.price ?? 0) : 0);
     final String itemType = (item is TourPackage) ? 'tour' : 'event';
 
     return Container(
@@ -49,8 +53,14 @@ class BookingBarWidget extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                price > 0 ? "Rp ${NumberFormat('#,###', 'id_ID').format(price)}" : "Gratis",
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Primary.mainColor),
+                price > 0
+                    ? "Rp ${NumberFormat('#,###', 'id_ID').format(price)}"
+                    : "Gratis",
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Primary.mainColor,
+                ),
               ),
             ],
           ),
@@ -59,20 +69,20 @@ class BookingBarWidget extends StatelessWidget {
               backgroundColor: Primary.mainColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             onPressed: () {
               if (authController.userRole.value == 'tamu') {
-                Get.snackbar(
-                  'Akses Ditolak',
-                  'Anda harus login untuk dapat melakukan pemesanan.',
-                  snackPosition: SnackPosition.TOP,
-                  backgroundColor: Colors.orange,
-                  colorText: Colors.white,
+                CustomSnackBar.show(
+                  context: context,
+                  message: "Silakan login untuk melakukan pemesanan",
+                  type: SnackBarType.warning,
                 );
-                Get.toNamed(Routes.SIGNIN); 
+                Get.toNamed(Routes.SIGNIN);
               } else {
-                onBookingPressed(); 
+                onBookingPressed();
               }
             },
             child: Text(itemType == 'tour' ? "Pesan Wisata" : "Daftar Event"),

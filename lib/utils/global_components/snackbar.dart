@@ -31,20 +31,20 @@ class CustomSnackBar {
         break;
       case SnackBarType.warning:
         backgroundColor = Warning.mainColor;
-        textColor = Neutral.dark1; // Gunakan teks gelap agar lebih terbaca
-        iconColor = Neutral.dark1; // Ikon gelap juga
+        textColor = Neutral.dark1;
+        iconColor = Neutral.dark1;
         iconData = Icons.warning_amber_rounded;
-        border = null; // Tidak ada border
+        border = null;
         break;
     }
 
     final snackBar = SnackBar(
       content: Container(
-        padding: const EdgeInsets.all(16), // Padding seragam
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: border, // Terapkan border di sini
+          border: border,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),

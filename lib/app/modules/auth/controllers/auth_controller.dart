@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/data/models/user_model.dart';
 import 'package:tangaya_apps/app/data/services/auth_services.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 class AuthController extends GetxController {
   final AuthService _authService = AuthService();
@@ -17,8 +19,7 @@ class AuthController extends GetxController {
   User? get user => currentUser.value;
   String get uid => user?.uid ?? '';
   String get userName => userModel.value?.name ?? user?.displayName ?? 'Tamu';
-  String get userGender =>
-      userModel.value?.gender ?? ''; 
+  String get userGender => userModel.value?.gender ?? '';
   String get userPhone => userModel.value?.phone ?? '-';
   String get userAddress => userModel.value?.address ?? '-';
   String get userEmail => userModel.value?.email ?? user?.email ?? '-';
@@ -42,7 +43,11 @@ class AuthController extends GetxController {
     try {
       final signedInUser = await _authService.signInWithGoogle();
       if (signedInUser == null) {
-        Get.snackbar('Login dibatalkan', 'Akun Google tidak dipilih.');
+        CustomSnackBar.show(
+          context: Get.context!,
+          message: 'Gagal masuk dengan Google. Silakan coba lagi.',
+          type: SnackBarType.error,
+        );
         return false;
       }
 
@@ -52,7 +57,7 @@ class AuthController extends GetxController {
 
       return true;
     } catch (e) {
-      Get.snackbar('Login Error', e.toString());
+      debugPrint('Error signing in with Google: $e');
       return false;
     } finally {
       isLoading.value = false;
@@ -69,11 +74,7 @@ class AuthController extends GetxController {
       final role = await _authService.fetchUserRole(user!.uid);
       userRole.value = role;
     } catch (e) {
-      Get.snackbar(
-        "Gagal",
-        "Gagal memuat data pengguna: $e",
-        snackPosition: SnackPosition.BOTTOM,
-      ); 
+      debugPrint('Error initializing user data: $e');
     }
   }
 
@@ -107,7 +108,7 @@ class AuthController extends GetxController {
       userModel.value = updated;
       return true;
     } catch (e) {
-      Get.snackbar('Update Gagal', e.toString());
+      debugPrint('Update Gagal: $e');
       return false;
     }
   }
@@ -121,7 +122,7 @@ class AuthController extends GetxController {
       userRole.value = 'tamu';
       Get.offAllNamed(Routes.SIGNIN);
     } catch (e) {
-      Get.snackbar('Logout Gagal', e.toString());
+      debugPrint('Error signing out: $e');
     } finally {
       isLoading.value = false;
     }

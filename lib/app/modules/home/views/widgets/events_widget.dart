@@ -194,7 +194,6 @@ class EventCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // --- MODIFIKASI TOMBOL "LIHAT DETAIL" ---
                   GestureDetector(
                     onTap: () {
                       Get.toNamed(
@@ -203,34 +202,26 @@ class EventCard extends StatelessWidget {
                       );
                     },
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                        50,
-                      ), // Bentuk pil yang memanjang
+                      borderRadius: BorderRadius.circular(50),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            vertical: 10, // Sesuaikan padding vertikal
-                            horizontal: 16, // Sesuaikan padding horizontal
+                            vertical: 10,
+                            horizontal: 16,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.20),
-                            borderRadius: BorderRadius.circular(
-                              50,
-                            ), // Pastikan sama dengan ClipRRect
+                            borderRadius: BorderRadius.circular(50),
                             border: Border.all(
                               color: Colors.white30,
                               width: 0.5,
                             ),
                           ),
                           child: Row(
-                            // Row ini akan membuat kontennya memanjang
-                            mainAxisAlignment:
-                                MainAxisAlignment
-                                    .spaceBetween, // Mendorong teks dan ikon ke ujung
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text(
-                                // Teks "Lihat Detail"
                                 "Lihat Detail",
                                 style: TextStyle(
                                   color: Colors.white,
@@ -238,12 +229,9 @@ class EventCard extends StatelessWidget {
                                   fontSize: 13,
                                 ),
                               ),
-                              // Spacer akan mendorong ikon ke kanan
-                              // const Spacer(), // Hapus spacer jika ingin teks & ikon berdekatan di kiri, atau gunakan mainAxisAlignment
                               const Icon(
-                                // Ikon panah
                                 Icons.arrow_forward_ios_rounded,
-                                size: 14, // Ukuran ikon disamakan dengan teks
+                                size: 14,
                                 color: Colors.white,
                               ),
                             ],
@@ -252,7 +240,6 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // --- AKHIR MODIFIKASI TOMBOL ---
                 ],
               ),
             ),

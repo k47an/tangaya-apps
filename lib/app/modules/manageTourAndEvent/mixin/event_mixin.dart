@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart'; // <-- 1. TAMBAHKAN IMPORT INI
 import 'package:tangaya_apps/app/data/models/event_model.dart';
 import 'package:tangaya_apps/app/data/services/event_service.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 mixin EventMixin on GetxController {
   final EventService _eventService = Get.find<EventService>();
@@ -40,12 +42,7 @@ mixin EventMixin on GetxController {
       final result = await _eventService.fetchEvents();
       events.assignAll(result);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal memuat event: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint('Error fetching events: $e');
     } finally {
       isEventLoading.value = false;
     }
@@ -56,18 +53,18 @@ mixin EventMixin on GetxController {
       return false;
     }
     if (selectedEventDate.value == null) {
-      Get.snackbar(
-        'Tanggal Wajib',
-        'Tanggal event harus dipilih.',
-        backgroundColor: Colors.orange,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Masukan tanggal event.',
+        type: SnackBarType.warning,
       );
       return false;
     }
     if (!isEditMode && selectedEventImage.value == null) {
-      Get.snackbar(
-        'Gambar Wajib',
-        'Gambar event harus dipilih.',
-        backgroundColor: Colors.orange,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Masukan gambar event.',
+        type: SnackBarType.warning,
       );
       return false;
     }
@@ -75,8 +72,12 @@ mixin EventMixin on GetxController {
   }
 
   double? _parsePrice() {
-    final priceText = eventPriceController.text.trim();
-    return priceText.isEmpty ? null : double.tryParse(priceText);
+    // 2. BERSIHKAN FORMATTER SEBELUM PARSING
+    final priceText = eventPriceController.text.trim().replaceAll('.', '');
+    if (priceText.isEmpty) {
+      return null;
+    }
+    return double.tryParse(priceText);
   }
 
   Future<void> addEvent() async {
@@ -94,19 +95,13 @@ mixin EventMixin on GetxController {
       );
       fetchEvents();
       Get.back();
-      Get.snackbar(
-        'Sukses',
-        'Event berhasil ditambahkan.',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Event berhasil ditambahkan.',
+        type: SnackBarType.success,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal menambahkan event: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint('Gagal menambahkan event');
     } finally {
       isEventLoading.value = false;
     }
@@ -129,19 +124,13 @@ mixin EventMixin on GetxController {
       );
       fetchEvents();
       Get.back();
-      Get.snackbar(
-        'Sukses',
-        'Event berhasil diubah.',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Berhasil mengedit event.',
+        type: SnackBarType.success,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal mengedit event: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint('Gagal mengedit event');
     } finally {
       isEventLoading.value = false;
     }
@@ -155,19 +144,13 @@ mixin EventMixin on GetxController {
         imageUrl: event.imageUrl,
       );
       events.removeWhere((e) => e.id == event.id);
-      Get.snackbar(
-        'Sukses',
-        'Event berhasil dihapus.',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Event berhasil dihapus.',
+        type: SnackBarType.success,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal menghapus event: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint('Gagal menghapus event: $e');
     } finally {
       isEventLoading.value = false;
     }
@@ -189,7 +172,14 @@ mixin EventMixin on GetxController {
     eventTitleController.text = event.title;
     eventDescriptionController.text = event.description;
     eventLocationController.text = event.location;
-    eventPriceController.text = event.price?.toStringAsFixed(0) ?? '';
+
+    if (event.price != null && event.price! > 0) {
+      final formatter = NumberFormat.decimalPattern('id_ID');
+      eventPriceController.text = formatter.format(event.price);
+    } else {
+      eventPriceController.clear();
+    }
+
     selectedEventDate.value = event.eventDate;
     currentEventImageUrl.value = event.imageUrl;
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/data/models/user_model.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 class ProfileController extends GetxController {
   final nameController = TextEditingController();
@@ -87,10 +88,10 @@ class ProfileController extends GetxController {
       }
     } catch (e) {
       debugPrint('Error saving user data: $e');
-      Get.snackbar(
-        "Gagal",
-        "Gagal menyimpan data profil: $e",
-        snackPosition: SnackPosition.BOTTOM,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Gagal menyimpan data pengguna',
+        type: SnackBarType.error,
       );
       return false;
     }

@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
 import 'package:tangaya_apps/app/data/services/tourPackage_service.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 mixin TourMixin on GetxController {
   final TourPackageService _tourPackageService = Get.find<TourPackageService>();
@@ -40,12 +42,7 @@ mixin TourMixin on GetxController {
       final packages = await _tourPackageService.fetchTourPackages();
       tourPackages.assignAll(packages);
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal mengambil data: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint('Error fetching tour packages: $e');
     } finally {
       isTourLoading.value = false;
     }
@@ -58,10 +55,10 @@ mixin TourMixin on GetxController {
 
     if (currentTourPackageImageUrls.isEmpty &&
         selectedTourPackageImages.isEmpty) {
-      Get.snackbar(
-        'Gambar Diperlukan',
-        'Minimal satu gambar harus diunggah.',
-        backgroundColor: Colors.orange,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Pilih minimal satu gambar untuk paket wisata.',
+        type: SnackBarType.warning,
       );
       return false;
     }
@@ -74,28 +71,26 @@ mixin TourMixin on GetxController {
 
     try {
       isTourLoading.value = true;
+      final String cleanPrice = tourPackagePriceController.text
+          .trim()
+          .replaceAll('.', '');
+
       await _tourPackageService.addTourPackage(
         title: tourPackageTitleController.text.trim(),
         description: tourPackageDescriptionController.text.trim(),
-        price: double.parse(tourPackagePriceController.text.trim()),
+        price: double.parse(cleanPrice),
         imageFiles: selectedTourPackageImages.toList(),
       );
 
       await fetchTourPackages();
       Get.back();
-      Get.snackbar(
-        'Sukses',
-        'Paket wisata berhasil ditambahkan',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Paket wisata berhasil ditambahkan',
+        type: SnackBarType.success,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal menambahkan paket wisata: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint('Error adding tour package: $e');
     } finally {
       isTourLoading.value = false;
     }
@@ -106,11 +101,15 @@ mixin TourMixin on GetxController {
 
     try {
       isTourLoading.value = true;
+      final String cleanPrice = tourPackagePriceController.text
+          .trim()
+          .replaceAll('.', '');
+
       await _tourPackageService.editTourPackage(
         docId: docId,
         newTitle: tourPackageTitleController.text.trim(),
         newDescription: tourPackageDescriptionController.text.trim(),
-        newPrice: double.parse(tourPackagePriceController.text.trim()),
+        newPrice: double.parse(cleanPrice),
         oldImageUrls: currentTourPackageImageUrls.toList(),
         newImageFiles: selectedTourPackageImages.toList(),
         imagesToDelete: tourPackageImagesToDelete.toList(),
@@ -118,19 +117,13 @@ mixin TourMixin on GetxController {
 
       await fetchTourPackages();
       Get.back();
-      Get.snackbar(
-        'Sukses',
-        'Paket wisata berhasil diubah',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Paket wisata berhasil diedit',
+        type: SnackBarType.success,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal mengedit paket wisata: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint('Error editing tour package: $e');
     } finally {
       isTourLoading.value = false;
     }
@@ -144,19 +137,13 @@ mixin TourMixin on GetxController {
         imageUrls: package.imageUrls ?? [],
       );
       tourPackages.removeWhere((p) => p.id == package.id);
-      Get.snackbar(
-        'Sukses',
-        'Paket wisata berhasil dihapus',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Paket wisata berhasil dihapus',
+        type: SnackBarType.success,
       );
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Gagal menghapus paket wisata: $e',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint('Error deleting tour package: $e');
     } finally {
       isTourLoading.value = false;
     }
@@ -175,7 +162,14 @@ mixin TourMixin on GetxController {
     prepareForAddTour();
     tourPackageTitleController.text = package.title ?? '';
     tourPackageDescriptionController.text = package.description ?? '';
-    tourPackagePriceController.text = package.price?.toStringAsFixed(0) ?? '';
+
+    if (package.price != null) {
+      final formatter = NumberFormat.decimalPattern('id_ID');
+      tourPackagePriceController.text = formatter.format(package.price);
+    } else {
+      tourPackagePriceController.clear();
+    }
+
     currentTourPackageImageUrls.assignAll(package.imageUrls ?? []);
   }
 

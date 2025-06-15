@@ -27,9 +27,9 @@ class TourpackageWidget extends GetView<HomeController> {
         itemCount: controller.tourPackages.length,
         itemBuilder: (context, index, realIndex) {
           final tour = controller.tourPackages[index];
-          // if (tour.imageUrls == null || tour.imageUrls!.isEmpty) {
-          //   return const SizedBox();
-          // }
+          if (tour.imageUrls == null || tour.imageUrls!.isEmpty) {
+            return const SizedBox.shrink();
+          }
           return Container(
             width: MediaQuery.of(context).size.width,
             margin: ScaleHelper.paddingOnly(bottom: 10),
@@ -89,7 +89,6 @@ class TourPackageCard extends StatelessWidget {
                   ),
             ),
 
-            // Overlay gradient gelap dari bawah
             Positioned.fill(
               child: Container(
                 decoration: const BoxDecoration(
@@ -102,7 +101,6 @@ class TourPackageCard extends StatelessWidget {
               ),
             ),
 
-            // Konten informasi
             Positioned(
               left: 16,
               right: 16,

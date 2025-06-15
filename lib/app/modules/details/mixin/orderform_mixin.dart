@@ -5,6 +5,7 @@ import 'package:tangaya_apps/app/data/models/event_model.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
 import 'package:tangaya_apps/app/data/services/booking_service.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 mixin OrderFormMixin on GetxController {
   AuthController get authController;
@@ -136,8 +137,7 @@ mixin OrderFormMixin on GetxController {
 
       unavailableDates.assignAll(fetchedDates);
     } catch (e) {
-      Get.snackbar('Error', 'Gagal memuat tanggal tidak tersedia.');
-      print("ERROR fetchUnavailableDates: $e");
+      debugPrint('Gagal memuat tanggal tidak tersedia.');
     } finally {
       isFetchingDates.value = false;
     }
@@ -145,21 +145,37 @@ mixin OrderFormMixin on GetxController {
 
   Future<void> submitOrder() async {
     if (nameC.text.isEmpty || phoneC.text.isEmpty || addressC.text.isEmpty) {
-      Get.snackbar("Validasi Gagal", "Nama, telepon, dan alamat wajib diisi.");
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Harap isi semua informasi kontak.',
+        type: SnackBarType.warning,
+      );
       return;
     }
     final int currentPeopleCountInput =
         int.tryParse(peopleC.text.isEmpty ? "0" : peopleC.text) ?? 0;
     if (peopleC.text.isNotEmpty && currentPeopleCountInput <= 0) {
-      Get.snackbar("Validasi Gagal", "Jumlah orang tidak valid.");
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Jumlah peserta harus lebih dari 0.',
+        type: SnackBarType.warning,
+      );
       return;
     }
     if (currentPeopleCountInput > 0 && peopleNames.any((c) => c.text.isEmpty)) {
-      Get.snackbar("Validasi Gagal", "Harap isi nama semua peserta.");
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Harap isi nama peserta.',
+        type: SnackBarType.warning,
+      );
       return;
     }
     if (itemType == 'tour' && selectedDate.value == null) {
-      Get.snackbar("Validasi Gagal", "Harap pilih tanggal untuk paket wisata.");
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Harap pilih tanggal untuk paket wisata.',
+        type: SnackBarType.warning,
+      );
       return;
     }
 
@@ -201,13 +217,14 @@ mixin OrderFormMixin on GetxController {
       );
 
       Get.back();
-      Get.snackbar(
-        "Sukses",
-        "Pemesanan berhasil dikirim dan menunggu persetujuan admin.",
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Pesanan berhasil dibuat.',
+        type: SnackBarType.success,
       );
       resetForm();
     } catch (e) {
-      Get.snackbar("Error Pesanan", "Terjadi kesalahan: $e");
+      debugPrint("Terjadi kesalahan: $e");
     } finally {
       isOrdering.value = false;
     }
