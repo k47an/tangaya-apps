@@ -11,6 +11,7 @@ class OnboardingView extends GetView<OnboardingController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Neutral.white1,
         body: Stack(children: [_buildPageView(), _buildBottomContent()]),
       ),
     );

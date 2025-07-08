@@ -39,6 +39,7 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Obx(
                   () => HeaderWidget(
@@ -47,20 +48,27 @@ class HomeView extends GetView<HomeController> {
                   ),
                 ),
                 const WeatherWidget(),
+                Padding(
+                  padding: ScaleHelper.paddingOnly(
+                    left: 20,
+                    right: 20,
+                    top: 30,
+                  ),
+                  child: Text(
+                    'Pilih Kategori',
+                    style: medium.copyWith(
+                      fontSize: ScaleHelper.scaleTextForDevice(20),
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                // Tab bar dan konten
                 Expanded(
-                  child: Container(
-                    margin: ScaleHelper.paddingOnly(top: 30),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Neutral.white4,
-                    ),
-                    child: Column(
-                      children: [
-                        _buildTabBar(),
-                        SizedBox(height: ScaleHelper.scaleHeightForDevice(10)),
-                        Expanded(child: _buildTabBarView()),
-                      ],
-                    ),
+                  child: Column(
+                    children: [
+                      _buildTabBar(),
+                      Expanded(child: _buildTabBarView()),
+                    ],
                   ),
                 ),
               ],
@@ -73,57 +81,72 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildTabBar() {
     return Container(
-      margin: ScaleHelper.paddingSymmetric(horizontal: 30),
-      child: TabBar(
-        controller: controller.tabController,
-        indicatorSize: TabBarIndicatorSize.label,
-        unselectedLabelColor: Neutral.white4,
-        dividerColor: Neutral.transparent,
-        indicatorWeight: ScaleHelper.scaleHeightForDevice(0.5),
-        indicatorColor: Primary.darkColor,
-        indicatorPadding: ScaleHelper.paddingSymmetric(vertical: 5),
-        tabs: List.generate(controller.tabs.length, (index) {
-          return Obx(
-            () => Tab(
-              child: IntrinsicWidth(
+      margin: EdgeInsets.symmetric(
+        vertical: ScaleHelper.scaleHeightForDevice(10),
+      ),
+
+      child: Obx(() {
+        return TabBar(
+          controller: controller.tabController,
+          indicator: UnderlineTabIndicator(
+            borderSide: BorderSide(width: 2.0, color: Neutral.white2),
+            insets: EdgeInsets.symmetric(
+              horizontal: ScaleHelper.scaleWidthForDevice(32),
+            ),
+          ),
+          indicatorSize: TabBarIndicatorSize.label,
+          dividerColor: Neutral.transparent,
+          labelPadding: EdgeInsets.zero,
+          tabs: List.generate(controller.tabs.length, (index) {
+            final isSelected = controller.currentTab.value == index;
+            return GestureDetector(
+              onTap: () {
+                controller.tabController.animateTo(index);
+                controller.currentTab.value = index;
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: ScaleHelper.scaleHeightForDevice(
+                    5,
+                  ), // Tambahkan jarak antara garis dan text
+                ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SvgPicture.asset(
                       controller.getTabIcon(index),
                       width: ScaleHelper.scaleWidthForDevice(20),
                       height: ScaleHelper.scaleHeightForDevice(20),
-                      color:
-                          controller.currentTab.value == index
-                              ? Primary.darkColor
-                              : Neutral.dark5,
+                      color: isSelected ? Neutral.white1 : Neutral.white4,
                     ),
                     SizedBox(width: ScaleHelper.scaleWidthForDevice(8)),
                     Text(
                       controller.getTabTitle(index),
                       style: TextStyle(
-                        color:
-                            controller.currentTab.value == index
-                                ? Primary.darkColor
-                                : Neutral.dark5,
+                        color: isSelected ? Neutral.white1 : Neutral.white4,
                         fontSize: ScaleHelper.scaleTextForDevice(14),
+                        fontWeight:
+                            isSelected ? FontWeight.w800 : FontWeight.normal,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          );
-        }),
-      ),
+            );
+          }),
+        );
+      }),
     );
   }
 
   Widget _buildTabBarView() {
-    return TabBarView(
-      controller: controller.tabController,
-      children: const [TourpackageWidget(), EventsWidget()],
+    return NotificationListener<ScrollNotification>(
+      onNotification: (_) => true,
+      child: TabBarView(
+        controller: controller.tabController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: [TourpackageWidget(), EventWidget()],
+      ),
     );
   }
 }

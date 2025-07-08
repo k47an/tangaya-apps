@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:tangaya_apps/app/data/models/tour_model.dart';
-import 'package:tangaya_apps/app/modules/manageTourAndEvent/controllers/manage_tour_event_controller.dart';
-import 'package:tangaya_apps/app/modules/manageTourAndEvent/widgets/editTourView_widget.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 
 class TourPackageCard extends StatelessWidget {
   final TourPackage tourPackage;
-  final VoidCallback? onDelete;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
-  const TourPackageCard({super.key, required this.tourPackage, this.onDelete});
+  const TourPackageCard({
+    super.key,
+    required this.tourPackage,
+    required this.onEdit,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
-    Get.find<ManageTourEventController>();
-
     return Card(
       margin: EdgeInsets.symmetric(
         vertical: ScaleHelper.scaleHeightForDevice(8),
@@ -22,94 +24,99 @@ class TourPackageCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 3,
       child: ListTile(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: ScaleHelper.scaleWidthForDevice(16),
+          vertical: ScaleHelper.scaleHeightForDevice(10),
+        ),
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: SizedBox(
-            width: ScaleHelper.scaleWidthForDevice(60),
-            height: ScaleHelper.scaleHeightForDevice(60),
+            width: ScaleHelper.scaleWidthForDevice(70),
+            height: ScaleHelper.scaleHeightForDevice(70),
             child: Image.network(
-              (tourPackage.imageUrls != null &&
-                      tourPackage.imageUrls!.isNotEmpty)
-                  ? tourPackage.imageUrls![0]
-                  : '',
-
+              (tourPackage.imageUrls?.isNotEmpty ?? false)
+                  ? tourPackage.imageUrls!.first
+                  : 'https://via.placeholder.com/150',
               fit: BoxFit.cover,
-              loadingBuilder: (
-                BuildContext context,
-                Widget child,
-                ImageChunkEvent? loadingProgress,
-              ) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value:
-                        loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                  ),
-                );
-              },
               errorBuilder:
-                  (context, error, stackTrace) =>
-                      const Icon(Icons.broken_image, size: 48),
+                  (context, error, stackTrace) => Container(
+                    color: Colors.grey[300],
+                    child: Icon(
+                      Icons.broken_image,
+                      size: ScaleHelper.scaleTextForDevice(30),
+                      color: Colors.grey[600],
+                    ),
+                  ),
             ),
           ),
         ),
         title: Text(
-          tourPackage.title ?? '',
+          tourPackage.title ?? 'Tanpa Judul',
           style: semiBold.copyWith(
             fontSize: ScaleHelper.scaleTextForDevice(16),
+            color: Neutral.dark1,
           ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            SizedBox(height: ScaleHelper.scaleHeightForDevice(4)),
             Text(
-              tourPackage.description ?? '',
+              tourPackage.description ?? 'Tidak ada deskripsi.',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: regular.copyWith(color: Neutral.dark1),
+              style: regular.copyWith(
+                color: Neutral.dark1,
+                fontSize: ScaleHelper.scaleTextForDevice(12),
+              ),
             ),
             SizedBox(height: ScaleHelper.scaleHeightForDevice(4)),
             Text(
-              'Rp ${tourPackage.price?.toStringAsFixed(0)}',
-              style: semiBold.copyWith(color: Primary.subtleColor),
+              NumberFormat.currency(
+                locale: 'id_ID',
+                symbol: 'Rp ',
+                decimalDigits: 0,
+              ).format(tourPackage.price ?? 0),
+              style: semiBold.copyWith(
+                color: Primary.mainColor,
+                fontSize: ScaleHelper.scaleTextForDevice(13),
+              ),
             ),
           ],
         ),
         isThreeLine: true,
         trailing: PopupMenuButton<String>(
+          icon: Icon(Icons.more_vert, color: Neutral.dark1),
           onSelected: (value) {
             if (value == 'edit') {
-              Get.to(
-                () => EditTourView(
-                  docId: '${tourPackage.id}',
-                  initialTitle: '${tourPackage.title}',
-                  initialDescription: '${tourPackage.description}',
-                  initialPrice: tourPackage.price ?? 0.0,
-                  initialImageUrls: tourPackage.imageUrls ?? [],
-                ),
-              );
-            }
-            if (value == 'delete' && onDelete != null) {
-              onDelete!();
+              onEdit();
+            } else if (value == 'delete') {
+              onDelete();
             }
           },
           itemBuilder:
-              (BuildContext context) => <PopupMenuEntry<String>>[
+              (context) => <PopupMenuEntry<String>>[
                 PopupMenuItem<String>(
                   value: 'edit',
-                  child: Text(
-                    'Edit',
-                    style: regular.copyWith(color: Neutral.dark1),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.edit_outlined),
+                      SizedBox(width: 8),
+                      Text('Edit'),
+                    ],
                   ),
                 ),
                 PopupMenuItem<String>(
                   value: 'delete',
-                  child: Text(
-                    'Hapus',
-                    style: regular.copyWith(color: Colors.red),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.delete_outline, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Hapus', style: TextStyle(color: Colors.red)),
+                    ],
                   ),
                 ),
               ],

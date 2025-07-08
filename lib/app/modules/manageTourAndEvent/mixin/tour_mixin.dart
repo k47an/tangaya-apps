@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:tangaya_apps/app/data/models/tour_model.dart'; // Pastikan path ini benar
-import 'package:tangaya_apps/app/data/services/tour_service.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:tangaya_apps/app/data/models/tour_model.dart';
+import 'package:tangaya_apps/app/data/services/tourPackage_service.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 mixin TourMixin on GetxController {
-  final TourPackageService _tourPackageService = TourPackageService();
+  final TourPackageService _tourPackageService = Get.find<TourPackageService>();
   final RxBool isTourLoading = false.obs;
-
-  // Form and Input Controllers
   final GlobalKey<FormState> tourPackageFormKey = GlobalKey<FormState>();
   final TextEditingController tourPackageTitleController =
       TextEditingController();
@@ -16,14 +16,25 @@ mixin TourMixin on GetxController {
       TextEditingController();
   final TextEditingController tourPackagePriceController =
       TextEditingController();
-
-  // Image Management
-  final RxList<File?> selectedTourPackageImages = <File?>[].obs;
-  final RxList<String> tourPackageImagesToDelete = <String>[].obs;
+  final RxList<File> selectedTourPackageImages = <File>[].obs;
   final RxList<String> currentTourPackageImageUrls = <String>[].obs;
+  final RxList<String> tourPackageImagesToDelete = <String>[].obs;
 
-  // Data List
   final RxList<TourPackage> tourPackages = <TourPackage>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchTourPackages();
+  }
+
+  @override
+  void onClose() {
+    tourPackageTitleController.dispose();
+    tourPackageDescriptionController.dispose();
+    tourPackagePriceController.dispose();
+    super.onClose();
+  }
 
   Future<void> fetchTourPackages() async {
     try {
@@ -31,133 +42,153 @@ mixin TourMixin on GetxController {
       final packages = await _tourPackageService.fetchTourPackages();
       tourPackages.assignAll(packages);
     } catch (e) {
-      Get.snackbar('Error', 'Gagal mengambil paket wisata: $e');
+      debugPrint('Error fetching tour packages: $e');
     } finally {
       isTourLoading.value = false;
     }
   }
 
-  bool validateTourPackageForm() {
-    return tourPackageFormKey.currentState?.validate() ?? false;
+  bool _validateTourPackageForm() {
+    if (!(tourPackageFormKey.currentState?.validate() ?? false)) {
+      return false;
+    }
+
+    if (currentTourPackageImageUrls.isEmpty &&
+        selectedTourPackageImages.isEmpty) {
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Pilih minimal satu gambar untuk paket wisata.',
+        type: SnackBarType.warning,
+      );
+      return false;
+    }
+
+    return true;
   }
 
   Future<void> addTourPackage() async {
-    if (!validateTourPackageForm()) {
-      Get.snackbar('Invalid', 'Harap isi semua field dengan benar');
-      return;
-    }
+    if (!_validateTourPackageForm()) return;
 
     try {
       isTourLoading.value = true;
+      final String cleanPrice = tourPackagePriceController.text
+          .trim()
+          .replaceAll('.', '');
+
       await _tourPackageService.addTourPackage(
         title: tourPackageTitleController.text.trim(),
         description: tourPackageDescriptionController.text.trim(),
-        price: double.parse(tourPackagePriceController.text.trim()),
-        imageFiles: selectedTourPackageImages.toList(), // Kirim List<File?>
+        price: double.parse(cleanPrice),
+        imageFiles: selectedTourPackageImages.toList(),
       );
-      fetchTourPackages();
-      clearTourPackageForm();
-      Get.snackbar('Sukses', 'Paket wisata berhasil ditambahkan');
+
+      await fetchTourPackages();
+      Get.back();
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Paket wisata berhasil ditambahkan',
+        type: SnackBarType.success,
+      );
     } catch (e) {
-      Get.snackbar('Error', 'Gagal menambahkan paket wisata: $e');
+      debugPrint('Error adding tour package: $e');
     } finally {
       isTourLoading.value = false;
     }
   }
 
   Future<void> editTourPackage({required String docId}) async {
-    if (!validateTourPackageForm()) {
-      Get.snackbar('Invalid', 'Harap isi semua field dengan benar');
-      return;
-    }
+    if (!_validateTourPackageForm()) return;
 
     try {
       isTourLoading.value = true;
+      final String cleanPrice = tourPackagePriceController.text
+          .trim()
+          .replaceAll('.', '');
+
       await _tourPackageService.editTourPackage(
         docId: docId,
         newTitle: tourPackageTitleController.text.trim(),
         newDescription: tourPackageDescriptionController.text.trim(),
-        newPrice: double.parse(tourPackagePriceController.text.trim()),
+        newPrice: double.parse(cleanPrice),
         oldImageUrls: currentTourPackageImageUrls.toList(),
-        newImageFiles: selectedTourPackageImages.whereType<File>().toList(),
+        newImageFiles: selectedTourPackageImages.toList(),
         imagesToDelete: tourPackageImagesToDelete.toList(),
       );
-      fetchTourPackages();
-      clearTourPackageForm();
-      Get.snackbar('Sukses', 'Paket wisata berhasil diubah');
+
+      await fetchTourPackages();
+      Get.back();
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Paket wisata berhasil diedit',
+        type: SnackBarType.success,
+      );
     } catch (e) {
-      Get.snackbar('Error', 'Gagal mengedit paket wisata: $e');
+      debugPrint('Error editing tour package: $e');
     } finally {
       isTourLoading.value = false;
     }
   }
 
-  Future<void> deleteTourPackage({
-    required String docId,
-    required List<String> imageUrls,
-  }) async {
+  Future<void> deleteTourPackage({required TourPackage package}) async {
     try {
       isTourLoading.value = true;
       await _tourPackageService.deleteTourPackage(
-        docId: docId,
-        imageUrls: imageUrls,
+        docId: package.id!,
+        imageUrls: package.imageUrls ?? [],
       );
-      fetchTourPackages();
-      Get.snackbar('Sukses', 'Paket wisata berhasil dihapus');
+      tourPackages.removeWhere((p) => p.id == package.id);
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Paket wisata berhasil dihapus',
+        type: SnackBarType.success,
+      );
     } catch (e) {
-      Get.snackbar('Error', 'Gagal menghapus paket wisata: $e');
+      debugPrint('Error deleting tour package: $e');
     } finally {
       isTourLoading.value = false;
     }
   }
 
-  Future<TourPackage?> getPackageById(String id) async {
-    return await _tourPackageService.getPackageById(id);
-  }
-
-  void fillTourPackageForm(TourPackage package) {
-    tourPackageTitleController.text = package.title ?? '';
-    tourPackageDescriptionController.text = package.description ?? '';
-    tourPackagePriceController.text = package.price?.toString() ?? '';
-    currentTourPackageImageUrls.assignAll(package.imageUrls ?? []);
-    selectedTourPackageImages.clear();
-    tourPackageImagesToDelete.clear();
-  }
-
-  void clearTourPackageForm() {
+  void prepareForAddTour() {
     tourPackageTitleController.clear();
     tourPackageDescriptionController.clear();
     tourPackagePriceController.clear();
     selectedTourPackageImages.clear();
-    tourPackageImagesToDelete.clear();
     currentTourPackageImageUrls.clear();
+    tourPackageImagesToDelete.clear();
   }
 
-  // Method untuk menambahkan gambar yang dipilih
-  void addSelectedImage(File? image) {
-    if (image != null) {
-      selectedTourPackageImages.add(image);
+  void prepareForEditTour(TourPackage package) {
+    prepareForAddTour();
+    tourPackageTitleController.text = package.title ?? '';
+    tourPackageDescriptionController.text = package.description ?? '';
+
+    if (package.price != null) {
+      final formatter = NumberFormat.decimalPattern('id_ID');
+      tourPackagePriceController.text = formatter.format(package.price);
+    } else {
+      tourPackagePriceController.clear();
     }
+
+    currentTourPackageImageUrls.assignAll(package.imageUrls ?? []);
   }
 
-  // Method untuk menghapus gambar yang dipilih (sebelum upload)
+  void addSelectedImages(List<File> images) {
+    selectedTourPackageImages.addAll(images);
+  }
+
   void removeSelectedImage(int index) {
     selectedTourPackageImages.removeAt(index);
   }
 
-  // Method untuk menandai gambar untuk dihapus (gambar yang sudah ada di Firestore)
   void markImageToDelete(String imageUrl) {
-    if (!tourPackageImagesToDelete.contains(imageUrl)) {
+    if (currentTourPackageImageUrls.remove(imageUrl)) {
       tourPackageImagesToDelete.add(imageUrl);
     }
-    // Juga hapus dari list URL saat ini agar tidak ditampilkan lagi di UI edit
-    currentTourPackageImageUrls.remove(imageUrl);
   }
 
-  // Method untuk membatalkan penghapusan gambar
   void unmarkImageToDelete(String imageUrl) {
-    tourPackageImagesToDelete.remove(imageUrl);
-    if (!currentTourPackageImageUrls.contains(imageUrl)) {
+    if (tourPackageImagesToDelete.remove(imageUrl)) {
       currentTourPackageImageUrls.add(imageUrl);
     }
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/data/models/user_model.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
+import 'package:tangaya_apps/utils/global_components/snackbar.dart';
 
 class ProfileController extends GetxController {
   final nameController = TextEditingController();
@@ -30,26 +31,24 @@ class ProfileController extends GetxController {
     selectedGender.value = userModel?.gender;
     if (selectedGender.value != 'Laki-laki' &&
         selectedGender.value != 'Perempuan') {
-      selectedGender.value = null; // Atau nilai default lain yang valid
+      selectedGender.value = null;
     }
   }
 
   Future<void> loadUserData() async {
     try {
-      dataLoaded.value = false; // Set loading state
+      dataLoaded.value = false;
       final user = authController.userModel.value;
       if (user != null) {
         userModel = user;
         _fillFormFields();
         dataLoaded.value = true;
       } else {
-        dataLoaded.value = true; // Set loaded meskipun user null
+        dataLoaded.value = true;
       }
     } catch (e) {
       debugPrint('Error loading user data: $e');
-      dataLoaded.value = false; // Set loading state ke false saat error
-      Get.snackbar("Gagal", "Gagal memuat data profil: $e",
-          snackPosition: SnackPosition.BOTTOM); // Show error
+      dataLoaded.value = false;
     }
   }
 
@@ -73,7 +72,7 @@ class ProfileController extends GetxController {
       final address = addressController.text.trim();
       final gender = selectedGender.value ?? '';
 
-      final success = await authController.updateUserProfile( // Tangkap nilai kembalian
+      final success = await authController.updateUserProfile(
         name: name,
         email: userModel?.email ?? '',
         gender: gender,
@@ -81,16 +80,19 @@ class ProfileController extends GetxController {
         address: address,
       );
 
-      if (success) { // Periksa keberhasilan
-        await loadUserData(); // Muat ulang data
+      if (success) {
+        await loadUserData();
         return true;
       } else {
-        return false; // Kembalikan false jika update gagal
+        return false;
       }
     } catch (e) {
       debugPrint('Error saving user data: $e');
-      Get.snackbar("Gagal", "Gagal menyimpan data profil: $e",
-          snackPosition: SnackPosition.BOTTOM); // Show error
+      CustomSnackBar.show(
+        context: Get.context!,
+        message: 'Gagal menyimpan data pengguna',
+        type: SnackBarType.error,
+      );
       return false;
     }
   }

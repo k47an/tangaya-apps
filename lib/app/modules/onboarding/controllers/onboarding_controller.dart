@@ -8,6 +8,7 @@ class OnboardingController extends GetxController {
   final selectedPageIndex = 0.obs;
   final isLoading = false.obs;
 
+  bool get isLastPage => selectedPageIndex.value == items.length - 1;
   final List<OnboardingInfo> items = [
     OnboardingInfo(
       title: "Camping",
@@ -29,13 +30,17 @@ class OnboardingController extends GetxController {
     ),
   ];
 
-  bool get isLastPage => selectedPageIndex.value == items.length - 1;
-
   @override
   void onInit() {
     super.onInit();
     pageController = PageController();
     _checkLoginStatus();
+  }
+
+  @override
+  void onClose() {
+    pageController.dispose();
+    super.onClose();
   }
 
   void _checkLoginStatus() async {
@@ -56,12 +61,6 @@ class OnboardingController extends GetxController {
         );
       }
     }
-  }
-
-  @override
-  void onClose() {
-    pageController.dispose();
-    super.onClose();
   }
 }
 

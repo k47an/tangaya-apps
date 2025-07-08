@@ -1,40 +1,39 @@
+
 class TourPackage {
-  String? id;
-  String? title;
-  String? description;
-  double? price;
-  List<String>? imageUrls;
-  // Tambahkan properti lain sesuai dengan struktur data Anda
+  final String? id;
+  final String? title;
+  final String? description;
+  final double? price;
+  final List<String>? imageUrls;
 
   TourPackage({
     this.id,
-    this.title,
-    this.description,
-    this.price,
-    this.imageUrls,
-    // Inisialisasi properti lain di sini
+    required this.title,
+    required this.description,
+    required this.price,
+    required this.imageUrls,
   });
 
-  // Method fromJson
-  factory TourPackage.fromJson(String id, Map<String, dynamic> data) {
+  factory TourPackage.fromJson(String id, Map<String, dynamic> json) {
     return TourPackage(
       id: id,
-      title: data['title'] as String?,
-      description: data['description'] as String?,
-      price: (data['price'] as num?)?.toDouble(),
-      imageUrls: (data['imageUrls'] as List<dynamic>?)?.cast<String>(),
-      // Map properti lain dari data ke model di sini
+      title: json['title'] as String?,
+      description: json['description'] as String?,
+      price: (json['price'] as num?)?.toDouble(),
+      imageUrls:
+          (json['imageUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
     );
   }
 
-  // Anda juga mungkin memerlukan method toJson untuk menyimpan data kembali ke Firestore
   Map<String, dynamic> toJson() {
     return {
       'title': title,
       'description': description,
       'price': price,
       'imageUrls': imageUrls,
-      // Map properti model ke format data yang sesuai untuk Firestore
+     
     };
   }
 }

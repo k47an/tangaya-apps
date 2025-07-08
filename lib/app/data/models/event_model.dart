@@ -7,6 +7,7 @@ class Event {
   final String location;
   final DateTime eventDate;
   final String imageUrl;
+  final double? price;
 
   Event({
     required this.id,
@@ -15,16 +16,18 @@ class Event {
     required this.location,
     required this.eventDate,
     required this.imageUrl,
+    this.price,
   });
 
-  factory Event.fromJson(Map<String, dynamic> json, String docId) {
+  factory Event.fromJson(Map<String, dynamic> json, String id) {
     return Event(
-      id: docId,
-      title: json['title'],
-      description: json['description'],
-      location: json['location'],
-      eventDate: (json['eventDate'] as Timestamp).toDate(),
+      id: id,
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      location: json['location'] ?? '',
+      eventDate: (json['eventDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       imageUrl: json['imageUrl'] ?? '',
+      price: (json['price'] as num?)?.toDouble(),
     );
   }
 
@@ -33,8 +36,9 @@ class Event {
       'title': title,
       'description': description,
       'location': location,
-      'eventDate': eventDate,
+      'eventDate': Timestamp.fromDate(eventDate),
       'imageUrl': imageUrl,
+      'price': price,
     };
   }
 }

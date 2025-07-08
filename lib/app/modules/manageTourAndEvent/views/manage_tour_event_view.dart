@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/components/eventCard.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/components/tourPackageCard.dart';
 import 'package:tangaya_apps/app/modules/manageTourAndEvent/controllers/manage_tour_event_controller.dart';
-import 'package:tangaya_apps/app/modules/manageTourAndEvent/widgets/addEvent_widget.dart';
-import 'package:tangaya_apps/app/modules/manageTourAndEvent/widgets/addTourPackage_widget.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 
 class ManageTourEventView extends GetView<ManageTourEventController> {
@@ -17,43 +15,22 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
       child: SafeArea(
         child: Scaffold(
           appBar: _buildAppBar(context),
-          body: Stack(
+          body: Column(
             children: [
-              Column(
-                children: [
-                  Container(
-                    color: Primary.mainColor,
-                    child: TabBar(
-                      indicatorColor: Colors.white,
-                      tabs: [
-                        Tab(icon: const Icon(Icons.tour), text: 'Paket Wisata'),
-                        Tab(icon: const Icon(Icons.event), text: 'Event'),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Obx(() {
-                      if (controller.isTourLoading.value ||
-                          controller.isEventLoading.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return const TabBarView(
-                        children: [_TourPackageList(), _EventList()],
-                      );
-                    }),
-                  ),
-                ],
-              ),
-              Positioned(
-                bottom: ScaleHelper.scaleHeightForDevice(20),
-                left: ScaleHelper.scaleWidthForDevice(20),
-                child: FloatingActionButton(
-                  onPressed: () => _showAddBottomSheet(context),
-                  backgroundColor: Primary.mainColor,
-                  child: const Icon(Icons.add),
-                ),
+              _buildTabBar(),
+              Expanded(
+                child: TabBarView(children: [_TourPackageList(), _EventList()]),
               ),
             ],
+          ),
+
+          floatingActionButton: Builder(
+            builder:
+                (context) => FloatingActionButton(
+                  onPressed: () => _showAddBottomSheet(context),
+                  backgroundColor: Primary.darkColor,
+                  child: const Icon(Icons.add, color: Colors.white),
+                ),
           ),
         ),
       ),
@@ -62,16 +39,35 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      backgroundColor: Primary.darkColor,
+      centerTitle: true,
+      elevation: 0,
+      title: Text(
+        "Manajemen Data",
+        style: semiBold.copyWith(
+          color: Colors.white,
+          fontSize: ScaleHelper.scaleTextForDevice(18),
+        ),
+      ),
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new),
+        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
         onPressed: () => Get.back(),
       ),
-      backgroundColor: Primary.mainColor,
-      centerTitle: true,
-      title: Text(
-        "Manajemen Tours & Events",
-        style: semiBold.copyWith(color: Colors.white, fontSize: 16),
-        overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Container _buildTabBar() {
+    return Container(
+      color: Primary.darkColor,
+      child: TabBar(
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.white70,
+        indicatorColor: Primary.mainColor,
+        indicatorWeight: 3,
+        tabs: const [
+          Tab(icon: Icon(Icons.tour), text: 'Paket Wisata'),
+          Tab(icon: Icon(Icons.event), text: 'Event'),
+        ],
       ),
     );
   }
@@ -79,24 +75,16 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
   void _showAddBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      backgroundColor: Colors.white,
-      isScrollControlled: true,
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+      builder:
+          (context) => SafeArea(
+            child: Wrap(
               children: [
                 ListTile(
                   leading: const Icon(Icons.tour),
                   title: const Text('Tambah Paket Wisata'),
                   onTap: () {
                     Navigator.pop(context);
-                    Get.to(() => const AddTourPackageView());
+                    controller.goToUpsertTourView();
                   },
                 ),
                 ListTile(
@@ -104,53 +92,46 @@ class ManageTourEventView extends GetView<ManageTourEventController> {
                   title: const Text('Tambah Event'),
                   onTap: () {
                     Navigator.pop(context);
-                    Get.to(() => const AddEventView());
+                    controller.goToUpsertEventView();
                   },
                 ),
               ],
             ),
           ),
-        );
-      },
     );
   }
 }
-
-// ================== WIDGETS ===================
 
 class _TourPackageList extends GetView<ManageTourEventController> {
   const _TourPackageList();
 
   @override
   Widget build(BuildContext context) {
-    if (controller.tourPackages.isEmpty) {
-      return const Center(child: Text('Tidak ada paket wisata.'));
-    }
-
-    return Obx(
-      () => ListView.builder(
-        // Tambahkan Obx di sini juga untuk memantau perubahan state loading
-        padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(12)),
-        itemCount: controller.tourPackages.length,
-        itemBuilder: (context, index) {
-          final tourPackage = controller.tourPackages[index];
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: ScaleHelper.scaleHeightForDevice(12),
-            ),
-            child: TourPackageCard(
+    return Obx(() {
+      if (controller.isTourLoading.value && controller.tourPackages.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (controller.tourPackages.isEmpty) {
+        return const Center(child: Text('Belum ada paket wisata.'));
+      }
+      return RefreshIndicator(
+        onRefresh: () => controller.fetchTourPackages(),
+        child: ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount: controller.tourPackages.length,
+          itemBuilder: (context, index) {
+            final tourPackage = controller.tourPackages[index];
+            return TourPackageCard(
               tourPackage: tourPackage,
-              onDelete: () async {
-                await controller.deleteTourPackage(
-                  docId: '${tourPackage.id}',
-                  imageUrls: tourPackage.imageUrls ?? [],
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
+              onEdit:
+                  () => controller.goToUpsertTourView(tourPackage: tourPackage),
+              onDelete:
+                  () => controller.deleteTourPackage(package: tourPackage),
+            );
+          },
+        ),
+      );
+    });
   }
 }
 
@@ -159,32 +140,28 @@ class _EventList extends GetView<ManageTourEventController> {
 
   @override
   Widget build(BuildContext context) {
-    if (controller.events.isEmpty) {
-      return const Center(child: Text('Tidak ada event.'));
-    }
-
-    return Obx(
-      () => ListView.builder(
-        padding: EdgeInsets.all(ScaleHelper.scaleWidthForDevice(12)),
-        itemCount: controller.events.length,
-        itemBuilder: (context, index) {
-          final event = controller.events[index];
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: ScaleHelper.scaleHeightForDevice(12),
-            ),
-            child: EventCard(
+    return Obx(() {
+      if (controller.isEventLoading.value && controller.events.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (controller.events.isEmpty) {
+        return const Center(child: Text('Belum ada event.'));
+      }
+      return RefreshIndicator(
+        onRefresh: () => controller.fetchEvents(),
+        child: ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount: controller.events.length,
+          itemBuilder: (context, index) {
+            final event = controller.events[index];
+            return EventCard(
               event: event,
-              onDelete: () async {
-                await controller.deleteEvent(
-                  docId: event.id,
-                  imageUrl: event.imageUrl,
-                );
-              },
-            ),
-          );
-        },
-      ),
-    );
+              onEdit: () => controller.goToUpsertEventView(event: event),
+              onDelete: () => controller.deleteEvent(event),
+            );
+          },
+        ),
+      );
+    });
   }
 }

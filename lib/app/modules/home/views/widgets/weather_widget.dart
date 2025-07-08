@@ -29,14 +29,14 @@ class WeatherWidget extends GetView<HomeController> {
               : 'Tidak Tersedia';
 
       return Card(
-        color: Colors.transparent,
+        color: Neutral.white1.withOpacity(0.1),
+        margin: ScaleHelper.paddingSymmetric(horizontal: 20, vertical: 10),
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: ScaleHelper.paddingSymmetric(horizontal: 16),
+          padding: ScaleHelper.paddingSymmetric(horizontal: 10, vertical: 16),
           child: Row(
             children: [
-              // Weather Icon + Desc
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -63,15 +63,13 @@ class WeatherWidget extends GetView<HomeController> {
                 ],
               ),
               Spacer(),
-              // Weather Info
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
                       'Pokdarwis Tangaya',
                       style: regular.copyWith(
-                        fontSize: ScaleHelper.scaleTextForDevice(12),
+                        fontSize: ScaleHelper.scaleTextForDevice(10),
                         color: Neutral.white1,
                       ),
                     ),

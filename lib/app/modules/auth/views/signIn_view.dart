@@ -10,10 +10,10 @@ class SignInView extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
             horizontal: ScaleHelper.scaleWidthForDevice(22),
             vertical: ScaleHelper.scaleHeightForDevice(20),

@@ -1,26 +1,26 @@
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/admin/views/components/orderView.dart';
-import '../modules/admin/bindings/admin_binding.dart';
-import '../modules/admin/views/admin_view.dart';
-import '../modules/auth/bindings/auth_binding.dart';
-import '../modules/auth/views/signIn_view.dart';
-import '../modules/chat/bindings/chat_binding.dart';
-import '../modules/chat/views/chat_view.dart';
-import '../modules/details/bindings/detail_binding.dart';
-import '../modules/details/views/detail_view.dart';
-import '../modules/home/bindings/home_binding.dart';
-import '../modules/home/views/home_view.dart';
-import '../modules/manageTourAndEvent/bindings/manage_tour_event_binding.dart';
-import '../modules/manageTourAndEvent/views/manage_tour_event_view.dart';
-import '../modules/notification/bindings/notification_binding.dart';
-import '../modules/notification/views/notification_view.dart';
-import '../modules/onboarding/bindings/onboarding_binding.dart';
-import '../modules/onboarding/views/onboarding_view.dart';
-import '../modules/onboarding/views/welcome_view.dart';
-import '../modules/profile/bindings/profile_binding.dart';
-import '../modules/profile/views/profile_view.dart';
-import '../modules/splash/bindings/splash_binding.dart';
-import '../modules/splash/views/splash_view.dart';
+import 'package:tangaya_apps/app/modules/payment/bindings/payment_binding.dart';
+import 'package:tangaya_apps/app/modules/payment/views/payment_view.dart';
+import 'package:tangaya_apps/app/modules/admin/bindings/admin_binding.dart';
+import 'package:tangaya_apps/app/modules/admin/views/admin_view.dart';
+import 'package:tangaya_apps/app/modules/auth/bindings/auth_binding.dart';
+import 'package:tangaya_apps/app/modules/auth/views/signIn_view.dart';
+import 'package:tangaya_apps/app/modules/details/bindings/detail_binding.dart';
+import 'package:tangaya_apps/app/modules/details/views/detail_view.dart';
+import 'package:tangaya_apps/app/modules/home/bindings/home_binding.dart';
+import 'package:tangaya_apps/app/modules/home/views/home_view.dart';
+import 'package:tangaya_apps/app/modules/manageTourAndEvent/bindings/manage_tour_event_binding.dart';
+import 'package:tangaya_apps/app/modules/manageTourAndEvent/views/manage_tour_event_view.dart';
+import 'package:tangaya_apps/app/modules/notification/bindings/notification_binding.dart';
+import 'package:tangaya_apps/app/modules/notification/views/notification_view.dart';
+import 'package:tangaya_apps/app/modules/onboarding/bindings/onboarding_binding.dart';
+import 'package:tangaya_apps/app/modules/onboarding/views/onboarding_view.dart';
+import 'package:tangaya_apps/app/modules/onboarding/views/welcome_view.dart';
+import 'package:tangaya_apps/app/modules/profile/bindings/profile_binding.dart';
+import 'package:tangaya_apps/app/modules/profile/views/profile_view.dart';
+import 'package:tangaya_apps/app/modules/splash/bindings/splash_binding.dart';
+import 'package:tangaya_apps/app/modules/splash/views/splash_view.dart';
 
 part 'app_routes.dart';
 
@@ -34,11 +34,6 @@ class AppPages {
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
-    ),
-    GetPage(
-      name: _Paths.CHAT,
-      page: () => const ChatView(),
-      binding: ChatBinding(),
     ),
     GetPage(
       name: _Paths.SIGNIN,
@@ -89,6 +84,11 @@ class AppPages {
       name: _Paths.NOTIFICATION,
       page: () => const NotificationView(),
       binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: _Paths.PAYMENT,
+      page: () => const PaymentView(),
+      binding: PaymentBinding(),
     ),
   ];
 }

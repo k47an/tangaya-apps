@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tangaya_apps/app/modules/auth/controllers/auth_controller.dart';
+import 'package:tangaya_apps/app/modules/home/controllers/home_controller.dart';
 import 'package:tangaya_apps/app/routes/app_pages.dart';
 import 'package:tangaya_apps/constant/constant.dart';
 import 'package:tangaya_apps/app/modules/admin/controllers/admin_controller.dart';
@@ -14,47 +15,60 @@ class AdminView extends GetView<AdminController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Neutral.white4,
-      appBar: AppBar(
-        backgroundColor: Primary.mainColor,
-        centerTitle: true,
-        elevation: 0,
-        title: Text(
-          "Profil Admin",
-          style: semiBold.copyWith(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: Get.back,
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+    return WillPopScope(
+      onWillPop: () async {
+        final homeC = Get.find<HomeController>();
+        homeC.refreshData();
+        return true;
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Neutral.white4,
+          appBar: AppBar(
+            backgroundColor: Primary.darkColor,
+            centerTitle: true,
+            elevation: 0,
+            title: Text(
+              "Profil Admin",
+              style: semiBold.copyWith(color: Colors.white),
+            ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              onPressed: () {
+                final homeC = Get.find<HomeController>();
+                homeC.refreshData();
+                Get.back();
+              },
+            ),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+            ),
+          ),
+          body: Obx(() {
+            final isLoading = controller.isLoading.value;
+            final user = controller.userModel.value;
+
+            if (isLoading || user == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _buildProfileHeader(user),
+                  const SizedBox(height: 24),
+                  _buildInfoSection(user),
+                  const SizedBox(height: 24),
+                  _buildNavigationSection(),
+                  const SizedBox(height: 24),
+                  _buildLogoutButton(),
+                ],
+              ),
+            );
+          }),
         ),
       ),
-      body: Obx(() {
-        final isLoading = controller.isLoading.value;
-        final user = controller.userModel.value;
-
-        if (isLoading || user == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _buildProfileHeader(user),
-              const SizedBox(height: 24),
-              _buildInfoSection(user),
-              const SizedBox(height: 24),
-              _buildNavigationSection(),
-              const SizedBox(height: 24),
-              _buildLogoutButton(),
-            ],
-          ),
-        );
-      }),
     );
   }
 
@@ -152,8 +166,11 @@ class AdminView extends GetView<AdminController> {
           Text("Navigasi", style: bold.copyWith(fontSize: 16)),
           const Divider(color: Primary.mainColor, thickness: 1),
           const SizedBox(height: 8),
-          _navigableRow("List Paket dan Event", Routes.MANAGE_EVENT_TOUR),
-          _navigableRow("List Order", Routes.ORDERVIEW),
+          _navigableRow(
+            "Manajemen Paket Wisata dan Event",
+            Routes.MANAGE_EVENT_TOUR,
+          ),
+          _navigableRow("Riwayat Pemesanan", Routes.ORDERVIEW),
         ],
       ),
     );

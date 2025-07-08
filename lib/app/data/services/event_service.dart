@@ -1,15 +1,20 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:get/get.dart';
 import '../models/event_model.dart';
 
-class EventService {
+class EventService extends GetxService {
   final _firestore = FirebaseFirestore.instance;
   final _storage = FirebaseStorage.instance;
-  final _collection = 'events';
+  final String _collectionPath = 'events';
 
   Future<List<Event>> fetchEvents() async {
-    final snapshot = await _firestore.collection(_collection).get();
+    final snapshot =
+        await _firestore
+            .collection(_collectionPath)
+            .orderBy('eventDate', descending: true)
+            .get();
     return snapshot.docs
         .map((doc) => Event.fromJson(doc.data(), doc.id))
         .toList();
@@ -20,15 +25,17 @@ class EventService {
     required String description,
     required String location,
     required DateTime eventDate,
-    required File? imageFile,
+    required File imageFile,
+    double? price,
   }) async {
-    final imageUrl = await _uploadImage(imageFile);
-    await _firestore.collection(_collection).add({
+    String imageUrl = await _uploadImage(imageFile);
+    await _firestore.collection(_collectionPath).add({
       'title': title,
       'description': description,
       'location': location,
       'eventDate': eventDate,
       'imageUrl': imageUrl,
+      'price': price,
     });
   }
 
@@ -38,24 +45,30 @@ class EventService {
     required String description,
     required String location,
     required DateTime eventDate,
-    required String oldImageUrl,
-    required File? newImageFile,
-    required bool deleteOldImage,
+    String? oldImageUrl,
+    File? newImageFile,
+    double? price,
   }) async {
-    String updatedImageUrl = oldImageUrl;
+    String finalImageUrl = oldImageUrl ?? '';
 
-    // Hapus gambar lama jika diminta dan ada gambar baru
-    if (deleteOldImage && newImageFile != null) {
-      await _storage.refFromURL(oldImageUrl).delete();
-      updatedImageUrl = await _uploadImage(newImageFile);
+    if (newImageFile != null) {
+      finalImageUrl = await _uploadImage(newImageFile);
+      if (oldImageUrl != null && oldImageUrl.isNotEmpty) {
+        try {
+          await _storage.refFromURL(oldImageUrl).delete();
+        } catch (e) {
+          print("Gagal menghapus gambar lama saat mengganti: $e");
+        }
+      }
     }
 
-    await _firestore.collection(_collection).doc(docId).update({
+    await _firestore.collection(_collectionPath).doc(docId).update({
       'title': title,
       'description': description,
       'location': location,
       'eventDate': eventDate,
-      'imageUrl': updatedImageUrl,
+      'imageUrl': finalImageUrl,
+      'price': price,
     });
   }
 
@@ -63,16 +76,34 @@ class EventService {
     required String docId,
     required String imageUrl,
   }) async {
-    await _storage.refFromURL(imageUrl).delete();
-    await _firestore.collection(_collection).doc(docId).delete();
+    if (imageUrl.isNotEmpty) {
+      try {
+        await _storage.refFromURL(imageUrl).delete();
+      } catch (e) {
+        print("Gagal menghapus gambar dari storage: $e");
+      }
+    }
+    await _firestore.collection(_collectionPath).doc(docId).delete();
   }
 
-  Future<String> _uploadImage(File? imageFile) async {
-    if (imageFile == null) return '';
+  Future<String> _uploadImage(File imageFile) async {
     final ref = _storage.ref().child(
       'event_images/${DateTime.now().millisecondsSinceEpoch}',
     );
     await ref.putFile(imageFile);
     return await ref.getDownloadURL();
+  }
+
+  Future<Event?> getEventById(String id) async {
+    try {
+      final doc = await _firestore.collection(_collectionPath).doc(id).get();
+      if (doc.exists && doc.data() != null) {
+        return Event.fromJson(doc.data()!, doc.id);
+      }
+      return null; 
+    } catch (e) {
+      print("Error fetching event by ID: $e");
+      throw Exception('Gagal mengambil detail event: $e');
+    }
   }
 }
