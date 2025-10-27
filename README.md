@@ -18,11 +18,11 @@ This repository contains the source code for Tangaya Apps, a cross-platform appl
 
 For detailed instructions on how to use the application (for both users and admins), please refer to our User Guide:
 
-[View User Guide]((https://drive.google.com/file/d/1_zx-jbCHe9GDcQJSL4KDPT46bbH_vHkQ/view?usp=sharing))
+[View User Guide](https://drive.google.com/file/d/1_zx-jbCHe9GDcQJSL4KDPT46bbH_vHkQ/view?usp=sharing)
 
 ## Intellectual Property (HKI)
 
 This source code is officially registered as an Intellectual Property Right (HKI) in the Republic of Indonesia.
 
 **Certificate of Registration:**
-[View HKI Certificate]([https://drive.google.com/file/d/1Bj1zNbuGhCLZgOJ45Dl6DkkRwuHFHUcB/view?usp=sharing](https://drive.google.com/file/d/16aGALsBd6A6EUo1O9CgeXwvxqV8KjO2C/view?usp=sharing))
+[View HKI Certificate](https://drive.google.com/file/d/16aGALsBd6A6EUo1O9CgeXwvxqV8KjO2C/view?usp=sharing)
