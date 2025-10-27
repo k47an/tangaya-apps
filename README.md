@@ -18,7 +18,7 @@ This repository contains the source code for Tangaya Apps, a cross-platform appl
 
 For detailed instructions on how to use the application (for both users and admins), please refer to our User Guide:
 
-[View User Guide]([LINK_TO_YOUR_USER_GUIDE_HERE](https://drive.google.com/file/d/1_zx-jbCHe9GDcQJSL4KDPT46bbH_vHkQ/view?usp=sharing))
+[View User Guide]((https://drive.google.com/file/d/1_zx-jbCHe9GDcQJSL4KDPT46bbH_vHkQ/view?usp=sharing))
 
 ## Intellectual Property (HKI)
 
